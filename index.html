@@ -17,16 +17,9 @@
     const titleWords = [
         "The", "Effect", "of", "2", "Strikes", "on", "a", "Hitter's", "Swing", "Shape"
     ];
-    const colors = ["#b8860b", "#8b5c2a"]; // gold, brown
-    let colorIdx = 0;
     let html = "";
     for (let word of titleWords) {
-        if (word === "0-2") {
-            html += `<span style="color:#fff;">${word.toUpperCase()}</span> `;
-        } else {
-            html += `<span style="color:${colors[colorIdx]};">${word.toUpperCase()}</span> `;
-            colorIdx = 1 - colorIdx;
-        }
+        html += `<span style="color:#fff;">${word.toUpperCase()}</span> `;
     }
     document.getElementById("dynamic-title").innerHTML = html.trim();
     </script>

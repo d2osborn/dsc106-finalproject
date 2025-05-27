@@ -9,11 +9,13 @@ body {
     min-width: 100vw;
     width: 100vw;
     font-family: 'Segoe UI', Arial, sans-serif;
+    color: #000;
 }
 
 * {
     box-sizing: border-box;
     font-size: 1.2em;
+    color: #000;
 }
 
 .video-effect-container {
@@ -43,13 +45,13 @@ body {
     width: auto;
     margin: 0;
     padding: 0.5vh 2vw;
-    color: #fff;
+    color: #000;
     font-size: 1.5vw;
     font-family: 'Montserrat Black', 'Segoe UI', Arial, sans-serif;
     font-weight: 900;
     letter-spacing: 0.05em;
     text-align: center;
-    text-shadow: 0 4px 32px #000a, 0 2px 8px #000a;
+    text-shadow: none;
     z-index: 2;
     background: none;
     border-radius: 0;
@@ -73,7 +75,7 @@ body {
     background: #fff;
     border-radius: 1vw;
     z-index: 3;
-    box-shadow: 0 2px 24px #000a;
+    box-shadow: 0 2px 24px #ccc;
 }
 
 .section-title {
@@ -85,12 +87,12 @@ body {
     text-align: center;
     margin: 0 0 1vw 0;
     text-transform: uppercase;
-    text-shadow: 0 2px 8px #000a;
+    text-shadow: none;
 }
 
 .section-summary {
     font-size: 1.1vw;
-    color: #fff;
+    color: #000;
     line-height: 1.6;
     text-align: center;
     margin: 0;
@@ -99,7 +101,7 @@ body {
 
 #player-select {
     background: #fff;
-    color: #222;
+    color: #000;
     border-radius: 4px;
     padding: 0.3em 1em;
     font-size: 1em;
@@ -114,7 +116,7 @@ body {
     padding: 2vw 3vw;
     background: #fff;
     border-radius: 1vw;
-    box-shadow: 0 2px 24px #000a;
+    box-shadow: 0 2px 24px #ccc;
     z-index: 3;
 }
 
@@ -127,7 +129,7 @@ body {
     text-align: center;
     margin: 0 0 2vw 0;
     text-transform: uppercase;
-    text-shadow: 0 2px 8px #000a;
+    text-shadow: none;
 }
 
 .sandbox-controls {
@@ -138,13 +140,13 @@ body {
     justify-content: center;
     margin-bottom: 2vw;
     font-size: 1vw;
-    color: #fff;
+    color: #000;
 }
 
 .sandbox-controls label {
     font-size: 1vw;
     font-weight: 700;
-    color: #fff;
+    color: #000;
 }
 
 .sandbox-controls select,
@@ -152,6 +154,7 @@ body {
     font-size: 1vw;
     margin-left: 0.5vw;
     margin-right: 1vw;
+    color: #000;
 }
 
 .sandbox-visuals {
@@ -164,7 +167,7 @@ body {
 .sandbox-viz {
     background: #fff;
     border-radius: 0.5vw;
-    box-shadow: 0 2px 12px #000a;
+    box-shadow: 0 2px 12px #ccc;
     padding: 1vw;
     margin-bottom: 2vw;
     min-width: 350px;
@@ -176,6 +179,6 @@ body {
 }
 
 .active-suggestion {
-    background: #444 !important;
-    color: #fff;
+    background: #ddd !important;
+    color: #000;
 }

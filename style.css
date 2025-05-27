@@ -69,13 +69,12 @@ body {
     position: relative;
     width: 80vw;
     max-width: 1200px;
-    margin: 0 auto;
-    margin-top: 4vw;
-    padding: 2vw 3vw;
-    background: #fff;
-    border-radius: 1vw;
+    margin: 4vw auto;
+    padding: 0;
+    background: none;
+    border-radius: 0;
     z-index: 3;
-    box-shadow: 0 2px 24px #ccc;
+    box-shadow: none;
 }
 
 .section-title {
@@ -113,10 +112,10 @@ body {
     width: 90vw;
     max-width: 1400px;
     margin: 4vw auto 0 auto;
-    padding: 2vw 3vw;
-    background: #fff;
-    border-radius: 1vw;
-    box-shadow: 0 2px 24px #ccc;
+    padding: 0;
+    background: none;
+    border-radius: 0;
+    box-shadow: none;
     z-index: 3;
 }
 
@@ -165,9 +164,9 @@ body {
 }
 
 .sandbox-viz {
-    background: #fff;
-    border-radius: 0.5vw;
-    box-shadow: 0 2px 12px #ccc;
+    background: none;
+    border-radius: 0;
+    box-shadow: none;
     padding: 1vw;
     margin-bottom: 2vw;
     min-width: 350px;

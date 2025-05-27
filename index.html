@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>The Effect of an 0-2 Count On a Hitter's Swing Shape</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1 class="main-title" id="dynamic-title"></h1>
+    <div class="video-effect-container">
+        <canvas id="effect-canvas"></canvas>
+        <video id="source-video" src="images/aurafarm.mp4" crossorigin="anonymous" style="display:none;" muted autoplay loop></video>
+    </div>
+    <script>
+    // Dynamic colored title, all uppercase
+    const titleWords = [
+        "The", "Effect", "of", "an", "0-2", "Count", "On", "a", "Hitter's", "Swing", "Shape"
+    ];
+    const colors = ["#b8860b", "#8b5c2a"]; // gold, brown
+    let colorIdx = 0;
+    let html = "";
+    for (let word of titleWords) {
+        if (word === "0-2") {
+            html += `<span style="color:#fff;">${word.toUpperCase()}</span> `;
+        } else {
+            html += `<span style="color:${colors[colorIdx]};">${word.toUpperCase()}</span> `;
+            colorIdx = 1 - colorIdx;
+        }
+    }
+    document.getElementById("dynamic-title").innerHTML = html.trim();
+    </script>
+    <!-- New Section: Adjust or Die (after video, scroll down to see) -->
+    <section class="section-container">
+        <h2 class="section-title">HOW HITTERS EVOLVE IN TWO-STRIKE COUNTS</h2>
+        <p class="section-summary">
+            In an 0–2 count, when the odds are stacked against the hitter, do MLB players protect the zone by adjusting their swing shape flattening the bat path, shortening the load, and trading power for contact or do they swing the same way regardless of context? Traditional analyses tend to average swing metrics across all situations, obscuring the real-time decision-making that separates elite contact hitters from those who go down swinging. With Statcast data and Hawk-Eye tracking, we can now see beyond just outcomes to explore the biomechanics behind every pitch and swing.
+            <br><br>
+            This project uses full season 2023-2024 Statcast data to model swing shapes probabilistically  examining attack angle, bat direction, and tilt across different pitch zones and game contexts. By comparing hitters' swing profiles in neutral counts (like 0–0) versus pressure counts (like 0–2), we identify which players adapt their mechanics and which stay locked into one approach. Through interactive heatmaps, strike zone vectors, and 3D swing visualizations, users can explore how swing adaptation influences contact quality, exit velocity, and wOBA  revealing the hidden art of two-strike survival.
+        </p>
+    </section>
+    <!-- SANDBOX SECTION -->
+    <section class="sandbox-section">
+        <h2 class="sandbox-title">SANDBOX: SEARCH FOR A PLAYER</h2>
+        <div class="sandbox-controls"></div>
+        <div class="sandbox-visuals">
+            <div id="zone-map" class="sandbox-viz"></div>
+            <div id="outcome-scatter" class="sandbox-viz"></div>
+            <div id="attack-angle-plot" class="sandbox-viz"></div>
+            <div id="event-bar" class="sandbox-viz"></div>
+            <div id="timeline-table" class="sandbox-viz"></div>
+        </div>
+    </section>
+    <!-- Make sure D3 loads before dashboard.js -->
+    <script src="script.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>

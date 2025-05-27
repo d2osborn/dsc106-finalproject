@@ -10,16 +10,20 @@ month_dict = {'03': 'March',
               '06': 'June',
               '07': 'July',
               '08': 'August',
-              '09': 'September'}
+              '09': 'September',
+              '10': 'October'}
 
 def statcast_data(year: str):
     files_folder = Path(f"files/{year}/")
     files_folder.mkdir(exist_ok=True)
 
-    march_data = statcast(start_dt=f"{year}-03-28", end_dt=f"{year}-03-31")
+    march_data = statcast(start_dt=f"{year}-03-20", end_dt=f"{year}-03-31")
     march_data.to_csv(files_folder / f'march_{year}.csv', index=False)
 
-    for month in ['04', '05', '06', '07', '08', '09']:
+    november_data = statcast(start_dt=f"{year}-11-01", end_dt=f"{year}-11-02")
+    november_data.to_csv(files_folder / f'november_{year}.csv', index=False)
+
+    for month in ['04', '05', '06', '07', '08', '09', '10']:
         if month in ['04', '06', '09']:
             end_date = '30'
         else:
@@ -42,4 +46,4 @@ def statcast_data(year: str):
     output_path = files_folder / f"savantdata-{year}.csv"
     monthly_games.to_csv(output_path, index=False)
 
-statcast_data('2024')
+statcast_data('2023')

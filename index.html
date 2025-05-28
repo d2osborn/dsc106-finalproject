@@ -27,9 +27,11 @@
     <section class="section-container">
         <h2 class="section-title">3 strikes and you're out! How are MLB hitters staying alive?</h2>
         <p class="section-summary">
-            In an 0–2 count, when the odds are stacked against the hitter, do MLB players protect the zone by adjusting their swing shape flattening the bat path, shortening the load, and trading power for contact or do they swing the same way regardless of context? Traditional analyses tend to average swing metrics across all situations, obscuring the real-time decision-making that separates elite contact hitters from those who go down swinging. With Statcast data and Hawk-Eye tracking, we can now see beyond just outcomes to explore the biomechanics behind every pitch and swing.
+            Baseball Savant recently released new swing metrics — Attack Angle (º), Attack Direction (º), and Swing Path (Tilt) (º) — which allow the public to take a deeper dive into swing geometry and better understand how hitters approach each at-bat. These metrics help reveal the relationship between a hitter’s swing characteristics and the outcomes they produce — for example, offering insight into how a player like Mookie Betts can hit 30 home runs despite being 5'9" with below-average swing speed.
             <br><br>
-            This project uses full season 2023-2024 Statcast data to model swing shapes probabilistically  examining attack angle, bat direction, and tilt across different pitch zones and game contexts. By comparing hitters' swing profiles in neutral counts (like 0–0) versus pressure counts (like 0–2), we identify which players adapt their mechanics and which stay locked into one approach. Through interactive heatmaps, strike zone vectors, and 3D swing visualizations, users can explore how swing adaptation influences contact quality, exit velocity, and wOBA  revealing the hidden art of two-strike survival.
+            It’s common knowledge that hitters are taught to use a “B swing” in two-strike counts — a shorter, flatter path designed to protect the plate and avoid striking out. But do major leaguers follow this advice? Are they adjusting their swing geometry — including attack angle, direction, and swing path (tilt) — when facing two strikes, or is the idea of a two-strike approach more myth than reality? To explore this, we examine how league-wide swing metrics change between 0-strike and 2-strike counts.
+            <br><br>
+            Therefore, we built a sandbox that lets you explore how individual hitters adjust their swing geometry in two-strike counts. Not every hitter follows the same blueprint — now it’s your turn to find out who adapts, and who doesn’t.
         </p>
     </section>
     <!-- SANDBOX SECTION -->
@@ -50,10 +52,10 @@
             <summary>▸ Writeup</summary>
             <div>
                 <p>
-                    This analysis reveals how hitters’ swing decisions are often strategic, especially with two strikes...
+                    So far, we’ve built out a basic structure of the website, including our title, hook, and the And-But-Therefore storyline. We’ve also implemented our interactive feature, a sandbox tool that lets users select any qualified MLB hitter (they must have a sufficient amount of plate appearances) and view their average attack angle, bat speed, and swing path (tilt) in both 0-0 and 0-2 counts. If no hitter is selected, the sandbox defaults to displaying league-average values for each of the metrics mentioned previously. And when a player is selected, the league averages remain visible as a way to let users see how individual hitters compare.
                 </p>
                 <p>
-                    Hitters like Steven Kwan and Yandy Díaz adapt swing mechanics...
+                    One of the most challenging parts of our project to design is designing a swing model that effectively visualizes how hitters swing, and how those swings change by count. Our goal is to emulate the clarity of Baseball Savant’s own swing metric visualizations, which is no small task. We’ve also found it difficult to create visualizations that both support our narrative and remain intuitive. These include animations to illustrate swing geometry (attack angle, direction, and tilt), distribution plots comparing 0-strike and 2-strike swings, and scatter plots showing per-player changes across counts. Integrating outcome metrics like xwOBA, whiff rate, contact rate, and groundball rate into the sandbox without cluttering the interface presents another design challenge. Presenting xwOBA will be a challenge in and of itself, as we'll need to develop our own model to estimate it, as it is not given in the data as its own feature.
                 </p>
             </div>
         </details>

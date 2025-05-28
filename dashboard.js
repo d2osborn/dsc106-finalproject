@@ -30,7 +30,9 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Find max values for each gauge field, rounded up to next 10 ---
+    // Set attack angle max to 25 as requested
     function getMax(field) {
+      if (field === 'attack_angle') return 25;
       const max = d3.max(data, d => +d[field]) || 1;
       return Math.ceil(max / 10) * 10;
     }
@@ -40,17 +42,30 @@ window.addEventListener('DOMContentLoaded', () => {
 
     function getCount(){ const c=radios.find(r=>r.checked); return c?c.value:null; }
     function update(){
-      const p=inputElem.value.trim(); if(!players.includes(p)) return;
-      const c=getCount(); if(!c) return;
-      const f=data.filter(d=>d.batter_name===p && ((c==='0-0'&&d.balls===0&&d.strikes===0)||(c==='0-2'&&d.balls===0&&d.strikes===2)));
-      gauge('#zone-map', f, 'attack_angle', 'Attack Angle (°)', 0, maxAttackAngle);
-      gauge('#outcome-scatter', f, 'bat_speed', 'Bat Speed (mph)', 0, maxBatSpeed);
-      gauge('#attack-angle-plot', f, 'swing_path_tilt', 'Swing Path Tilt (°)', -maxSwingPathTilt, maxSwingPathTilt);
+      const p = inputElem.value.trim();
+      const c = getCount();
+      let f = [];
+      let showData = [];
+      if (players.includes(p) && c) {
+        f = data.filter(d=>d.batter_name===p && ((c==='0-0'&&d.balls===0&&d.strikes===0)||(c==='0-2'&&d.balls===0&&d.strikes===2)));
+        showData = (f.length > 0) ? f : [];
+      }
+      // If no valid player or no data, show MLB average for selected count
+      if (showData.length === 0 && c) {
+        showData = data.filter(d => (c==='0-0'&&d.balls===0&&d.strikes===0)||(c==='0-2'&&d.balls===0&&d.strikes===2));
+      }
+      // If still empty (shouldn't happen), fallback to all data
+      if (showData.length === 0) showData = data;
+      gauge('#zone-map', showData, 'attack_angle', 'Attack Angle (°)', 0, maxAttackAngle);
+      gauge('#outcome-scatter', showData, 'bat_speed', 'Bat Speed (mph)', 0, maxBatSpeed);
+      gauge('#attack-angle-plot', showData, 'swing_path_tilt', 'Swing Path Tilt (°)', -maxSwingPathTilt, maxSwingPathTilt);
     }
     inputElem.addEventListener('change',update);
     inputElem.addEventListener('keyup',e=>{ if(e.key==='Enter')update(); });
     radios.forEach(r=>r.addEventListener('change',update));
 
+    // --- Show MLB averages on initial load ---
+    update();
 
     window.__statcast_full_data__ = data;
   });

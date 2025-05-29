@@ -224,3 +224,16 @@ body, button, input, select, textarea {
 .writeup-dropdown[open] summary {
     color: #ffcc00;
 }
+
+.mlb-average {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 12px; /* uniform smaller size */
+    fill: #E63946;  /* red color */
+    text-anchor: middle;
+}
+
+svg text.mlb-average {
+    font-size: 12px !important;
+    fill: #E63946 !important;
+    text-anchor: middle;
+}

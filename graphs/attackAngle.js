@@ -20,7 +20,7 @@ export function drawAttackAngle(containerSel, data, config) {
     const r = 180, cx = 200, cy = 200;
     const ballX = cx + r * 0.85, ballY = cy;
     svg.append('image')
-        .attr('href', '../images/ball.png')
+        .attr('href', 'images/ball.png')   // updated image path
         .attr('x', ballX - 18)
         .attr('y', ballY - 18)
         .attr('width', 36)

@@ -64,7 +64,7 @@ export function drawSwingPathTilt(containerSel, data, config) {
 
     // 2) In that group, draw the bat flipped horizontally so its RIGHT edge sits at x=0:
     batG.append('image')
-      .attr('xlink:href', '../images/bat.svg')
+      .attr('xlink:href', 'images/bat.svg')  // updated image path
       .attr('width', batLength)
       .attr('height', newHeight)
       .attr('preserveAspectRatio', 'none')

@@ -289,34 +289,18 @@ label {
     min-height: 400px;
 }
 
-/* Style for the golden arrows */
 .scroll-arrows {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 3vw; /* Make them quite big */
-    color: #b8860b; /* Golden tint */
-    font-family: 'Montserrat Black', 'Segoe UI', Arial, sans-serif;
-    font-weight: 900;
-    cursor: pointer;
-    z-index: 3;
-    user-select: none;
-    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-/* Style for the outlined arrows */
-.scroll-arrows {
-    position: absolute;
-    top: 85%; /* Moved slightly higher from 90% */
-    left: 50%;
-    transform: translateX(-50%) rotate(90deg); /* Rotate arrows downward */
-    font-size: 5vw; /* Keep them big */
-    color: #b8860b; /* Golden tint */
-    font-family: 'Montserrat Black', 'Segoe UI', Arial, sans-serif;
-    font-weight: 900;
-    cursor: pointer;
-    z-index: 3;
-    user-select: none;
-    text-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 85%;
+  left: 50%;
+  transform: translateX(-50%) rotate(90deg);
+  font-size: 5vw;
+  color: #fff;
+  font-family: 'Montserrat Black', 'Segoe UI', Arial, sans-serif;
+  font-weight: 900;
+  opacity: 0.45;
+  cursor: pointer;
+  z-index: 3;
+  user-select: none;
+  text-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }

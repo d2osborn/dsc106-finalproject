@@ -1,8 +1,6 @@
-import { appendMLBAverage } from './utils.js';
-
 export function drawAttackAngle(containerSel, data, config) {
-	// ...existing logic from the "if (field==='attack_angle')" block...
-	// Use config.title, config.max, etc.
+    // ...existing logic from the "if (field==='attack_angle')" block...
+    // Use config.title, config.max, etc.
     const svg = containerSel.append('svg')
         .attr('viewBox', '0 0 400 400')
         .attr('preserveAspectRatio', 'xMidYMid meet');
@@ -68,6 +66,25 @@ export function drawAttackAngle(containerSel, data, config) {
         .style('font-size', '22px')
         .text(avg.toFixed(1) + "°");
     
-    // Add MLB Average using the utility function
-    appendMLBAverage(svg, data, 'attack_angle');
+    // Replace the MLB Average call with:
+    appendMLBAverage(svg, 200, 380, data, 'attack_angle', "20px");
+}
+
+// Append the MLB Average utility function at the bottom:
+function appendMLBAverage(svg, cx, y, data, field, overrideFontSize) {
+    let mlbAvg = null;
+    if (window.__statcast_full_data__ && Array.isArray(window.__statcast_full_data__)) {
+        mlbAvg = d3.mean(window.__statcast_full_data__, d => +d[field]);
+    } else if (data && data.length > 0) {
+        mlbAvg = d3.mean(data, d => +d[field]);
+    }
+    const fontSize = overrideFontSize || "20px";
+    svg.append('text')
+       .attr('x', cx)
+       .attr('y', y)
+       .attr('text-anchor', 'middle')
+       .style('font-size', fontSize)
+       .style('fill', '#E63946')
+       .text(mlbAvg !== null && !isNaN(mlbAvg) ?
+             `MLB Average: ${mlbAvg.toFixed(1)}${field==="attack_angle"?"°":""}` : '');
 }

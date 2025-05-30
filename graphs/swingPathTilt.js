@@ -1,5 +1,3 @@
-import { appendMLBAverage } from './utils.js';
-
 export function drawSwingPathTilt(containerSel, data, config) {
     // Create SVG container
     const svg = containerSel.append('svg')
@@ -91,6 +89,25 @@ export function drawSwingPathTilt(containerSel, data, config) {
         .style('font-size', '22px')
         .text(avg.toFixed(1) + "°");
     
-    // Add MLB Average using the utility function
-    appendMLBAverage(svg, data, 'swing_path_tilt');
+    // Update MLB Average call to use uniform placement for 400x400 svg:
+    appendMLBAverage(svg, 200, 380, data, 'swing_path_tilt', "20px");
+}
+
+// Append the utility function directly:
+function appendMLBAverage(svg, cx, y, data, field, overrideFontSize) {
+    let mlbAvg = null;
+    if (window.__statcast_full_data__ && Array.isArray(window.__statcast_full_data__)) {
+        mlbAvg = d3.mean(window.__statcast_full_data__, d => +d[field]);
+    } else if (data && data.length > 0) {
+        mlbAvg = d3.mean(data, d => +d[field]);
+    }
+    const fontSize = overrideFontSize || "20px";
+    svg.append('text')
+       .attr('x', cx)
+       .attr('y', y)
+       .attr('text-anchor', 'middle')
+       .style('font-size', fontSize)
+       .style('fill', '#E63946')
+       .text(mlbAvg !== null && !isNaN(mlbAvg) ?
+             `MLB Average: ${mlbAvg.toFixed(1)}${field==="attack_angle"?"°":""}` : '');
 }

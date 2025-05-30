@@ -2,64 +2,182 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>The Effect of 2 Strikes on a Hitter’s Swing</title>
+    <title>The Effect of 2 Strikes on a Hitter's Swing</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script type="module">
+        import { drawAttackAngle } from './graphs/attackAngle.js';
+        import { drawBatSpeed } from './graphs/batSpeed.js';
+        import { drawSwingPathTilt } from './graphs/swingPathTilt.js';
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const controls = d3.select('.sandbox-controls');
+            controls.html(`
+                <div style="display:flex;align-items:center;gap:1em;margin-bottom:1em;">
+                    <label style="color:#fff;font-weight:bold;">Player:
+                        <input id="player-input" list="player-list" placeholder="Enter player name" autocomplete="off" style="padding:0.4em 0.8em;font-size:1em;">
+                        <datalist id="player-list"></datalist>
+                    </label>
+                    <label style="color:#fff;font-weight:bold;">Count:
+                        <label><input type="radio" name="count" value="0-0" checked>0-0</label>
+                        <label><input type="radio" name="count" value="0-2">0-2</label>
+                    </label>
+                </div>
+            `);
+            const inputElem = document.getElementById('player-input');
+            const dataList = document.getElementById('player-list');
+            const radios = Array.from(document.getElementsByName('count'));
+
+            // Load data
+            d3.csv('files/combined_data.csv', d3.autoType).then(data => {
+                const players = Array.from(new Set(data.map(d=>d.batter_name.trim()).filter(n=>n))).sort();
+                function populate(list) { dataList.innerHTML = list.map(n=>`<option value="${n}">`).join(''); }
+                
+                inputElem.addEventListener('input', ()=>{
+                    const v = inputElem.value.toLowerCase();
+                    populate(v ? players.filter(p=>p.toLowerCase().includes(v)).slice(0,10) : []);
+                });
+
+                function getMax(field) {
+                    if (field === 'attack_angle') return 25;
+                    const max = d3.max(data, d => +d[field]) || 1;
+                    return Math.ceil(max / 10) * 10;
+                }
+                const maxAttackAngle = getMax('attack_angle');
+                const maxBatSpeed = getMax('bat_speed');
+                const maxSwingPathTilt = Math.ceil((d3.max(data, d => Math.abs(+d.swing_path_tilt)) || 60) / 10) * 10;
+
+                function getCount(){ const c=radios.find(r=>r.checked); return c?c.value:null; }
+                function update(){
+                    const p = inputElem.value.trim();
+                    const c = getCount();
+                    let f = [];
+                    let showData = [];
+                    if (players.includes(p) && c) {
+                        f = data.filter(d=>d.batter_name===p && ((c==='0-0'&&d.balls===0&&d.strikes===0)||(c==='0-2'&&d.balls===0&&d.strikes===2)));
+                        showData = (f.length > 0) ? f : [];
+                    }
+                    if (showData.length === 0 && c) {
+                        showData = data.filter(d => (c==='0-0'&&d.balls===0&&d.strikes===0)||(c==='0-2'&&d.balls===0&&d.strikes===2));
+                    }
+                    if (showData.length === 0) showData = data;
+
+                    // Clear containers
+                    d3.select('#zone-map').html('');
+                    d3.select('#outcome-scatter').html('');
+                    d3.select('#attack-angle-plot').html('');
+
+                    // Draw graphs using imported functions
+                    drawAttackAngle(d3.select('#zone-map'), showData, {
+                        title: 'Attack Angle (°)',
+                        max: maxAttackAngle
+                    });
+                    drawBatSpeed(d3.select('#outcome-scatter'), showData, {
+                        title: 'Bat Speed (mph)',
+                        max: maxBatSpeed
+                    });
+                    drawSwingPathTilt(d3.select('#attack-angle-plot'), showData, {
+                        title: 'Swing Path Tilt (°)',
+                        max: maxSwingPathTilt
+                    });
+                }
+                inputElem.addEventListener('change',update);
+                inputElem.addEventListener('keyup',e=>{ if(e.key==='Enter')update(); });
+                radios.forEach(r=>r.addEventListener('change',update));
+
+                // Show MLB averages on initial load
+                update();
+
+                window.__statcast_full_data__ = data;
+            });
+        });
+    </script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+    </style>
 </head>
 <body>
     <h1 class="main-title" id="dynamic-title"></h1>
-    <div class="video-effect-container">
+    <!-- Updated hero section: container now spans full viewport without white space -->
+    <div class="video-effect-container" style="width: 100vw; height: 100vh; overflow: hidden;">
         <canvas id="effect-canvas"></canvas>
-        <video id="source-video" src="images/aurafarm.mp4" crossorigin="anonymous" style="display:none;" muted autoplay loop></video>
+        <video id="source-video" src="images/aurafarm.mp4" preload="auto" crossorigin="anonymous" style="display:none;" muted autoplay loop></video>
     </div>
     <script>
-    // Dynamic colored title, all uppercase
-    const titleWords = [
-        "The", "Effect", "of", "2", "Strikes", "on", "a", "Hitter's", "Swing"
-    ];
-    let html = "";
-    for (let word of titleWords) {
-        html += `<span style="color:#fff;">${word.toUpperCase()}</span> `;
-    }
-    document.getElementById("dynamic-title").innerHTML = html.trim();
+        // Dynamic colored title, all uppercase
+        const titleWords = [
+            "The", "Effect", "of", "2", "Strikes", "on", "a", "Hitter's", "Swing"
+        ];
+        let html = "";
+        for (let word of titleWords) {
+            html += `<span style="color:#fff;">${word.toUpperCase()}</span> `;
+        }
+        document.getElementById("dynamic-title").innerHTML = html.trim();
+
+        // Video effect – updated to use container dimensions
+        const video = document.getElementById('source-video');
+        const canvas = document.getElementById('effect-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            const container = document.querySelector('.video-effect-container');
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        function drawVideo() {
+            if (video.readyState >= 2) {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            }
+            requestAnimationFrame(drawVideo);
+        }
+
+        video.addEventListener('canplay', () => {
+            video.play();
+            drawVideo();
+        });
     </script>
-    <!-- New Section: Adjust or Die (after video, scroll down to see) -->
+
+    <!-- New Section: Adjust or Die -->
     <section class="section-container">
         <h2 class="section-title">3 strikes and you're out! How are MLB hitters staying alive?</h2>
         <p class="section-summary">
-            Baseball Savant recently released new swing metrics, attack angle (º), attack direction (º), and swing path (tilt) (º), which allow the public to take a deeper dive into swing geometry and better understand how hitters approach each at-bat. These metrics help reveal the relationship between a hitter’s swing characteristics and the outcomes they produce. For example, offering insight into how a player like Mookie Betts can hit 30 home runs despite being 5'9" with below-average swing speed.
+            Baseball Savant recently released new swing metrics, attack angle (º), attack direction (º), and swing path (tilt) (º), which allow the public to take a deeper dive into swing geometry and better understand how hitters approach each at-bat. These metrics help reveal the relationship between a hitter's swing characteristics and the outcomes they produce. For example, offering insight into how a player like Mookie Betts can hit 30 home runs despite being 5'9" with below-average swing speed.
             <br><br>
-            It’s common knowledge that hitters are taught to use a “B swing” in two-strike counts, which is a shorter, flatter path designed to protect the plate and avoid striking out. But do major leaguers follow this advice? Are they adjusting their swing geometry, including attack angle, direction, and swing path (tilt), when facing two strikes, or is the idea of a two-strike approach more myth than reality? To explore this, we examine how league-wide swing metrics change between 0-strike and 2-strike counts.
+            It's common knowledge that hitters are taught to use a "B swing" in two-strike counts, which is a shorter, flatter path designed to protect the plate and avoid striking out. But do major leaguers follow this advice? Are they adjusting their swing geometry, including attack angle, direction, and swing path (tilt), when facing two strikes, or is the idea of a two-strike approach more myth than reality? To explore this, we examine how league-wide swing metrics change between 0-strike and 2-strike counts.
             <br><br>
-            Therefore, we built a sandbox that lets you explore how individual hitters adjust their swing geometry in two-strike counts. Not every hitter follows the same blueprint, now it’s your turn to find out who adapts, and who doesn’t.
+            Therefore, we built a sandbox that lets you explore how individual hitters adjust their swing geometry in two-strike counts. Not every hitter follows the same blueprint, now it's your turn to find out who adapts, and who doesn't.
         </p>
     </section>
+
     <!-- SANDBOX SECTION -->
     <section class="sandbox-section">
         <h2 class="sandbox-title">Explore How MLB Hitters Adjusts in Two Strikes</h2>
         <div class="sandbox-controls"></div>
         <div class="sandbox-visuals">
-            <!-- Meters & Visualizations -->
             <div id="zone-map" class="sandbox-viz"></div>
             <div id="outcome-scatter" class="sandbox-viz"></div>
             <div id="attack-angle-plot" class="sandbox-viz"></div>
         </div>
 
-        <!-- ✅ ONE clean dropdown -->
         <details class="writeup-dropdown">
             <summary>▸ Writeup</summary>
             <div>
                 <p>
-                    So far, we’ve built out a basic structure of the website, including our title, hook, and the And-But-Therefore storyline. We’ve also implemented our interactive feature, a sandbox tool that lets users select any qualified MLB hitter (they must have a sufficient amount of plate appearances) and view their average attack angle, bat speed, and swing path (tilt) in both 0-0 and 0-2 counts. If no hitter is selected, the sandbox defaults to displaying league-average values for each of the metrics mentioned previously. And when a player is selected, the league averages remain visible as a way to let users see how individual hitters compare.
+                    So far, we've built out a basic structure of the website, including our title, hook, and the And-But-Therefore storyline. We've also implemented our interactive feature, a sandbox tool that lets users select any qualified MLB hitter (they must have a sufficient amount of plate appearances) and view their average attack angle, bat speed, and swing path (tilt) in both 0-0 and 0-2 counts. If no hitter is selected, the sandbox defaults to displaying league-average values for each of the metrics mentioned previously. And when a player is selected, the league averages remain visible as a way to let users see how individual hitters compare.
                 </p>
                 <p>
-                    One of the most challenging parts of our project to design is designing a swing model that effectively visualizes how hitters swing, and how those swings change by count. Our goal is to emulate the clarity of Baseball Savant’s own swing metric visualizations, which is no small task. We’ve also found it difficult to create visualizations that both support our narrative and remain intuitive. These include animations to illustrate swing geometry (attack angle, direction, and tilt), distribution plots comparing 0-strike and 2-strike swings, and scatter plots showing per-player changes across counts. Integrating outcome metrics like xwOBA, whiff rate, contact rate, and groundball rate into the sandbox without cluttering the interface presents another design challenge. The most challenging aspect of the process will be showing the website in the form of a slideshow where we can show the visualizations as you scroll down as it tells the narrative, similar to how the Gun Deaths in America website was.
+                    One of the most challenging parts of our project to design is designing a swing model that effectively visualizes how hitters swing, and how those swings change by count. Our goal is to emulate the clarity of Baseball Savant's own swing metric visualizations, which is no small task. We've also found it difficult to create visualizations that both support our narrative and remain intuitive. These include animations to illustrate swing geometry (attack angle, direction, and tilt), distribution plots comparing 0-strike and 2-strike swings, and scatter plots showing per-player changes across counts. Integrating outcome metrics like xwOBA, whiff rate, contact rate, and groundball rate into the sandbox without cluttering the interface presents another design challenge. The most challenging aspect of the process will be showing the website in the form of a slideshow where we can show the visualizations as you scroll down as it tells the narrative, similar to how the Gun Deaths in America website was.
                 </p>
             </div>
         </details>
     </section>
-    <script src="script.js"></script>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="dashboard.js"></script>
 </body>
 </html>

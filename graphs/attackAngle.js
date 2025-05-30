@@ -1,3 +1,5 @@
+import { appendMLBAverage } from './utils.js';
+
 export function drawAttackAngle(containerSel, data, config) {
 	// ...existing logic from the "if (field==='attack_angle')" block...
 	// Use config.title, config.max, etc.
@@ -18,7 +20,7 @@ export function drawAttackAngle(containerSel, data, config) {
     const r = 180, cx = 200, cy = 200;
     const ballX = cx + r * 0.85, ballY = cy;
     svg.append('image')
-        .attr('href', 'images/ball.png')
+        .attr('href', '../images/ball.png')
         .attr('x', ballX - 18)
         .attr('y', ballY - 18)
         .attr('width', 36)
@@ -62,8 +64,10 @@ export function drawAttackAngle(containerSel, data, config) {
         .attr('x', 210)
         .attr('y', 190)
         .attr('text-anchor', 'start')
-        .attr('fill', "#fff")
+        .attr('fill', "#000")
         .style('font-size', '22px')
         .text(avg.toFixed(1) + "°");
-    // Leave MLB average call to dashboard.js
+    
+    // Add MLB Average using the utility function
+    appendMLBAverage(svg, data, 'attack_angle');
 }

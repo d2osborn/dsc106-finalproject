@@ -1,92 +1,101 @@
+import { appendMLBAverage } from './utils.js';
+
 export function drawSwingPathTilt(containerSel, data, config) {
-    // ...existing logic from the "if (field==='swing_path_tilt')" block...
+    // Create SVG container
     const svg = containerSel.append('svg')
         .attr('viewBox', '0 0 400 400')
         .attr('preserveAspectRatio', 'xMidYMid meet');
-    // Use config.title, etc.
-    // For consistency we use cx = 150, cy = 200.
-    const cx = 150, cy = 200, r = 180;
-    const lineLength = 250;
+    
     // Title
     svg.append('text')
-        .attr('x', cx)
+        .attr('x', 200)
         .attr('y', 50)
         .attr('text-anchor', 'middle')
-        .attr('fill', "#b8860b")
+        .attr('fill', '#b8860b')
         .style('font-size', '2vw')
         .text(config.title);
-    // Pivot point
-    const pivotX = cx + r * 0.85, pivotY = cy;
-    // Dashed baseline
-    const blackX = pivotX + lineLength * Math.cos(Math.PI);
-    const blackY = pivotY - lineLength * Math.sin(Math.PI);
+    
+    // Compute average swing_path_tilt (absolute value) and convert degrees to radians
+    const avg = d3.mean(data, d => +d.swing_path_tilt) || 0;
+    const theta = Math.abs(avg) * Math.PI / 180;
+    
+    // Set up base positioning similar to attackAngle graph
+    const cx = 200, cy = 200;
+    const r = 180;
+    const ballX = cx + r * 0.85; // reference point (as in attack angle)
+    const ballY = cy;
+    const lineLength = 250;
+    const zeroAngle = Math.PI;  // baseline drawn at π (to the left)
+    // Define baseline coordinates
+    const blackX = ballX + lineLength * Math.cos(zeroAngle);
+    const blackY = ballY - lineLength * Math.sin(zeroAngle);
+    // Baseline (black dashed line)
     svg.append('line')
-        .attr('x1', pivotX)
-        .attr('y1', pivotY)
-        .attr('x2', blackX)
-        .attr('y2', blackY)
+        .attr('x1', ballX).attr('y1', ballY)
+        .attr('x2', blackX).attr('y2', blackY)
         .attr('stroke', '#111')
         .attr('stroke-width', 3)
         .attr('stroke-dasharray', '8,6');
-    // Angle mapping
-    const angleScale = d3.scaleLinear()
-         .domain([-config.max, config.max])
-         .range([-Math.PI/3, Math.PI/3]);
-    const avg = d3.mean(data, d => +d.swing_path_tilt) || 0;
-    const theta = angleScale(avg);
-    // Yellow polygon fill
+
+    // Compute red endpoint (for bat motion) using (zeroAngle + theta)
+    const redX = ballX + lineLength * Math.cos(zeroAngle + theta);
+    const redY = ballY - lineLength * Math.sin(zeroAngle + theta);
+    
+    // Draw filled polygon (triangle) between baseline and red endpoint with transition
     const fillPoly = svg.append('polygon')
-         .attr('points', `${pivotX},${pivotY} ${blackX},${blackY} ${pivotX},${pivotY}`)
-         .attr('fill', "#b8860b")
-         .attr('opacity', 0.5);
-    fillPoly.transition().duration(1000)
-         .attrTween("points", function() {
-             return t => {
-                 const tipX = pivotX + lineLength * Math.cos(Math.PI - theta * t);
-                 const tipY = pivotY - lineLength * Math.sin(Math.PI - theta * t);
-                 return `${pivotX},${pivotY} ${blackX},${blackY} ${tipX},${tipY}`;
-             };
-         });
-    // Red line animating to current tilt
-    const redLine = svg.append('line')
-         .attr('x1', pivotX)
-         .attr('y1', pivotY)
-         .attr('x2', blackX)
-         .attr('y2', blackY)
-         .attr('stroke', '#EE3311')
-         .attr('stroke-width', 4);
-    redLine.transition().duration(1000)
-         .attrTween("x2", function() {
-             const interp = d3.interpolate(blackX, pivotX + lineLength * Math.cos(Math.PI - theta));
-             return t => interp(t);
-         })
-         .attrTween("y2", function() {
-             const interp = d3.interpolate(blackY, pivotY - lineLength * Math.sin(Math.PI - theta));
-             return t => interp(t);
-         });
-    // Bat remains unchanged
-    const batGroup = svg.append('g')
-         .attr('transform', `translate(${pivotX},${pivotY})`);
-    batGroup.append('image')
-         .attr('href', 'images/bat.png')
-         .attr('x', -18)
-         .attr('y', -lineLength)
-         .attr('width', 36)
-         .attr('height', lineLength);
-    batGroup.transition().duration(1000)
-         .attrTween("transform", function() {
-             const interp = d3.interpolateNumber(0, theta * (180/Math.PI));
-             return t => `translate(${pivotX},${pivotY}) rotate(${interp(t)})`;
-         });
-    // Numeric angle in white, 12px
-    const textX = pivotX + (lineLength/2)*Math.cos(Math.PI - theta);
-    const textY = pivotY - (lineLength/2)*Math.sin(Math.PI - theta);
+        .attr('points', `${ballX},${ballY} ${blackX},${blackY} ${ballX},${ballY}`)
+        .attr('fill', "#b8860b")
+        .attr('opacity', 0.5);
+    fillPoly.transition().duration(1000).attrTween("points", function() {
+        return t => {
+            const currX = blackX + (redX - blackX) * t;
+            const currY = blackY + (redY - blackY) * t;
+            return `${ballX},${ballY} ${blackX},${blackY} ${currX},${currY}`;
+        };
+    });
+    
+    // Update bat image block so that after flipping horizontally its right edge touches the graph’s origin (ballX) and it's shifted slightly to the right.
+    // The goal is to have the bat start at the graph’s origin.
+    // In this solution, we want the bat’s right edge (after flip) to be at ballX.
+    // Since the bat's width equals lineLength, its left edge (pre-flip) should be at: batLeft = ballX - lineLength.
+    // Also, we reduce its height to a thinner (skinnier) size.
+    const newHeight = 20;
+    const batLength = lineLength;  // 250px
+
+    // 1) Create a <g> at the pivot:
+    const batG = svg.append('g')
+      .attr('class', 'swing-bat')
+      .attr('transform', `translate(${ballX},${ballY})`);
+
+    // 2) In that group, draw the bat flipped horizontally so its RIGHT edge sits at x=0:
+    batG.append('image')
+      .attr('xlink:href', '../images/bat.svg')
+      .attr('width', batLength)
+      .attr('height', newHeight)
+      .attr('preserveAspectRatio', 'none')
+      .attr('x', 0)            // right edge at pivot (x=0)
+      .attr('y', -newHeight/2) // vertically centered
+      .attr('transform', 'scale(-1,1)');
+
+    // 3) Tween the ROTATION on the GROUP from 0 → –(avg in degrees) (for a CCW swing):
+    batG.transition()
+      .duration(1000)
+      .attrTween('transform', () => {
+          const interp = d3.interpolateNumber(0, - (Math.abs(avg) || 0));
+          return t => `translate(${ballX},${ballY}) rotate(${interp(t)})`;
+      });
+    
+    // Compute centroid to place the average angle text inside the triangle
+    const centroidX = (ballX + blackX + redX) / 3;
+    const centroidY = (ballY + blackY + redY) / 3;
     svg.append('text')
-         .attr('x', textX)
-         .attr('y', textY)
-         .attr('text-anchor', 'middle')
-         .attr('fill', '#fff')
-         .style('font-size', '12px')
-         .text(avg.toFixed(1) + "°");
-    // Leave MLB average to dashboard.js
+        .attr('x', centroidX)
+        .attr('y', centroidY)
+        .attr('text-anchor', 'middle')
+        .attr('fill', "#000")
+        .style('font-size', '22px')
+        .text(avg.toFixed(1) + "°");
+    
+    // Add MLB Average using the utility function
+    appendMLBAverage(svg, data, 'swing_path_tilt');
 }

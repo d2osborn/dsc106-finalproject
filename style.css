@@ -46,13 +46,13 @@ body, button, input, select, textarea {
     width: auto;
     margin: 0;
     padding: 0.5vh 2vw;
-    color: #000;
+    color: #b8860b; /* Golden tint */
     font-size: 1.5vw;
     font-family: 'Montserrat Black', 'Segoe UI', Arial, sans-serif;
     font-weight: 900;
     letter-spacing: 0.05em;
     text-align: center;
-    text-shadow: none;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     z-index: 2;
     background: none;
     border-radius: 0;
@@ -287,4 +287,36 @@ label {
     border-radius: 8px;
     padding: 20px;
     min-height: 400px;
+}
+
+/* Style for the golden arrows */
+.scroll-arrows {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 3vw; /* Make them quite big */
+    color: #b8860b; /* Golden tint */
+    font-family: 'Montserrat Black', 'Segoe UI', Arial, sans-serif;
+    font-weight: 900;
+    cursor: pointer;
+    z-index: 3;
+    user-select: none;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Style for the outlined arrows */
+.scroll-arrows {
+    position: absolute;
+    top: 85%; /* Moved slightly higher from 90% */
+    left: 50%;
+    transform: translateX(-50%) rotate(90deg); /* Rotate arrows downward */
+    font-size: 5vw; /* Keep them big */
+    color: #b8860b; /* Golden tint */
+    font-family: 'Montserrat Black', 'Segoe UI', Arial, sans-serif;
+    font-weight: 900;
+    cursor: pointer;
+    z-index: 3;
+    user-select: none;
+    text-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }

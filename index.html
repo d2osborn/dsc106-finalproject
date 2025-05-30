@@ -103,19 +103,33 @@
 </head>
 <body>
     <h1 class="main-title" id="dynamic-title"></h1>
+    
     <!-- Updated hero section: container now spans full viewport without white space -->
-    <div class="video-effect-container" style="width: 100vw; height: 100vh; overflow: hidden;">
+    <div class="video-effect-container" style="width: 100vw; height: 100vh; overflow: hidden; position: relative;">
         <canvas id="effect-canvas"></canvas>
         <video id="source-video" src="images/aurafarm.mp4" preload="auto" crossorigin="anonymous" style="display:none;" muted autoplay loop></video>
+        
+        <!-- Outlined arrows below the title -->
+        <div class="scroll-arrows" onclick="scrollPastVideo()">&#x276F;&#x276F;&#x276F;</div>
     </div>
+
     <script>
+        // Scroll past the video when arrows are clicked
+        function scrollPastVideo() {
+            const videoContainer = document.querySelector('.video-effect-container');
+            window.scrollTo({
+                top: videoContainer.offsetHeight,
+                behavior: 'smooth'
+            });
+        }
+
         // Dynamic colored title, all uppercase
         const titleWords = [
             "The", "Effect", "of", "2", "Strikes", "on", "a", "Hitter's", "Swing"
         ];
         let html = "";
         for (let word of titleWords) {
-            html += `<span style="color:#fff;">${word.toUpperCase()}</span> `;
+            html += `<span style="color:#b8860b;">${word.toUpperCase()}</span> `; // Updated to golden tint
         }
         document.getElementById("dynamic-title").innerHTML = html.trim();
 
@@ -140,6 +154,7 @@
         }
 
         video.addEventListener('canplay', () => {
+            video.playbackRate = 1.25; // Slightly increase playback speed
             video.play();
             drawVideo();
         });

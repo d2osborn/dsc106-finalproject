@@ -54,15 +54,10 @@ export function drawSwingPathTilt(containerSel, data, config) {
         };
     });
     
-    // Update bat image block so that after flipping horizontally its right edge touches the graph’s origin (ballX) and it's shifted slightly to the right.
-    // The goal is to have the bat start at the graph’s origin.
-    // In this solution, we want the bat’s right edge (after flip) to be at ballX.
-    // Since the bat's width equals lineLength, its left edge (pre-flip) should be at: batLeft = ballX - lineLength.
-    // Also, we reduce its height to a thinner (skinnier) size.
     const newHeight = 20;
     const batLength = lineLength;  // 250px
 
-    // 1) Create a <g> at the pivot:
+
     const batG = svg.append('g')
       .attr('class', 'swing-bat')
       .attr('transform', `translate(${ballX},${ballY})`);

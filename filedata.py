@@ -47,3 +47,4 @@ def statcast_data(year: str):
     monthly_games.to_csv(output_path, index=False)
 
 statcast_data('2023')
+

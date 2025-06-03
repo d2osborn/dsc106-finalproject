@@ -159,29 +159,30 @@ body, button, input, select, textarea {
 
 .sandbox-visuals {
     display: flex;
-    flex-wrap: wrap;
-    gap: 2vw;
-    justify-content: center;
+    flex-wrap: nowrap;  /* Prevent wrapping */
+    justify-content: space-between;  /* Evenly space out the charts */
 }
 
 .sandbox-viz {
     background: #fff;
-    border-radius: 0;
-    box-shadow: none;
     padding: 1vw;
     margin-bottom: 2vw;
-    min-width: 350px;
-    min-height: 0;
-    flex: 1 1 400px;
-    max-width: 48vw;
-    max-height: 48vw;
+    /* Adjust each chart so four fit in one row */
+    width: 22vw;    /* 4 x 22vw = 88vw plus gaps within 100vw */
+    height: 22vw;
     overflow: auto;
 }
 
-/* .sandbox-viz {
-    outline: 1px dashed red;
-    background: rgba(255, 0, 0, 0.02);
-} */
+/* Responsive: Under 1000px, switch to two columns */
+@media (max-width: 1000px) {
+    .sandbox-visuals {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .sandbox-viz {
+        width: 45vw;
+        height: 45vw;
+    }
+}
 
 .sandbox-viz:empty {
     min-height: 0;
@@ -303,4 +304,19 @@ label {
   z-index: 3;
   user-select: none;
   text-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+#direction-angle-plot {
+    background: #fff;
+    padding: 1vw;
+    margin-bottom: 2vw;
+    /* Removed specific width and height to allow grid to size it */
+    /* width: 48vw; */
+    /* height: 48vw; */
+    overflow: auto;
+}
+
+.sandbox-viz svg {
+    transform: scale(0.7);
+    transform-origin: center;
 }

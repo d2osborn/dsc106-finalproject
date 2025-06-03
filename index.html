@@ -10,6 +10,7 @@
         import { drawAttackAngle } from './graphs/attackAngle.js';
         import { drawBatSpeed } from './graphs/batSpeed.js';
         import { drawSwingPathTilt } from './graphs/swingPathTilt.js';
+        import { drawDirectionAngle } from './graphs/directionAngle.js';
 
         window.addEventListener('DOMContentLoaded', () => {
             const controls = d3.select('.sandbox-controls');
@@ -67,6 +68,7 @@
                     d3.select('#zone-map').html('');
                     d3.select('#outcome-scatter').html('');
                     d3.select('#attack-angle-plot').html('');
+                    d3.select('#direction-angle-plot').html('');
 
                     // Draw graphs using imported functions
                     drawAttackAngle(d3.select('#zone-map'), showData, {
@@ -80,6 +82,10 @@
                     drawSwingPathTilt(d3.select('#attack-angle-plot'), showData, {
                         title: 'Swing Path Tilt (°)',
                         max: maxSwingPathTilt
+                    });
+                    drawDirectionAngle(d3.select('#direction-angle-plot'), showData, {
+                        title: 'Direction Angle (°)',
+                        max: maxAttackAngle // Adjust max if needed
                     });
                 }
                 inputElem.addEventListener('change',update);
@@ -176,10 +182,14 @@
     <section class="sandbox-section">
         <h2 class="sandbox-title">Explore How MLB Hitters Adjusts in Two Strikes</h2>
         <div class="sandbox-controls"></div>
-        <div class="sandbox-visuals">
-            <div id="zone-map" class="sandbox-viz"></div>
-            <div id="outcome-scatter" class="sandbox-viz"></div>
-            <div id="attack-angle-plot" class="sandbox-viz"></div>
+        <!-- NEW container to constrain the sandbox grid -->
+        <div class="sandbox-visuals-container" style="max-width: 1000px; margin: 0 auto;">
+            <div class="sandbox-visuals">
+                <div id="zone-map" class="sandbox-viz"></div>
+                <div id="outcome-scatter" class="sandbox-viz"></div>
+                <div id="attack-angle-plot" class="sandbox-viz"></div>
+                <div id="direction-angle-plot" class="sandbox-viz"></div>
+            </div>
         </div>
 
         <details class="writeup-dropdown">

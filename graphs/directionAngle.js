@@ -1,7 +1,8 @@
-export function drawAttackAngle(containerSel, data, config) {
+export function drawDirectionAngle(containerSel, data, config) {
     const svg = containerSel.append('svg')
-        .attr('viewBox', '0 0 400 400') // Matches container aspect ratio
+        .attr('viewBox', '0 0 400 400') // now matches attackAngle.js layout
         .attr('preserveAspectRatio', 'xMidYMid meet');
+    // Remove any group transform – use the SVG directly
     // Title
     svg.append('text')
         .attr('x', 200)
@@ -11,26 +12,29 @@ export function drawAttackAngle(containerSel, data, config) {
         .style('font-size', '2vw')
         .text(config.title);
     const angleScale = d3.scaleLinear().domain([0, config.max]).range([0, Math.PI/3]);
-    const avg = d3.mean(data, d => +d.attack_angle) || 0;
+    const avg = d3.mean(data, d => +d.attack_direction) || 0;
     const theta = angleScale(avg);
+    // Use same dimensions as attackAngle
     const r = 180, cx = 200, cy = 200;
-    const ballX = cx + r * 0.85, ballY = cy;
+    // For a rotated direction graph, position the ball accordingly (rotated opposite)
+    const ballX = cx, ballY = cy + r * 0.85;
     svg.append('image')
-        .attr('href', 'images/ball.png')   // updated image path
+        .attr('href', 'images/ball.png')
         .attr('x', ballX - 18)
         .attr('y', ballY - 18)
         .attr('width', 36)
         .attr('height', 36);
-    const lineLength = 250, zeroAngle = Math.PI;
+    const lineLength = 250, zeroAngle = -Math.PI/2;
     const blackX = ballX + lineLength * Math.cos(zeroAngle);
-    const blackY = ballY - lineLength * Math.sin(zeroAngle);
-    svg.append('line').attr('x1', ballX).attr('y1', ballY)
+    const blackY = ballY + lineLength * Math.sin(zeroAngle);
+    svg.append('line')
+        .attr('x1', ballX).attr('y1', ballY)
         .attr('x2', blackX).attr('y2', blackY)
         .attr('stroke', '#111')
         .attr('stroke-width', 3)
         .attr('stroke-dasharray', '8,6');
-    const redX = ballX + lineLength * Math.cos(zeroAngle - theta);
-    const redY = ballY - lineLength * Math.sin(zeroAngle - theta);
+    const redX = ballX + lineLength * Math.cos(zeroAngle + theta);
+    const redY = ballY + lineLength * Math.sin(zeroAngle + theta);
     const fillPoly = svg.append('polygon')
         .attr('points', `${ballX},${ballY} ${blackX},${blackY} ${ballX},${ballY}`)
         .attr('fill', "#b8860b")
@@ -63,12 +67,10 @@ export function drawAttackAngle(containerSel, data, config) {
         .attr('fill', "#000")
         .style('font-size', '22px')
         .text(avg.toFixed(1) + "°");
-    
-    // Replace the MLB Average call with:
-    appendMLBAverage(svg, 200, 380, data, 'attack_angle', "20px");
+
+    appendMLBAverage(svg, 200, 380, data, 'attack_direction', "20px");
 }
 
-// Append the MLB Average utility function at the bottom:
 function appendMLBAverage(svg, cx, y, data, field, overrideFontSize) {
     let mlbAvg = null;
     if (window.__statcast_full_data__ && Array.isArray(window.__statcast_full_data__)) {
@@ -84,5 +86,5 @@ function appendMLBAverage(svg, cx, y, data, field, overrideFontSize) {
        .style('font-size', fontSize)
        .style('fill', '#E63946')
        .text(mlbAvg !== null && !isNaN(mlbAvg) ?
-             `MLB Average: ${mlbAvg.toFixed(1)}${field==="attack_angle"?"°":""}` : '');
+             `MLB Average: ${mlbAvg.toFixed(1)}${field==="attack_direction" ? "°" : ""}` : '');
 }

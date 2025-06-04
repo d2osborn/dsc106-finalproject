@@ -168,8 +168,8 @@ body, button, input, select, textarea {
     padding: 1vw;
     margin-bottom: 2vw;
     /* Adjust each chart so four fit in one row */
-    width: 22vw;    /* 4 x 22vw = 88vw plus gaps within 100vw */
-    height: 22vw;
+    width: 30vw;    /* 4 x 22vw = 88vw plus gaps within 100vw */
+    height: 30vw;
     overflow: auto;
 }
 

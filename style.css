@@ -158,19 +158,38 @@ body, button, input, select, textarea {
 }
 
 .sandbox-visuals {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);  /* 4 columns for 4 graphs */
+    justify-items: center;
+}
+
+.sandbox-visuals-container {
     display: flex;
-    flex-wrap: nowrap;  /* Prevent wrapping */
-    justify-content: space-between;  /* Evenly space out the charts */
+    justify-content: center;
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
 }
 
 .sandbox-viz {
     background: #fff;
     padding: 1vw;
     margin-bottom: 2vw;
-    /* Adjust each chart so four fit in one row */
-    width: 30vw;    /* 4 x 22vw = 88vw plus gaps within 100vw */
-    height: 30vw;
+    /* Uniform dimensions across all charts */
+    width: 22vw;
+    height: 22vw;
     overflow: auto;
+}
+
+/* If you want the swing animation container to match exactly, update its styles as well: */
+#animation-swing {
+    width: 22vw !important;
+    height: 22vw !important;
+    margin: 2vw auto !important;  /* Ensures center alignment */
+    position: relative !important;
+    overflow: hidden !important;
+    background: #fff !important;
 }
 
 /* Responsive: Under 1000px, switch to two columns */
@@ -181,6 +200,10 @@ body, button, input, select, textarea {
     .sandbox-viz {
         width: 45vw;
         height: 45vw;
+    }
+    #animation-swing {
+        width: 90vw !important;
+        height: 60vw !important; /* Even taller on mobile */
     }
 }
 

@@ -194,6 +194,8 @@
         <div class="sandbox-visuals-container" style="max-width: 1400px; margin: 2vw auto;">
             <div id="animation-swing" class="sandbox-viz"></div>
         </div>
+        <!-- Swing animation import -->
+        <script type="module" src="./graphs/swingAnimationWithOBJ.js?v=2"></script>
         <details class="writeup-dropdown">
             <summary>▸ Writeup</summary>
             <div>
@@ -206,17 +208,5 @@
             </div>
         </details>
     </section>
-    <!-- Swing animation import -->
-    <script type="module">
-        window.addEventListener('DOMContentLoaded', () => {
-            import('./graphs/swingAnimationWithOBJ.js')
-                .then(() => {
-                    console.log('Swing animation module loaded successfully');
-                })
-                .catch(err => {
-                    console.error('Error loading swing animation:', err);
-                });
-        });
-    </script>
 </body>
 </html>

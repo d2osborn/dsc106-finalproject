@@ -1,24 +1,29 @@
-import * as THREE from 'https://unpkg.com/three@0.156.0/build/three.module.js';
-import { GLTFLoader } from 'https://unpkg.com/three@0.156.0/examples/jsm/loaders/GLTFLoader.js';
+import * as THREE from 'https://unpkg.com/three@0.158.0/build/three.module.js';
+import { OrbitControls } from 'https://unpkg.com/three@0.158.0/examples/jsm/controls/OrbitControls.js?module';
+import { GLTFLoader } from 'https://unpkg.com/three@0.158.0/examples/jsm/loaders/GLTFLoader.js?module';
 
 // Get the animation container
 const container = document.querySelector('#animation-swing');
 const width = container.clientWidth;
 const height = container.clientHeight;
+const scaleFactor = 2; // enlarge the rendering area
+const newWidth = width * scaleFactor;
+const newHeight = height * scaleFactor;
 
 // Create renderer, scene, and camera
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(width, height);
+renderer.setSize(newWidth, newHeight);
 renderer.domElement.style.width = '100%';
 renderer.domElement.style.height = '100%';
 container.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xffffff); // Set white background
-const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-camera.position.set(0, 1.5, 5);
-camera.lookAt(0, 0, 0);
+scene.background = new THREE.Color(0xffffff);
+// Zoom out a bit more: reposition camera farther away from bat’s area
+const camera = new THREE.PerspectiveCamera(45, newWidth / newHeight, 0.1, 1000);
+camera.position.set(0, 1, 5);
+camera.lookAt(new THREE.Vector3(-0.35, 0.2, 0));  // Focus near bat’s meeting zone
 
 // Add lights
 const ambient = new THREE.AmbientLight(0xffffff, 0.6);
@@ -101,83 +106,43 @@ function showAttackAngle2D(angleDegrees) {
   }, 1000);
 }
 
-// Helper to process bat.glb so that its handle end becomes the pivot at (0,0,0)
-function processBatObject(obj) {
-  const bbox = new THREE.Box3().setFromObject(obj);
-  const minX = bbox.min.x;
-  obj.traverse(child => { 
-    if (child.isMesh) { 
-      child.geometry.translate(-minX, 0, 0);
-      // Ensure materials are properly set
-      if (child.material) {
-        child.material.needsUpdate = true;
-      }
-    } 
-  });
-  const newLength = 3;
-  const width = bbox.max.x - minX;
-  const scaleVal = newLength / width;
-  obj.scale.set(scaleVal, scaleVal, scaleVal);
-  return obj;
-}
-
-// Helper to process ball.glb so its center is moved to (0,0,0) then positioned at x = -3.
-function processBallObject(obj) {
-  const bbox = new THREE.Box3().setFromObject(obj);
-  const diameter = bbox.max.x - bbox.min.x;
-  const desiredDiam = 0.4;
-  const scaleVal = desiredDiam / diameter;
-  obj.scale.setScalar(scaleVal);
-  const newBbox = new THREE.Box3().setFromObject(obj);
-  const center = new THREE.Vector3();
-  newBbox.getCenter(center);
-  obj.traverse(child => { 
-    if (child.isMesh) { 
-      child.geometry.translate(-center.x, -center.y, -center.z);
-      // Ensure materials are properly set
-      if (child.material) {
-        child.material.needsUpdate = true;
-      }
-    } 
-  });
-  const radius = (newBbox.max.x - newBbox.min.x) / 2;
-  obj.position.set(-3, radius, 0);
-  return obj;
-}
-
 // Use GLTFLoader for loading models
 const gltfLoader = new GLTFLoader();
 let batMeshObject = null;
 let ballMeshObject = null;
 
-// Load the bat model
 gltfLoader.load('models/bat.glb', (gltf) => {
   console.log('Bat model loaded successfully');
-  batMeshObject = processBatObject(gltf.scene);
-  batMeshObject.position.set(0, 0.5, 0);
+  const bat = gltf.scene;
+  bat.traverse(child => {
+    if (child.isMesh && child.material && typeof child.material.onBuild !== 'function') {
+      child.material.onBuild = () => {};
+    }
+  });
+  // Increase bat size significantly and reposition it on the RIGHT side
+  bat.scale.set(3.0, 3.0, 3.0);
+  // Initial bat position on right
+  bat.position.set(2, 0.2, 0);
+  batMeshObject = bat;
   scene.add(batMeshObject);
   checkIfReady();
-}, 
-(progress) => {
-  console.log('Loading bat model:', (progress.loaded / progress.total * 100) + '%');
-},
-(err) => {
-  console.error("Error loading bat.glb:", err);
-});
+}, undefined, err => { console.error("Error loading bat.glb:", err); });
 
-// Load the ball model
 gltfLoader.load('models/baseball.glb', (gltf) => {
-  console.log('Ball model loaded successfully');
-  ballMeshObject = processBallObject(gltf.scene);
+  console.log('Baseball model loaded successfully');
+  const ball = gltf.scene;
+  ball.traverse(child => {
+    if (child.isMesh && child.material && typeof child.material.onBuild !== 'function') {
+      child.material.onBuild = () => {};
+    }
+  });
+  // Reduce ball size and reposition it on the LEFT side
+  ball.scale.set(0.5, 0.5, 0.5);
+  ball.position.set(-2, 0.2, 0);
+  ballMeshObject = ball;
   scene.add(ballMeshObject);
   checkIfReady();
-},
-(progress) => {
-  console.log('Loading ball model:', (progress.loaded / progress.total * 100) + '%');
-},
-(err) => {
-  console.error("Error loading baseball.glb:", err);
-});
+}, undefined, err => { console.error("Error loading baseball.glb:", err); });
 
 function checkIfReady() {
   if (batMeshObject && ballMeshObject) {
@@ -187,85 +152,53 @@ function checkIfReady() {
 }
 
 function startAnimationLoop() {
-  const swingTime = 2000;   // 2 seconds per swing cycle
-  const hitMoment = 0.6;    // Contact occurs at 60% of the swing cycle
-  const maxGhosts = 30;
-  const ghostBats = [];
-  let leagueAvgAngle = 5;
-  
-  function animate(time) {
+    let avgBatSpeed = (window.__statcast_full_data__ && d3.mean(window.__statcast_full_data__, d => +d.bat_speed)) || 90;
+    let avgSwingTilt = (window.__statcast_full_data__ && d3.mean(window.__statcast_full_data__, d => +d.swing_path_tilt)) || 5;
+    let swingTime = 4000 - avgBatSpeed * 10;
+    swingTime = Math.max(1000, Math.min(swingTime, 3000));
+
+    // Changed base rotation on the X axis to +90° (Math.PI/2) so the bat rotates the other way
+    const baseRotation = Math.PI/2; // +90° on x-axis
+    const extraRotation = -THREE.MathUtils.degToRad(avgSwingTilt); // additional tilt from swing data
+    const finalBatRotation = baseRotation + extraRotation;
+    
+    // Final and initial positions (unchanged)
+    const finalBatPosition = new THREE.Vector3(0, 0.2, 0);
+    const finalBallPosition = new THREE.Vector3(-0.7, 0.2, 0);
+    const initBatPosition = new THREE.Vector3(2, 0.2, 0);
+    const initBallPosition = new THREE.Vector3(-2, 0.2, 0);
+    
+    function animate(time) {
+        requestAnimationFrame(animate);
+        const tCycle = (time % swingTime) / swingTime;
+        const contactThreshold = 0.6;
+        if (tCycle < contactThreshold) {
+            const tApproach = tCycle / contactThreshold;
+            const currentBatRotation = THREE.MathUtils.lerp(baseRotation, finalBatRotation, tApproach);
+            batMeshObject.rotation.set(0, 0, 0);
+            batMeshObject.position.copy(initBatPosition.clone().lerp(finalBatPosition, tApproach));
+            batMeshObject.rotation.x = currentBatRotation;
+            
+            const tApproachBall = (tCycle / contactThreshold) * 0.8;
+            ballMeshObject.position.copy(initBallPosition.clone().lerp(finalBallPosition, tApproachBall));
+            ballMeshObject.rotation.set(0, 0, 0);
+            // ...existing ghost clones code...
+        } else {
+            // Freeze positions once edges contact
+            batMeshObject.position.copy(finalBatPosition);
+            batMeshObject.rotation.set(0, 0, 0);
+            batMeshObject.rotation.x = finalBatRotation;
+            ballMeshObject.position.copy(finalBallPosition);
+            ballMeshObject.rotation.set(0, 0, 0);
+        }
+        renderer.render(scene, camera);
+    }
     requestAnimationFrame(animate);
-    const tCycle = (time % swingTime) / swingTime;
-    const eased = 0.5 - Math.cos(tCycle * Math.PI) / 2;
-    const startRad = THREE.MathUtils.degToRad(-45);
-    const endRad = THREE.MathUtils.degToRad(leagueAvgAngle);
-    const currentRad = THREE.MathUtils.lerp(startRad, endRad, eased);
-    
-    // Reset bat position and apply rotation
-    batMeshObject.rotation.set(0, 0, 0);
-    batMeshObject.position.set(0, 0.5, 0);
-    batMeshObject.rotation.z = currentRad;
-    
-    // Handle ghost bats
-    if (ghostBats.length < maxGhosts) {
-      const ghost = batMeshObject.clone();
-      ghost.traverse(child => {
-        if (child.isMesh) {
-          child.material = child.material.clone();
-          child.material.transparent = true;
-          child.material.opacity = 0.3;
-        }
-      });
-      ghostBats.push(ghost);
-      scene.add(ghost);
-    }
-    
-    // Update ghost bats
-    for (let i = ghostBats.length - 1; i >= 0; i--) {
-      ghostBats[i].traverse(child => {
-        if (child.isMesh) {
-          child.material.opacity *= 0.95;
-        }
-      });
-      const mesh = ghostBats[i].getObjectByProperty('isMesh', true);
-      if (mesh && mesh.material.opacity < 0.02) {
-        scene.remove(ghostBats[i]);
-        ghostBats.splice(i, 1);
-      }
-    }
-    
-    // Animate ball
-    if (tCycle < hitMoment) {
-      const tApproach = tCycle / hitMoment;
-      ballMeshObject.position.set(-3 + 3 * tApproach, 0.2, 0);
-      ballMeshObject.rotation.set(0, 0, 0);
-    } else {
-      const tLaunch = (tCycle - hitMoment) / (1 - hitMoment);
-      ballMeshObject.position.set(
-        0,
-        0.2 + 1.0 * tLaunch,
-        -2 + 7 * tLaunch
-      );
-      ballMeshObject.rotation.x += 0.05;
-    }
-    
-    // At the moment of contact, briefly show the 2D attack-angle overlay
-    if (Math.abs(tCycle - hitMoment) < 0.005 && angleSvg.style.opacity === "0") {
-      const angleDeg = THREE.MathUtils.radToDeg(-currentRad);
-      showAttackAngle2D(angleDeg);
-    }
-    
-    renderer.render(scene, camera);
-  }
-  
-  requestAnimationFrame(animate);
-  
-  // Handle window resize
-  window.addEventListener('resize', () => {
-    const w = container.clientWidth;
-    const h = container.clientHeight;
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-    renderer.setSize(w, h);
-  });
+    window.addEventListener('resize', () => {
+        const w = container.clientWidth * scaleFactor;
+        const h = container.clientHeight * scaleFactor;
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+    });
 }

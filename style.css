@@ -184,12 +184,13 @@ body, button, input, select, textarea {
 
 /* If you want the swing animation container to match exactly, update its styles as well: */
 #animation-swing {
-    width: 22vw !important;
-    height: 22vw !important;
-    margin: 2vw auto !important;  /* Ensures center alignment */
-    position: relative !important;
-    overflow: hidden !important;
-    background: #fff !important;
+    background: #fff;
+    padding: 1vw;
+    margin-bottom: 2vw;
+    /* Updated dimensions to enlarge the animation box */
+    width: 40vw;
+    height: 40vw;
+    overflow: auto;
 }
 
 /* Responsive: Under 1000px, switch to two columns */

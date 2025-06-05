@@ -9,7 +9,7 @@ export function drawSwingPathTilt(containerSel, data, config) {
         .attr('x', 200)
         .attr('y', 50)
         .attr('text-anchor', 'middle')
-        .attr('fill', '#b8860b')
+        .attr('fill', '#000080')
         .style('font-size', '2vw')
         .text(config.title);
     

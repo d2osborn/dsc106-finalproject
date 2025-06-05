@@ -7,7 +7,7 @@ export function drawAttackAngle(containerSel, data, config) {
         .attr('x', 200)
         .attr('y', 50)
         .attr('text-anchor', 'middle')
-        .attr('fill', '#b8860b')
+        .attr('fill', '#000080')
         .style('font-size', '2vw')
         .text(config.title);
     const angleScale = d3.scaleLinear().domain([0, config.max]).range([0, Math.PI/3]);

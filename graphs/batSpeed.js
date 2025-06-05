@@ -6,7 +6,7 @@ export function drawBatSpeed(containerSel, data, config) {
         .attr('x', 50)    // was 100
         .attr('y', 10)    // was 20
         .attr('text-anchor', 'middle')
-        .attr('fill', "#b8860b")
+        .attr('fill', "#000080")
         .style('font-size', '7px')  // roughly half of 14px
         .text(config.title);
     const bgArc = d3.arc()

@@ -46,7 +46,7 @@ body, button, input, select, textarea {
     width: auto;
     margin: 0;
     padding: 0.5vh 2vw;
-    color: #b8860b; /* Golden tint */
+    color: #000080; /* Golden tint */
     font-size: 1.5vw;
     font-family: 'Montserrat Black', 'Segoe UI', Arial, sans-serif;
     font-weight: 900;
@@ -82,7 +82,7 @@ body, button, input, select, textarea {
     font-family: 'Montserrat Black', 'Segoe UI', Arial, sans-serif;
     font-size: 1.5vw;
     font-weight: 900;
-    color: #b8860b;
+    color: #000080;
     letter-spacing: 0.04em;
     text-align: center;
     margin: 0 0 1vw 0;
@@ -124,7 +124,7 @@ body, button, input, select, textarea {
     font-family: 'Montserrat Black', 'Segoe UI', Arial, sans-serif;
     font-size: 1.5vw;
     font-weight: 900;
-    color: #b8860b;
+    color: #000080;
     letter-spacing: 0.04em;
     text-align: center;
     margin: 0 0 2vw 0;
@@ -234,7 +234,7 @@ body, button, input, select, textarea {
 
 .writeup-dropdown summary {
     font-family: 'Montserrat Black', 'Segoe UI', Arial, sans-serif;
-    color: #b8860b;
+    color: #000080;
     font-weight: 900;
     font-size: 1.2vw;
     cursor: pointer;
@@ -246,7 +246,7 @@ body, button, input, select, textarea {
 }
 
 .writeup-dropdown[open] summary {
-    color: #ffcc00;
+    color: #000080;
 }
 
 .mlb-average {

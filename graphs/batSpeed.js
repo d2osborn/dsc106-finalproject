@@ -58,7 +58,7 @@ export function drawBatSpeed(containerSel, data, config) {
         .attr('x', 50)   // was 100
         .attr('y', 60)   // was 120
         .attr('text-anchor', 'middle')
-        .attr('fill', "#b8860b")
+        .attr('fill', "#000080")
         .style('font-size', '10px')  // was 20px
         .text('0');
     textVal.transition().delay(200).duration(1000)
@@ -93,7 +93,7 @@ export function drawBatSpeed(containerSel, data, config) {
             .attr("x", lx)
             .attr("y", ly)
             .attr("text-anchor", "middle")
-            .attr("fill", "#b8860b")
+            .attr("fill", "#000080")
             .style("font-size", "5px")  // was 10px
             .text(tick);
     });

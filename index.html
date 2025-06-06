@@ -6,6 +6,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script type="module" src="story graphs/vis.js"></script>
+
     <script type="module">
         import { drawAttackAngle } from './graphs/attackAngle.js';
         import { drawBatSpeed } from './graphs/batSpeed.js';
@@ -171,7 +173,9 @@
             His swing shows big structural changes, yet his contact quality stays high. This is uncommon.<br>
             <br><br>
         </p>
-        <div id="outcome-scatter" class="sandbox-viz"></div>
+        <div id="heatmap0" class="sandbox-viz"></div>
+        <div id="heatmap2" class="sandbox-viz"></div>
+
         <p class = 'Therefore'>
             As stated earlier, every hitter has a unique way of managing tough counts; some shorten up, some stay aggressive, and others (like Yordan) retool their entire swing shape. <br> 
             Now it’s your turn: explore your favorite players’ swing mechanics and outcomes. What makes them successful in two-strike situations?<br>

@@ -1,4 +1,4 @@
-d3.json(".files/yordan/alvarez_kde_data.json").then(data => {
+d3.json("files/yordan/alvarez_kde_data.json").then(data => {
   const { zone, grid } = data;
   const width = 400;
   const height = 400;

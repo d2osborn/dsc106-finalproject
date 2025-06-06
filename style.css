@@ -66,19 +66,24 @@ html, body {
 }
 
 .section-title {
-    font-size: 2.5em;
-    margin-bottom: 1em;
-    color: #000080;
+    font-size: 2.8vw; /* Slightly increased */
     font-weight: 900;
+    color: #000080;
+    text-align: center;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    margin-bottom: 1em;
 }
 
-.section-summary {
-    font-size: 1.2em;
+
+.section-container p {
+    font-size: 1vw; /* Smaller than title */
+    font-weight: 400; /* Not bold */
+    color: #111; /* Softer than title navy */
     line-height: 1.6;
-    color: #444;
+    text-align: justify; /* Optional: for tidy block alignment */
+    margin-bottom: 1.5em;
 }
+
 
 * {
     box-sizing: border-box;

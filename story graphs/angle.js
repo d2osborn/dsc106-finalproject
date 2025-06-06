@@ -173,5 +173,5 @@ d3.csv(csvFile, d3.autoType).then(data => {
       .attr("text-anchor", "middle")
       .style("font-size", "16px")
       .style("font-weight", "bold")
-      .text("Histogram of Δ(Attack Angle) for All Players");
+      .text("Change in Variance (attack angle) 0 strike vs. 2 strikes");
 });

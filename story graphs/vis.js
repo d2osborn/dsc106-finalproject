@@ -7,10 +7,13 @@ d3.json("files/yordan/alvarez_kde_data.json").then(data => {
   const x = d3.scaleLinear().domain([d3.min(grid.x), d3.max(grid.x)]).range([0, width]);
   const y = d3.scaleLinear().domain([d3.min(grid.y), d3.max(grid.y)]).range([height, 0]);
 
-  const color = d3.scaleSequential(d3.interpolateCool)
-                  .domain([0, d3.max(grid.z0.flat().concat(grid.z2.flat()))]);
+  const color0 = d3.scaleSequential(d3.interpolateRdBu)
+  .domain([d3.max(grid.z0.flat()), 0]); // Reverse for RdBu
 
-  function drawHeatmap(containerId, zData, title) {
+  const color2 = d3.scaleSequential(d3.interpolateRdBu)
+    .domain([d3.max(grid.z2.flat()), 0]);
+
+  function drawHeatmap(containerId, zData, title, colorScale) {
     const svg = d3.select(containerId)
       .append("svg")
       .attr("width", width + margin.left + margin.right)
@@ -31,9 +34,9 @@ d3.json("files/yordan/alvarez_kde_data.json").then(data => {
       .attr("y", d => y(d.y) - cellHeight)
       .attr("width", cellWidth)
       .attr("height", cellHeight)
-      .attr("fill", d => color(d.value));
+      .attr("fill", d => colorScale(d.value)); // 🔁 use colorScale here
 
-    // Strike zone rectangle
+    // Strike zone
     svg.append("rect")
       .attr("x", x(zone.left))
       .attr("y", y(zone.top))
@@ -50,6 +53,7 @@ d3.json("files/yordan/alvarez_kde_data.json").then(data => {
       .text(title);
   }
 
-  drawHeatmap("#heatmap0", grid.z0, "0-Strike Contact Density");
-  drawHeatmap("#heatmap2", grid.z2, "2-Strike Contact Density");
+  // 🎯 Use separate color scales
+  drawHeatmap("#heatmap0", grid.z0, "0-Strike Contact Density", color0);
+  drawHeatmap("#heatmap2", grid.z2, "2-Strike Contact Density", color2);
 });

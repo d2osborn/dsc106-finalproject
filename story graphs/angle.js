@@ -28,12 +28,13 @@ const numBins = 30;                 // match plt.hist(bins=30)
 // CREATE SVG
 // -------------------------
 const svg = d3
-  .select("#chart")
+  .select("#chart")  // or "#horizon" in tilt.js
   .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+    .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+    .attr("preserveAspectRatio", "xMidYMid meet")
   .append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
+
 
 // -------------------------
 // LOAD DATA

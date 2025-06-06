@@ -429,3 +429,14 @@ label {
 #attack-angle-plot polygon {
     fill: #000080 !important;
 }
+.heatmap-container {
+    display: flex;
+    justify-content: center;
+    gap: 2rem; /* space between the two heatmaps */
+    margin-top: 2rem;
+  }
+  
+  .sandbox-viz {
+    flex: 0 0 auto;
+  }
+  

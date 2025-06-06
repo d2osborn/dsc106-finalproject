@@ -111,7 +111,10 @@
 
                     // Compute league or player averages
                     const avgAttack = d3.mean(showData, d => +d.attack_angle) || 0;
-                    const avgDir    = d3.mean(showData, d => +d.direction_angle) || 0;
+                    const avgDir    = d3.mean(showData, d => +d.attack_direction) || 0;
+
+                    console.log('showData:', showData);
+                    console.log('Calculated avgDir:', avgDir);
 
                     // Send to 3D swing animation
                     if (window.updateAttackAngleVisualization) {

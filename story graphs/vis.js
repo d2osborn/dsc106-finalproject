@@ -25,17 +25,17 @@ d3.json("files/yordan/alvarez_kde_data.json").then(data => {
     const cellHeight = height / grid.y.length;
 
     svg.selectAll("rect")
-      .data(zData.flatMap((row, j) =>
-        row.map((val, i) => ({ x: grid.x[i], y: grid.y[j], value: val }))
-      ))
-      .enter()
-      .append("rect")
-      .attr("x", d => x(d.x))
-      .attr("y", d => y(d.y) - cellHeight)
-      .attr("width", cellWidth)
-      .attr("height", cellHeight)
-      .attr("fill", d => colorScale(d.value)); // 🔁 use colorScale here
-
+    .data(zData[0].map((_, i) =>
+      zData.map((row, j) => ({ x: grid.x[j], y: grid.y[i], value: row[i] }))
+    ).flat())
+    .enter()
+    .append("rect")
+    .attr("x", d => x(d.x))
+    .attr("y", d => y(d.y) - cellHeight)
+    .attr("width", cellWidth)
+    .attr("height", cellHeight)
+    .attr("fill", d => colorScale(d.value));
+  
     // Strike zone
     svg.append("rect")
       .attr("x", x(zone.left))

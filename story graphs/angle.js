@@ -28,13 +28,14 @@ const numBins = 30;                 // match plt.hist(bins=30)
 // CREATE SVG
 // -------------------------
 const svg = d3
-  .select("#chart")  // or "#horizon" in tilt.js
+  .select("#chart")
   .append("svg")
     .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
     .attr("preserveAspectRatio", "xMidYMid meet")
+    .style("width", "100%")
+    .style("height", "100%")
   .append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
-
 
 // -------------------------
 // LOAD DATA
@@ -70,7 +71,7 @@ d3.csv(csvFile, d3.autoType).then(data => {
   const idx = values.indexOf(targetDelta);
   const targetPct = (idx / (n - 1)) * 100;
 
-  // 2) Create a histogram of all players’ delta_attack_angle
+  // 2) Create a histogram of all players' delta_attack_angle
 
   //   2a) Set up x‐scale domain from min to max of delta_attack_angle
   const x = d3

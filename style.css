@@ -443,7 +443,9 @@ label {
   display: flex;
   align-items: flex-start;
   gap: 2.5rem;
-  margin: 2rem 0;
+  margin: 2rem auto;
+  max-width: 1200px;
+  padding: 0 20px;
 }
 
 /* —— pair of plots —— */
@@ -451,6 +453,7 @@ label {
   display: flex;
   flex-direction: row;
   gap: 1.5rem;
+  flex: 0 0 auto;
 }
 
 /* —— each heat-map tile —— */
@@ -458,15 +461,18 @@ label {
   width: 300px;      /* bump up from 240 → 300 for less blur */
   height: 300px;
   flex: 0 0 auto;    /* keep them fixed-size */
+  position: relative;
+  overflow: hidden;
 }
 
-.heatmap svg     { image-rendering: pixelated; }
+.heatmap svg     { width: 100%; height: 100%; display: block; }
 
 /* —— explanatory text —— */
 .plot-text {
   flex: 1;
   max-width: 480px;
   line-height: 1.55;
+  padding: 0 20px;
 }
 .plot-text .hl {
   color: #F5C26B;
@@ -479,7 +485,6 @@ label {
   .plot-pair   { justify-content: center; }
 }
 
-
 .sandbox-viz {
     flex: 0 0 auto;
 }
@@ -491,27 +496,221 @@ h3 {
 .chart-container {
     display: flex;
     gap: 20px;
-  }
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 0;
+}
   
-  .chart, .horizon {
-    flex: 1;            /* each chart div takes equal share of available width */
-    height: 400px;      /* give it some visible height */
-    border: 1px solid #ccc; /* optional, to see the box */
-  }
-  #chart, #horizon {
-    max-width: 800px;
-    margin: 2em auto;
-    height: auto;
+.chart {
+    flex: 1;
+    height: 400px;
+    min-width: 0; /* Prevents flex items from overflowing */
+    position: relative;
     overflow: hidden;
 }
-
-#chart svg, #horizon svg {
+  
+.chart svg {
     width: 100%;
-    height: auto;
+    height: 100%;
+    display: block;
 }
-#horizon {
+  
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .chart-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .chart {
+        width: 100%;
+        max-width: 800px;
+    }
+    
+    .heatmap-row {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .plot-pair {
+        justify-content: center;
+    }
+    
+    .plot-text {
+        max-width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .chart {
+        height: 300px;
+    }
+    
+    .heatmap {
+        width: 250px;
+        height: 250px;
+    }
+}
+
+/* Graph Sections */
+.graph-section {
+    margin: 3rem auto;
+    max-width: 1200px;
+    padding: 0 20px;
+}
+
+.graph-section h3 {
+    color: #000080;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.graph-explanation {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 20px;
+    line-height: 1.6;
+}
+
+.graph-explanation p {
+    font-size: 1.1rem;
+    color: #333;
+    text-align: justify;
+}
+
+/* Chart Container */
+.chart-container {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
     width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+.chart {
+    flex: 1;
+    height: 400px;
+    min-width: 0;
+    position: relative;
+    overflow: hidden;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.chart svg {
+    width: 100%;
+    height: 100%;
     display: block;
 }
 
+/* Heatmap Row */
+.heatmap-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 2.5rem;
+    margin: 2rem auto;
+    max-width: 1200px;
+    padding: 0 20px;
+}
+
+.plot-pair {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    flex: 0 0 auto;
+}
+
+.heatmap {
+    width: 300px;
+    height: 300px;
+    flex: 0 0 auto;
+    position: relative;
+    overflow: hidden;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.heatmap svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.plot-text {
+    flex: 1;
+    max-width: 480px;
+    line-height: 1.55;
+    padding: 0 20px;
+}
+
+.plot-text h3 {
+    color: #000080;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+}
+
+.plot-text p {
+    font-size: 1.1rem;
+    color: #333;
+    text-align: justify;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .chart-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .chart {
+        width: 100%;
+        max-width: 800px;
+    }
+    
+    .heatmap-row {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .plot-pair {
+        justify-content: center;
+    }
+    
+    .plot-text {
+        max-width: 100%;
+        text-align: center;
+    }
+    
+    .graph-explanation {
+        text-align: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .chart {
+        height: 300px;
+    }
+    
+    .heatmap {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .graph-section h3 {
+        font-size: 1.3rem;
+    }
+    
+    .graph-explanation p,
+    .plot-text p {
+        font-size: 1rem;
+    }
+}
   

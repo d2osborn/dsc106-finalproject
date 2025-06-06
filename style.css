@@ -429,14 +429,61 @@ label {
 #attack-angle-plot polygon {
     fill: #000080 !important;
 }
-.heatmap-container {
-    display: flex;
-    justify-content: center;
-    gap: 2rem; /* space between the two heatmaps */
-    margin-top: 2rem;
-  }
-  
-  .sandbox-viz {
+
+.no-card {
+    background: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0;
+}
+
+/* —— flex row that holds plots + text —— */
+.heatmap-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 2.5rem;
+  margin: 2rem 0;
+}
+
+/* —— pair of plots —— */
+.plot-pair {
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
+}
+
+/* —— each heat-map tile —— */
+.heatmap {
+  width: 300px;      /* bump up from 240 → 300 for less blur */
+  height: 300px;
+  flex: 0 0 auto;    /* keep them fixed-size */
+}
+
+.heatmap svg     { image-rendering: pixelated; }
+
+/* —— explanatory text —— */
+.plot-text {
+  flex: 1;
+  max-width: 480px;
+  line-height: 1.55;
+}
+.plot-text .hl {
+  color: #F5C26B;
+  font-weight: 700;
+}
+
+/* —— stack vertically on small screens —— */
+@media (max-width: 850px) {
+  .heatmap-row { flex-direction: column; }
+  .plot-pair   { justify-content: center; }
+}
+
+
+.sandbox-viz {
     flex: 0 0 auto;
-  }
+}
   
+
+h3 {
+  color: #EB6E1F;
+}

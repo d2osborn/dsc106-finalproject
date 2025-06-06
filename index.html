@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>The Effect of 2 Strikes on a Hitter's Swing</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script type="module" src="story graphs/vis.js"></script>
@@ -154,28 +154,38 @@
             3 strikes and you're out!<br><br>
             How are MLB hitters staying alive?
           </h2>
-          
         <p class="And">
+            <br></br>
             Baseball Savant recently released new swing metrics: attack angle (º), attack direction (º), and swing path (tilt) (º)<br><br>
-            These new metrics allow the public to take a deeper dive into swing geometry and better understand how hitters approach each at-bat. <br>
-            For example, offering insight into how a player like Mookie Betts can hit 30 home runs despite being 5'9" with below-average swing speed. <br>
-            To help reveal the relationship between a hitter's swing characteristics and the outcomes they produce, we have segmented situations based on the strike counts. <br>
+            These new metrics allow the public to take a deeper dive into swing geometry and better understand how hitters approach each at-bat. 
+            For example, offering insight into how a player like Mookie Betts can hit 30 home runs despite being 5'9" with below-average swing speed.
+            To help reveal the relationship between a hitter's swing characteristics and the outcomes they produce, we have segmented situations based on the strike counts.
             <br><br>
-            It's common knowledge that hitters are taught to use a "B swing" in two-strike counts. <br>
-            Do the data reveal major leaguers follow this advice? <br>
-            Are they adjusting their swing geometry, when facing two strikes, or is the idea of a two-strike approach more myth than reality?  <br>
-            These adjustments can dramatically affect batted-ball outcomes like wOBA, contact%, and groundball%. <br>
-            <br><br>
+            It's common knowledge that hitters are taught to use a "B swing" in two-strike counts. Do the data reveal major leaguers follow this advice?
+            Are they adjusting their swing geometry, when facing two strikes, or is the idea of a two-strike approach more myth than reality?
+            These adjustments can dramatically affect batted-ball outcomes like wOBA, contact%, and groundball%.
         </p>
         <p class ='But'>
-            While many hitters attemps to adjust their swings with two strikes, Yordan Alvarez stands out. <br>
-            Despite large changes in his swing direction and attack angle, he remains elite in two-strike performance (e.g., top percentile in wOBA and contact%). <br>
+            While many hitters attemps to adjust their swings with two strikes, Yordan Alvarez stands out.
+            Despite large changes in his swing direction and attack angle, he remains elite in two-strike performance (e.g., top percentile in wOBA and contact%). 
             His swing shows big structural changes, yet his contact quality stays high. This is uncommon.<br>
-            <br><br>
         </p>
-        <div class="heatmap-container">
-            <div id="heatmap0" class="sandbox-viz"></div>
-            <div id="heatmap2" class="sandbox-viz"></div>
+        <div class="heatmap-row">
+        <!---- plots on the left -->
+        <div class="plot-pair">
+            <div id="heatmap0" class="heatmap no-card"></div>
+            <div id="heatmap2" class="heatmap no-card"></div>
+        </div>
+
+        <!---- explanation on the right -->
+        <div class="plot-text">
+            <h3>Contact% Between Counts</h3>
+            <p>
+                As we can see from the side-by-side strike zone heatmaps, Yordan's contact% changes drastically from 0-strike counts to 2-strike counts. 
+                We can see how in 0-strike counts, he prefers to make contact more inside and along the middle of the zone, but in 2-strike counts, he expands his zone and even tends to make contact away.
+                This not only tells us that Y
+            </p>
+        </div>
         </div>
           
         <p class = 'Therefore'>

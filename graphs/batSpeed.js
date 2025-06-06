@@ -28,7 +28,7 @@ export function drawBatSpeed(containerSel, data, config) {
         .startAngle(-3 * Math.PI/4);
     const fgPath = svg.append('path')
         .attr('transform', `translate(50,50)`)
-        .attr('fill', "#b8860b");
+        .attr('fill', "#000080");
     fgPath.transition().duration(1000)
         .attrTween('d', function() {
             const interp = d3.interpolate(-3 * Math.PI/4, scale(avg));

@@ -42,7 +42,7 @@ export function drawSwingPathTilt(containerSel, data, config) {
     // Draw filled polygon (triangle) between baseline and red endpoint with transition
     const fillPoly = svg.append('polygon')
         .attr('points', `${ballX},${ballY} ${blackX},${blackY} ${ballX},${ballY}`)
-        .attr('fill', "#b8860b")
+        .attr('fill', "#000080")
         .attr('opacity', 0.5);
     fillPoly.transition().duration(1000).attrTween("points", function() {
         return t => {

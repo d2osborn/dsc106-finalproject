@@ -32,8 +32,8 @@ export function drawAttackAngle(containerSel, data, config) {
     const redX = ballX + lineLength * Math.cos(zeroAngle - theta);
     const redY = ballY - lineLength * Math.sin(zeroAngle - theta);
     const fillPoly = svg.append('polygon')
-        .attr('points', `${ballX},${ballY} ${blackX},${blackY} ${ballX},${ballY}`)
-        .attr('fill', "#b8860b")
+        .attr('points', `${ballX},${ballY} ${blackX},${blackY} ${redX},${redY}`)
+        .attr('fill', "#000080")
         .attr('opacity', 0.5);
     fillPoly.transition().duration(1000).attrTween("points", function() {
         return t => {
@@ -45,7 +45,7 @@ export function drawAttackAngle(containerSel, data, config) {
     const redLine = svg.append('line')
         .attr('x1', ballX).attr('y1', ballY)
         .attr('x2', blackX).attr('y2', blackY)
-        .attr('stroke', '#EE3311')
+        .attr('stroke', '#000080')
         .attr('stroke-width', 4);
     redLine.transition().duration(1000)
         .attrTween("x2", () => {

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>The Effect of 2 Strikes on a Hitter's Swing</title>
-    <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script type="module">
         import { drawAttackAngle } from './graphs/attackAngle.js';
@@ -15,7 +15,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             const controls = d3.select('.sandbox-controls');
             controls.html(`
-                <div style="display:flex;align-items:center;gap:1em;margin-bottom:1em;">
+                <div style="display:flex;align-items:center;gap:1em;">
                     <label style="color:#fff;font-weight:bold;">Player:
                         <input id="player-input" list="player-list" placeholder="Enter player name" autocomplete="off"
                                style="padding:0.4em 0.8em;font-size:1em;">
@@ -113,7 +113,7 @@
                     const avgAttack = d3.mean(showData, d => +d.attack_angle) || 0;
                     const avgDir    = d3.mean(showData, d => +d.direction_angle) || 0;
 
-                    // Send to 3D swing animation (if those functions exist)
+                    // Send to 3D swing animation
                     if (window.updateAttackAngleVisualization) {
                         window.updateAttackAngleVisualization(avgAttack);
                     }
@@ -133,20 +133,11 @@
             });
         });
     </script>
-
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-    </style>
 </head>
 <body>
     <h1 class="main-title" id="dynamic-title"></h1>
 
-    <!-- Updated hero section: container now spans full viewport without white space -->
-    <div class="video-effect-container" style="width: 100vw; height: 100vh; overflow: hidden; position: relative;">
+    <div class="video-effect-container">
         <canvas id="effect-canvas"></canvas>
         <video id="source-video"
                src="images/paredes.mp4"
@@ -158,21 +149,61 @@
                loop>
         </video>
         
-        <!-- Outlined arrows below the title -->
         <div class="scroll-arrows" onclick="scrollPastVideo()">&#x276F;&#x276F;&#x276F;</div>
     </div>
 
-    <script>
-        // Scroll past the video when arrows are clicked
-        function scrollPastVideo() {
-            const videoContainer = document.querySelector('.video-effect-container');
-            window.scrollTo({
-                top: videoContainer.offsetHeight,
-                behavior: 'smooth'
-            });
-        }
+    <section class="section-container">
+        <h2 class="section-title" style="color: #000080;">3 strikes and you're out! How are MLB hitters staying alive?</h2>
+        <p class="section-summary">
+            Baseball Savant recently released new swing metrics, attack angle (º), attack direction (º), and swing path (tilt) (º), which allow the public to take a deeper dive into swing geometry and better understand how hitters approach each at-bat. These metrics help reveal the relationship between a hitter's swing characteristics and the outcomes they produce. For example, offering insight into how a player like Mookie Betts can hit 30 home runs despite being 5'9" with below-average swing speed.
+            <br><br>
+            It's common knowledge that hitters are taught to use a "B swing" in two-strike counts, which is a shorter, flatter path designed to protect the plate and avoid striking out. But do major leaguers follow this advice? Are they adjusting their swing geometry, including attack angle, direction, and swing path (tilt), when facing two strikes, or is the idea of a two-strike approach more myth than reality? To explore this, we examine how league-wide swing metrics change between 0-strike and 2-strike counts.
+            <br><br>
+            Therefore, we built a sandbox that lets you explore how individual hitters adjust their swing geometry in two-strike counts. Not every hitter follows the same blueprint, now it's your turn to find out who adapts, and who doesn't.
+        </p>
+    </section>
 
-        // Dynamic colored title, all uppercase
+    <!-- SANDBOX SECTION -->
+    <section class="sandbox-section">
+        <h2 class="sandbox-title">Explore How MLB Hitters Adjust in Two Strike Counts</h2>
+        
+        <!-- Controls -->
+        <div class="sandbox-controls">
+            <div style="display:flex;align-items:center;gap:1em;">
+                <label style="color:#fff;font-weight:bold;">Player:
+                    <input id="player-input" list="player-list" placeholder="Enter player name" autocomplete="off"
+                           style="padding:0.4em 0.8em;font-size:1em;">
+                    <datalist id="player-list"></datalist>
+                </label>
+                <label style="color:#fff;font-weight:bold;">Count:
+                    <label><input type="radio" name="count" value="0-0" checked>0-0</label>
+                    <label><input type="radio" name="count" value="0-2">0-2</label>
+                </label>
+            </div>
+        </div>
+
+        <!-- Dashboard Layout -->
+        <div class="sandbox-layout">
+            <!-- Left side: Small rectangle and 3D model container -->
+            <div class="left-container">
+                <div class="small-rectangle"></div>
+                <div class="animation-container">
+                    <div class="sandbox-viz" id="animation-swing"></div>
+                </div>
+            </div>
+            
+            <!-- Right side: 2x2 grid of squares -->
+            <div class="graphs-container">
+                <div id="zone-map" class="sandbox-viz"></div>
+                <div id="outcome-scatter" class="sandbox-viz"></div>
+                <div id="attack-angle-plot" class="sandbox-viz"></div>
+                <div id="direction-angle-plot" class="sandbox-viz"></div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Dynamic colored title
         const titleWords = [
             "The", "Effect", "of", "2", "Strikes", "on", "a", "Hitter's", "Swing"
         ];
@@ -182,7 +213,7 @@
         }
         document.getElementById("dynamic-title").innerHTML = html.trim();
 
-        // Video effect – updated to use container dimensions
+        // Video effect
         const video = document.getElementById('source-video');
         const canvas = document.getElementById('effect-canvas');
         const ctx = canvas.getContext('2d');
@@ -202,66 +233,22 @@
             requestAnimationFrame(drawVideo);
         }
         video.addEventListener('canplay', () => {
-            video.playbackRate = 1.25; // Slightly increase playback speed
+            video.playbackRate = 1.25;
             video.play();
             drawVideo();
         });
+
+        // Scroll past the video when arrows are clicked
+        function scrollPastVideo() {
+            const videoContainer = document.querySelector('.video-effect-container');
+            window.scrollTo({
+                top: videoContainer.offsetHeight,
+                behavior: 'smooth'
+            });
+        }
     </script>
 
-    <!-- New Section: Adjust or Die -->
-    <section class="section-container">
-        <h2 class="section-title">3 strikes and you're out! How are MLB hitters staying alive?</h2>
-        <p class="section-summary">
-            Baseball Savant recently released new swing metrics, attack angle (º), attack direction (º), and swing path (tilt) (º), which allow the public to take a deeper dive into swing geometry and better understand how hitters approach each at-bat. These metrics help reveal the relationship between a hitter's swing characteristics and the outcomes they produce. For example, offering insight into how a player like Mookie Betts can hit 30 home runs despite being 5'9" with below-average swing speed.
-            <br><br>
-            It's common knowledge that hitters are taught to use a "B swing" in two-strike counts, which is a shorter, flatter path designed to protect the plate and avoid striking out. But do major leaguers follow this advice? Are they adjusting their swing geometry, including attack angle, direction, and swing path (tilt), when facing two strikes, or is the idea of a two-strike approach more myth than reality? To explore this, we examine how league-wide swing metrics change between 0-strike and 2-strike counts.
-            <br><br>
-            Therefore, we built a sandbox that lets you explore how individual hitters adjust their swing geometry in two-strike counts. Not every hitter follows the same blueprint, now it's your turn to find out who adapts, and who doesn't.
-        </p>
-    </section>
-
-    <!-- SANDBOX SECTION -->
-    <section class="sandbox-section">
-        <h2 class="sandbox-title">Explore How MLB Hitters Adjust in Two Strike Counts</h2>
-        <div class="sandbox-controls"></div>
-        
-        <!-- NEW FLEXBOX LAYOUT FOR SANDBOX VISUALS AND ANIMATION -->
-        <div class="sandbox-layout">
-            <!-- Left side: swing animation container -->
-            <div class="animation-container">
-                <div class="sandbox-viz" id="animation-swing">
-                    <div id="coord-display"
-                         style="display:block; position:absolute; top:10px; left:10px;
-                                background:rgba(0,0,0,0.7); color:white; padding:10px;
-                                border-radius:5px; font-family:monospace;">
-                    </div>
-                    <button id="coord-button"
-                            style="position:absolute; top:10px; right:10px;
-                                   background:#4CAF50; color:white; border:none;
-                                   padding:10px 20px; border-radius:5px; cursor:pointer;">
-                        Copy Coordinates
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Right side: four graphs stacked vertically -->
-            <div class="graphs-container">
-                <div id="zone-map"           class="sandbox-viz"></div>
-                <div id="outcome-scatter"    class="sandbox-viz"></div>
-                <div id="attack-angle-plot"  class="sandbox-viz"></div>
-                <div id="direction-angle-plot" class="sandbox-viz"></div>
-            </div>
-        </div>
-
-        <!-- Swing animation script import (unchanged) -->
-        <script type="module" src="./graphs/swingAnimationWithOBJ.js?v=2"></script>
-
-        <details class="writeup-dropdown">
-            <summary>▸ Writeup</summary>
-            <div>
-                <p>… (existing writeup content) …</p>
-            </div>
-        </details>
-    </section>
+    <!-- Import the 3D animation script -->
+    <script type="module" src="./graphs/swingAnimationWithOBJ.js"></script>
 </body>
 </html>

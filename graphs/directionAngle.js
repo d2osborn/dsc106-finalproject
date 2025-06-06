@@ -37,7 +37,7 @@ export function drawDirectionAngle(containerSel, data, config) {
     const redY = ballY + lineLength * Math.sin(zeroAngle + theta);
     const fillPoly = svg.append('polygon')
         .attr('points', `${ballX},${ballY} ${blackX},${blackY} ${ballX},${ballY}`)
-        .attr('fill', "#b8860b")
+        .attr('fill', "#000080")
         .attr('opacity', 0.5);
     fillPoly.transition().duration(1000).attrTween("points", function() {
         return t => {

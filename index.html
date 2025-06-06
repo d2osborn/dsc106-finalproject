@@ -17,7 +17,8 @@
             controls.html(`
                 <div style="display:flex;align-items:center;gap:1em;margin-bottom:1em;">
                     <label style="color:#fff;font-weight:bold;">Player:
-                        <input id="player-input" list="player-list" placeholder="Enter player name" autocomplete="off" style="padding:0.4em 0.8em;font-size:1em;">
+                        <input id="player-input" list="player-list" placeholder="Enter player name" autocomplete="off"
+                               style="padding:0.4em 0.8em;font-size:1em;">
                         <datalist id="player-list"></datalist>
                     </label>
                     <label style="color:#fff;font-weight:bold;">Count:
@@ -30,75 +31,109 @@
             const dataList = document.getElementById('player-list');
             const radios = Array.from(document.getElementsByName('count'));
 
-            // Load data
             d3.csv('files/combined_data.csv', d3.autoType).then(data => {
-                const players = Array.from(new Set(data.map(d=>d.batter_name.trim()).filter(n=>n))).sort();
-                function populate(list) { dataList.innerHTML = list.map(n=>`<option value="${n}">`).join(''); }
-                
-                inputElem.addEventListener('input', ()=>{
+                const players = Array.from(new Set(
+                  data.map(d => d.batter_name.trim()).filter(n => n)
+                )).sort();
+                function populate(list) {
+                    dataList.innerHTML = list.map(n => `<option value="${n}">`).join('');
+                }
+
+                inputElem.addEventListener('input', () => {
                     const v = inputElem.value.toLowerCase();
-                    populate(v ? players.filter(p=>p.toLowerCase().includes(v)).slice(0,10) : []);
+                    populate(
+                      v ? players.filter(p => p.toLowerCase().includes(v)).slice(0, 10) : []
+                    );
                 });
 
                 function getMax(field) {
                     if (field === 'attack_angle') return 25;
-                    const max = d3.max(data, d => +d[field]) || 1;
-                    return Math.ceil(max / 10) * 10;
+                    const m = d3.max(data, d => +d[field]) || 1;
+                    return Math.ceil(m / 10) * 10;
                 }
-                const maxAttackAngle = getMax('attack_angle');
-                const maxBatSpeed = getMax('bat_speed');
-                const maxSwingPathTilt = Math.ceil((d3.max(data, d => Math.abs(+d.swing_path_tilt)) || 60) / 10) * 10;
+                const maxAttackAngle   = getMax('attack_angle');
+                const maxBatSpeed      = getMax('bat_speed');
+                const maxSwingPathTilt = Math.ceil(
+                  (d3.max(data, d => Math.abs(+d.swing_path_tilt)) || 60) / 10
+                ) * 10;
 
-                function getCount(){ const c=radios.find(r=>r.checked); return c?c.value:null; }
-                function update(){
+                function getCount() {
+                    const c = radios.find(r => r.checked);
+                    return c ? c.value : null;
+                }
+
+                function update() {
                     const p = inputElem.value.trim();
                     const c = getCount();
-                    let f = [];
-                    let showData = [];
+                    let filtered = [], showData = [];
+
                     if (players.includes(p) && c) {
-                        f = data.filter(d=>d.batter_name===p && ((c==='0-0'&&d.balls===0&&d.strikes===0)||(c==='0-2'&&d.balls===0&&d.strikes===2)));
-                        showData = (f.length > 0) ? f : [];
+                        filtered = data.filter(d =>
+                          d.batter_name === p &&
+                          ((c === '0-0' && d.balls === 0 && d.strikes === 0) ||
+                           (c === '0-2' && d.balls === 0 && d.strikes === 2))
+                        );
+                        showData = filtered.length > 0 ? filtered : [];
                     }
                     if (showData.length === 0 && c) {
-                        showData = data.filter(d => (c==='0-0'&&d.balls===0&&d.strikes===0)||(c==='0-2'&&d.balls===0&&d.strikes===2));
+                        showData = data.filter(d =>
+                          (c === '0-0' && d.balls === 0 && d.strikes === 0) ||
+                          (c === '0-2' && d.balls === 0 && d.strikes === 2)
+                        );
                     }
-                    if (showData.length === 0) showData = data;
+                    if (showData.length === 0) {
+                        showData = data;
+                    }
 
-                    // Clear containers
+                    // Clear prior charts
                     d3.select('#zone-map').html('');
                     d3.select('#outcome-scatter').html('');
                     d3.select('#attack-angle-plot').html('');
                     d3.select('#direction-angle-plot').html('');
 
-                    // Draw graphs using imported functions
+                    // Re‐draw all four graphs
                     drawAttackAngle(d3.select('#zone-map'), showData, {
                         title: 'Attack Angle (°)',
-                        max: maxAttackAngle
+                        max:   maxAttackAngle
                     });
                     drawBatSpeed(d3.select('#outcome-scatter'), showData, {
                         title: 'Bat Speed (mph)',
-                        max: maxBatSpeed
+                        max:   maxBatSpeed
                     });
                     drawSwingPathTilt(d3.select('#attack-angle-plot'), showData, {
                         title: 'Swing Path Tilt (°)',
-                        max: maxSwingPathTilt
+                        max:   maxSwingPathTilt
                     });
                     drawDirectionAngle(d3.select('#direction-angle-plot'), showData, {
                         title: 'Direction Angle (°)',
-                        max: maxAttackAngle // Adjust max if needed
+                        max:   maxAttackAngle
                     });
-                }
-                inputElem.addEventListener('change',update);
-                inputElem.addEventListener('keyup',e=>{ if(e.key==='Enter')update(); });
-                radios.forEach(r=>r.addEventListener('change',update));
 
-                // Show MLB averages on initial load
+                    // Compute league or player averages
+                    const avgAttack = d3.mean(showData, d => +d.attack_angle) || 0;
+                    const avgDir    = d3.mean(showData, d => +d.direction_angle) || 0;
+
+                    // Send to 3D swing animation (if those functions exist)
+                    if (window.updateAttackAngleVisualization) {
+                        window.updateAttackAngleVisualization(avgAttack);
+                    }
+                    if (window.updateDirectionAngleVisualization) {
+                        window.updateDirectionAngleVisualization(avgDir);
+                    }
+                }
+
+                inputElem.addEventListener('change', update);
+                inputElem.addEventListener('keyup', e => { if (e.key === 'Enter') update(); });
+                radios.forEach(r => r.addEventListener('change', update));
+
+                // Initial draw (MLB averages)
                 update();
 
                 window.__statcast_full_data__ = data;
             });
         });
     </script>
+
     <style>
         html, body {
             margin: 0;
@@ -109,11 +144,19 @@
 </head>
 <body>
     <h1 class="main-title" id="dynamic-title"></h1>
-    
+
     <!-- Updated hero section: container now spans full viewport without white space -->
     <div class="video-effect-container" style="width: 100vw; height: 100vh; overflow: hidden; position: relative;">
         <canvas id="effect-canvas"></canvas>
-        <video id="source-video" src="images/paredes.mp4" preload="auto" crossorigin="anonymous" style="display:none;" muted autoplay loop></video>
+        <video id="source-video"
+               src="images/paredes.mp4"
+               preload="auto"
+               crossorigin="anonymous"
+               style="display:none;"
+               muted
+               autoplay
+               loop>
+        </video>
         
         <!-- Outlined arrows below the title -->
         <div class="scroll-arrows" onclick="scrollPastVideo()">&#x276F;&#x276F;&#x276F;</div>
@@ -158,7 +201,6 @@
             }
             requestAnimationFrame(drawVideo);
         }
-
         video.addEventListener('canplay', () => {
             video.playbackRate = 1.25; // Slightly increase playback speed
             video.play();
@@ -182,29 +224,42 @@
     <section class="sandbox-section">
         <h2 class="sandbox-title">Explore How MLB Hitters Adjust in Two Strike Counts</h2>
         <div class="sandbox-controls"></div>
-        <div class="sandbox-visuals-container" style="max-width: 1000px; margin: 0 auto;">
-            <div class="sandbox-visuals">
-                <div id="zone-map" class="sandbox-viz"></div>
-                <div id="outcome-scatter" class="sandbox-viz"></div>
-                <div id="attack-angle-plot" class="sandbox-viz"></div>
+        
+        <!-- NEW FLEXBOX LAYOUT FOR SANDBOX VISUALS AND ANIMATION -->
+        <div class="sandbox-layout">
+            <!-- Left side: swing animation container -->
+            <div class="animation-container">
+                <div class="sandbox-viz" id="animation-swing">
+                    <div id="coord-display"
+                         style="display:block; position:absolute; top:10px; left:10px;
+                                background:rgba(0,0,0,0.7); color:white; padding:10px;
+                                border-radius:5px; font-family:monospace;">
+                    </div>
+                    <button id="coord-button"
+                            style="position:absolute; top:10px; right:10px;
+                                   background:#4CAF50; color:white; border:none;
+                                   padding:10px 20px; border-radius:5px; cursor:pointer;">
+                        Copy Coordinates
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Right side: four graphs stacked vertically -->
+            <div class="graphs-container">
+                <div id="zone-map"           class="sandbox-viz"></div>
+                <div id="outcome-scatter"    class="sandbox-viz"></div>
+                <div id="attack-angle-plot"  class="sandbox-viz"></div>
                 <div id="direction-angle-plot" class="sandbox-viz"></div>
             </div>
         </div>
-        <!-- Animation section in its own container -->
-        <div class="sandbox-visuals-container" style="max-width: 1400px; margin: 2vw auto;">
-            <div id="animation-swing" class="sandbox-viz"></div>
-        </div>
-        <!-- Swing animation import -->
+
+        <!-- Swing animation script import (unchanged) -->
         <script type="module" src="./graphs/swingAnimationWithOBJ.js?v=2"></script>
+
         <details class="writeup-dropdown">
             <summary>▸ Writeup</summary>
             <div>
-                <p>
-                    So far, we've built out a basic structure of the website, including our title, hook, and the And-But-Therefore storyline. We've also implemented our interactive feature, a sandbox tool that lets users select any qualified MLB hitter (they must have a sufficient amount of plate appearances) and view their average attack angle, bat speed, and swing path (tilt) in both 0-0 and 0-2 counts. If no hitter is selected, the sandbox defaults to displaying league-average values for each of the metrics mentioned previously. And when a player is selected, the league averages remain visible as a way to let users see how individual hitters compare.
-                </p>
-                <p>
-                    One of the most challenging parts of our project to design is designing a swing model that effectively visualizes how hitters swing, and how those swings change by count. Our goal is to emulate the clarity of Baseball Savant's own swing metric visualizations, which is no small task. We've also found it difficult to create visualizations that both support our narrative and remain intuitive. These include animations to illustrate swing geometry (attack angle, direction, and tilt), distribution plots comparing 0-strike and 2-strike swings, and scatter plots showing per-player changes across counts. Integrating outcome metrics like xwOBA, whiff rate, contact rate, and groundball rate into the sandbox without cluttering the interface presents another design challenge. The most challenging aspect of the process will be showing the website in the form of a slideshow where we can show the visualizations as you scroll down as it tells the narrative, similar to how the Gun Deaths in America website was.
-                </p>
+                <p>… (existing writeup content) …</p>
             </div>
         </details>
     </section>

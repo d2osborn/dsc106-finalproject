@@ -19,6 +19,7 @@ body, button, input, select, textarea {
     color: #000;
 }
 
+/* HERO VIDEO STYLES (unchanged) */
 .video-effect-container {
     width: 100vw;
     height: 100vh;
@@ -46,7 +47,7 @@ body, button, input, select, textarea {
     width: auto;
     margin: 0;
     padding: 0.5vh 2vw;
-    color: #000080; /* Golden tint */
+    color: #000080; /* Navy blue */
     font-size: 1.5vw;
     font-family: 'Montserrat Black', 'Segoe UI', Arial, sans-serif;
     font-weight: 900;
@@ -66,6 +67,7 @@ body, button, input, select, textarea {
     transform: translate(-50%, -50%);
 }
 
+/* SECTION “Adjust or Die” (unchanged) */
 .section-container {
     position: relative;
     width: 80vw;
@@ -99,16 +101,7 @@ body, button, input, select, textarea {
     font-family: 'Segoe UI', Arial, sans-serif;
 }
 
-#player-select {
-    background: #fff;
-    color: #000;
-    border-radius: 4px;
-    padding: 0.3em 1em;
-    font-size: 1em;
-    min-width: 200px;
-    margin-left: 0.5em;
-}
-
+/* SANDBOX CONTROLS (unchanged) */
 .sandbox-section {
     width: 90vw;
     max-width: 1400px;
@@ -157,56 +150,69 @@ body, button, input, select, textarea {
     color: #000;
 }
 
-.sandbox-visuals {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);  /* 4 columns for 4 graphs */
-    justify-items: center;
+/* ───────────── NEW TWO‐COLUMN LAYOUT ───────────── */
+.sandbox-layout {
+    display: flex;
+    gap: 2vw;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto 2vw auto;
 }
 
-.sandbox-visuals-container {
+/* Left side: swing animation container */
+.animation-container {
+    flex: 2;                  /* roughly twice width of right column */
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
 }
 
+/* Right side: four graphs stacked vertically */
+.graphs-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2vw;
+}
+
+/* Each “box” (swing animation or one graph) stays square via aspect‐ratio */
 .sandbox-viz {
     background: #fff;
     padding: 1vw;
-    margin-bottom: 2vw;
-    /* Uniform dimensions across all charts */
-    width: 22vw;
-    height: 22vw;
     overflow: auto;
 }
 
-/* If you want the swing animation container to match exactly, update its styles as well: */
+/* Force each .sandbox-viz to be a square */
+.sandbox-viz {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+}
+
+/* Make #animation-swing itself a solid square too */
 #animation-swing {
-    background: #fff;
-    padding: 1vw;
-    margin-bottom: 2vw;
-    /* Updated dimensions to enlarge the animation box */
-    width: 40vw;
-    height: 40vw;
-    overflow: auto;
+    width: 100%;
+    aspect-ratio: 1 / 1;
 }
 
-/* Responsive: Under 1000px, switch to two columns */
+/* On narrower screens, stack left + right in one column */
 @media (max-width: 1000px) {
-    .sandbox-visuals {
-        grid-template-columns: repeat(2, 1fr);
+    .sandbox-layout {
+        flex-direction: column;
+        gap: 2vh;
     }
     .sandbox-viz {
-        width: 45vw;
-        height: 45vw;
-    }
-    #animation-swing {
-        width: 90vw !important;
-        height: 60vw !important; /* Even taller on mobile */
+        width: 90vw !important;  /* nearly full‐width on mobile */
+        aspect-ratio: initial;    /* let height auto‐adjust */
     }
 }
+
+/* Slightly scale down each D3‐generated SVG so it fits inside the box */
+.sandbox-viz svg {
+    transform: scale(0.7);
+    transform-origin: center;
+}
+
+/* The rest of your existing CSS for writeups, mlb‐average text, etc., remains unchanged: */
 
 .sandbox-viz:empty {
     min-height: 0;
@@ -251,7 +257,7 @@ body, button, input, select, textarea {
 
 .mlb-average {
     font-family: 'Roboto Mono', monospace;
-    font-size: 12px; /* uniform smaller size */
+    font-size: 12px;
     fill: #E63946;  /* red color */
     text-anchor: middle;
 }

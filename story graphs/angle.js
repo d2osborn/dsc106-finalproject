@@ -157,7 +157,7 @@ d3.csv(csvFile, d3.autoType).then(data => {
   svg
     .append("text")
       .attr("x", x(targetDelta))
-      .attr("y", y(d3.max(bins, d => d.length)) - 10)  // 10px above highest bar
+      .attr("y", y(d3.max(bins, d => d.length)) +10)  // 10px above highest bar
       .attr("fill", "red")
       .attr("text-anchor", "middle")
       .style("font-size", "12px")

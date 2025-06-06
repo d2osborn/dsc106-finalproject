@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script type="module" src="story graphs/vis.js"></script>
+    <script type="module" src="story graphs/angle.js"></script>
 
     <script type="module">
         import { drawAttackAngle } from './graphs/attackAngle.js';
@@ -165,13 +166,12 @@
             Are they adjusting their swing geometry, when facing two strikes, or is the idea of a two-strike approach more myth than reality?
             These adjustments can dramatically affect batted-ball outcomes like wOBA, contact%, and groundball%.
         </p>
+        <div id="chart"></div>
         <p class ='But'>
             While many hitters attemps to adjust their swings with two strikes, Yordan Alvarez stands out.
             Despite large changes in his swing direction and attack angle, he remains elite in two-strike performance (e.g., top percentile in wOBA and contact%). 
             His swing shows big structural changes, yet his contact quality stays high. This is uncommon.<br>
         </p>
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         <div class="heatmap-row">
         <!---- plots on the left -->
         <div class="plot-pair">
@@ -188,14 +188,10 @@
                 This not only tells us that Y
             </p>
         </div>
-=======
-=======
->>>>>>> Stashed changes
         <div id="chart"></div>
         <div class="heatmap-container">
             <div id="heatmap0" class="sandbox-viz"></div>
             <div id="heatmap2" class="sandbox-viz"></div>
->>>>>>> Stashed changes
         </div>
           
         <p class = 'Therefore'>

@@ -509,5 +509,9 @@ h3 {
     width: 100%;
     height: auto;
 }
+#horizon {
+    width: 100%;
+    display: block;
+}
 
   

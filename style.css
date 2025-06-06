@@ -488,3 +488,15 @@ label {
 h3 {
   color: #EB6E1F;
 }
+.chart-container {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  
+  .chart {
+    flex: 1;           /* each chart “box” takes up equal share of available width */
+    height: 400px;     /* match whatever height works for you */
+    border: 1px solid #ccc; /* optional, just to see the box */
+  }
+  

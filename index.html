@@ -170,12 +170,14 @@
         <h2 class="palyer_name" style="color: #801100;">
             Yordan Alvarez
           </h2>
+        <p class ='But'>
+            While many hitters attemps to adjust their swings with two strikes, Yordan Alvarez stands out.
+        </p>
         <div class="chart-container">
             <div id="chart" class="chart"></div>
             <div id="horizon" class="horizon"></div>
         </div>
         <p class ='But'>
-            While many hitters attemps to adjust their swings with two strikes, Yordan Alvarez stands out.
             Despite large changes in his swing direction and attack angle, he remains elite in two-strike performance (e.g., top percentile in wOBA and contact%). 
             His swing shows big structural changes, yet his contact quality stays high. This is uncommon.
         </p>
@@ -248,21 +250,41 @@
     </section>
 
     <script>
-        // Dynamic colored title
         const titleWords = [
-            "The", "Effect", "of", "2", "Strikes", "on", "a", "Hitter's", "Swing"
+            ["The", "Effect"],
+            ["of"],
+            ["2", "Strikes"],
+            ["on", "a"],
+            ["Hitter's", "Swing"]
         ];
+
+        const highlightWords = new Set(["THE", "EFFECT", "2", "STRIKES", "HITTER'S", "SWING"]);
+        const specialColors = {
+            "2": "#ff4d4d",
+            "STRIKES": "#ff4d4d",
+            "EFFECT": "#FFBF00"
+        };
+
         let html = "";
-        for (let word of titleWords) {
-            html += `<span style="color:#fff; opacity:0.95; font-size:1.9vw;">${word.toUpperCase()}</span> `;
+        for (let line of titleWords) {
+            html += `<div style="margin-bottom: 0.4vw;">`;
+            for (let word of line) {
+                const wordUpper = word.toUpperCase();
+                const fontSize = highlightWords.has(wordUpper) ? "4vw" : "1.5vw";
+                const color = specialColors[wordUpper] || "#ffffff";
+                html += `<span style="color:${color}; opacity:0.95; font-size:${fontSize}; margin-right: 0.4vw;">${wordUpper}</span>`;
+            }
+            html += `</div>`;
         }
         document.getElementById("dynamic-title").innerHTML = html.trim();
 
+    
+    
         // Video effect
         const video = document.getElementById('source-video');
         const canvas = document.getElementById('effect-canvas');
         const ctx = canvas.getContext('2d');
-
+    
         function resizeCanvas() {
             const container = document.querySelector('.video-effect-container');
             canvas.width = container.clientWidth;
@@ -270,7 +292,7 @@
         }
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
-
+    
         function drawVideo() {
             if (video.readyState >= 2) {
                 ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -282,7 +304,7 @@
             video.play();
             drawVideo();
         });
-
+    
         // Scroll past the video when arrows are clicked
         function scrollPastVideo() {
             const videoContainer = document.querySelector('.video-effect-container');
@@ -292,6 +314,7 @@
             });
         }
     </script>
+    
 
     <!-- Import the 3D animation script -->
     <script type="module" src="./graphs/swingAnimationWithOBJ.js"></script>

@@ -114,6 +114,9 @@ function drawScatterMatrix(data, selectedMetric) {
         .attr("text-anchor", "middle")
         .text(formatMetricName(selectedMetric));
 
+      // Use a constant offset matching the third graph, adjusted a tiny bit upward:
+      const yOffset = -margin.left + 10;
+      
       svg.append("g")
         .attr("transform", `translate(${margin.left},0)`)
         .call(d3.axisLeft(yScale))
@@ -121,7 +124,7 @@ function drawScatterMatrix(data, selectedMetric) {
         .append("text")
         .attr("transform", "rotate(-90)")
         .attr("x", -height / 2)
-        .attr("y", -margin.left + 15)
+        .attr("y", yOffset)
         .attr("fill", colors.text)
         .attr("text-anchor", "middle")
         .text(formatMetricName(j));
@@ -234,25 +237,24 @@ function setupCorrelationGraph(data) {
   drawScatterMatrix(data, iMetrics[0]);
 }
 
-d3.json("files/But/league_trend.json").then(raw => {
-    console.log("Raw data loaded:", raw);  // Debug log
-    
-    const keys = Object.keys(raw);
-    console.log("Data keys:", keys);  // Debug log
-    
-    const length = raw[keys[0]].length;
-    console.log("Data length:", length);  // Debug log
+d3.json("files/BUt/league_trend.json").then(raw => {
+  // 1) Convert each raw[col] from an object into a real array
+  Object.keys(raw).forEach(col => {
+    raw[col] = Object.values(raw[col]);
+  });
   
-    const data = Array.from({ length }, (_, i) => {
-      const row = {};
-      keys.forEach(k => row[k] = raw[k][i]);
-      return row;
-    });
-    
-    console.log("Processed data sample:", data.slice(0, 3));  // Debug log
-    console.log("Total data points:", data.length);  // Debug log
+  // 2) Now derive keys and the length
+  const keys = Object.keys(raw);
+  const length = raw[keys[0]].length;
   
-    setupCorrelationGraph(data);
+  // 3) Build a row-wise array of objects
+  const data = Array.from({ length }, (_, i) => {
+    const row = {};
+    keys.forEach(k => row[k] = raw[k][i]);
+    return row;
+  });
+  
+  setupCorrelationGraph(data);
 }).catch(error => {
-    console.error("Error loading data:", error);  // Error handling
+  console.error("Error loading data:", error);
 });

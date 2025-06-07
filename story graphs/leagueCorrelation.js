@@ -41,7 +41,7 @@ function pearsonCorr(x, y) {
 
 function formatMetricName(metric) {
   if (metric === 'wOBA') return 'wOBA';
-
+  if (metric === 'gb%')  return 'Ground Ball %';
   return metric
     .split('_')
     .map((word, i) => {
@@ -260,9 +260,26 @@ function setupCorrelationGraph(data) {
     .style("justify-content", "center")
     .style("gap", "1rem");
 
-  d3.select("#correlation-select").on("change", function() {
-    drawScatterMatrix(data, this.value);
-  });
+    d3.select("#correlation-select").on("change", function() {
+      const graphs = d3.select("#correlation-graphs");
+    
+      // fade old charts out
+      graphs.transition()
+        .duration(300)
+        .style("opacity", 0)
+        .on("end", () => {
+          // clear & draw new
+          drawScatterMatrix(data, this.value);
+    
+          // fade the fresh charts back in
+          graphs
+            .style("opacity", 0)
+            .transition()
+            .duration(300)
+            .style("opacity", 1);
+        });
+    });
+    
 
   drawScatterMatrix(data, iMetrics[0]);
 }

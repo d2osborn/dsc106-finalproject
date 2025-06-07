@@ -1,11 +1,8 @@
 export function drawSwingPathTilt(containerSel, data, config) {
-    console.log('drawSwingPathTilt called with data:', data, 'and config:', config);
-
     // Create SVG container
     const svg = containerSel.append('svg')
         .attr('viewBox', '0 0 400 400')
-        .attr('preserveAspectRatio', 'xMidYMid meet')
-        .style('background-color', '#f0f0f0'); // Temporary background for debugging
+        .attr('preserveAspectRatio', 'xMidYMid meet');
     
     // Title
     svg.append('text')

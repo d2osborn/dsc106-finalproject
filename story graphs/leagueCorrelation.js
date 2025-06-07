@@ -6,7 +6,7 @@ window.addEventListener('error', function(e) {
     console.error('Module loading error:', e);
 });
 
-const iMetrics = ['swing%', 'zone_swing%', 'chase%', 'contact%', 'whiff%', 
+const iMetrics = ['wOBA', 'swing%', 'zone_swing%', 'chase%', 'contact%', 'whiff%', 
                   'foul%', 'in_play%', 'oppo%', 'gb%', 'barrel%'];
 const jMetrics = ['delta_attack_angle', 'delta_attack_direction', 'delta_swing_path_tilt'];
 
@@ -19,6 +19,16 @@ const colors = {
   grid: '#e0e0e0'
 };
 
+function displayValue(metric, v) {
+  if (metric === 'wOBA' || !metric.endsWith('%')) {
+    return v.toFixed(3);
+  }
+
+  const rounded     = Number(v.toFixed(3));  
+  const percentage  = rounded * 100;         
+  return percentage.toFixed(1);            
+}
+
 function pearsonCorr(x, y) {
   const meanX = d3.mean(x), meanY = d3.mean(y);
   const numerator = d3.sum(x.map((_, i) => (x[i] - meanX) * (y[i] - meanY)));
@@ -30,13 +40,17 @@ function pearsonCorr(x, y) {
 }
 
 function formatMetricName(metric) {
-  return metric.replace(/_/g, ' ')
+  // keep brand-style mixed-case names intact
+  if (metric === 'wOBA') return 'wOBA';
+
+  return metric
+    .replace(/_/g, ' ')            // underscores → spaces
     .replace(/\b\w/g, l => l.toUpperCase())
     .replace('Delta ', 'Δ');
 }
 
 function drawScatterMatrix(data, selectedMetric) {
-    const width = 300, height = 300, margin = {top: 40, right: 20, bottom: 40, left: 40};
+    const width = 320, height = 300, margin = { top: 40, right: 10, bottom: 40, left: 40 };
     const container = d3.select("#correlation-graphs");
     container.html(""); // Clear old
   
@@ -46,10 +60,10 @@ function drawScatterMatrix(data, selectedMetric) {
         isFinite(d[selectedMetric]) && isFinite(d[j])
       );
   
-      const x = filtered.map(d => +d[selectedMetric]);
-      const y = filtered.map(d => +d[j]);
+      const x = filtered.map(d => +d[j]);
+      const y = filtered.map(d => +d[selectedMetric]);
   
-      const r = x.length > 1 ? pearsonCorr(x, y).toFixed(2) : "N/A";
+      const r = x.length > 1 ? pearsonCorr(x, y).toFixed(3) : "N/A";
   
       const div = container.append("div")
         .attr("class", "correlation-graph")
@@ -57,7 +71,7 @@ function drawScatterMatrix(data, selectedMetric) {
         .style("background", colors.background)
         .style("border-radius", "8px")
         .style("box-shadow", "0 2px 4px rgba(0,0,0,0.1)")
-        .style("padding", "1rem");
+        .style("padding", "1rem")
 
       // Title with correlation coefficient
       div.append("div")
@@ -82,6 +96,13 @@ function drawScatterMatrix(data, selectedMetric) {
         .domain(d3.extent(y))
         .nice()
         .range([height - margin.bottom, margin.top]);
+
+      const yTickFormat = (metric => {
+        if (metric === "wOBA" || !metric.endsWith("%")) {
+          return d => d.toFixed(2);
+        }
+        return d => (Number(d.toFixed(3)) * 100).toFixed(1);
+      })(selectedMetric);
   
       // Add grid lines
       svg.append("g")
@@ -112,14 +133,15 @@ function drawScatterMatrix(data, selectedMetric) {
         .attr("y", margin.bottom - 5)
         .attr("fill", colors.text)
         .attr("text-anchor", "middle")
-        .text(formatMetricName(selectedMetric));
+        .text(formatMetricName(j));
 
       // Use a constant offset matching the third graph, adjusted a tiny bit upward:
-      const yOffset = -margin.left + 10;
+      const yOffset = -margin.left + 7.25;
       
       svg.append("g")
         .attr("transform", `translate(${margin.left},0)`)
-        .call(d3.axisLeft(yScale))
+        .call(d3.axisLeft(yScale)
+        .tickFormat(yTickFormat))
         .style("color", colors.text)
         .append("text")
         .attr("transform", "rotate(-90)")
@@ -127,7 +149,7 @@ function drawScatterMatrix(data, selectedMetric) {
         .attr("y", yOffset)
         .attr("fill", colors.text)
         .attr("text-anchor", "middle")
-        .text(formatMetricName(j));
+        .text(formatMetricName(selectedMetric));
 
       // Add points with tooltips
       const tooltip = div.append("div")
@@ -162,28 +184,33 @@ function drawScatterMatrix(data, selectedMetric) {
         .attr("d", line);
 
       // Add points with increased size and opacity
+      const pointData = filtered.map(d => ({
+        xVal: +d[j],                // Δ-metric  (x-axis)
+        yVal: +d[selectedMetric]    // chosen metric (y-axis)
+      }));
+
       svg.selectAll("circle")
-        .data(x)
+        .data(pointData)
         .join("circle")
-        .attr("cx", (_, i) => xScale(x[i]))
-        .attr("cy", (_, i) => yScale(y[i]))
-        .attr("r", 5)  // Increased from 4
-        .attr("fill", colors.secondary)
-        .attr("opacity", 0.8)  // Increased from 0.7
-        .on("mouseover", function(event, d) {
-          const i = x.indexOf(d);
-          tooltip
-            .style("visibility", "visible")
-            .html(`${formatMetricName(selectedMetric)}: ${d.toFixed(2)}<br>${formatMetricName(j)}: ${y[i].toFixed(2)}`);
-        })
-        .on("mousemove", function(event) {
-          tooltip
-            .style("top", (event.pageY - 10) + "px")
-            .style("left", (event.pageX + 10) + "px");
-        })
-        .on("mouseout", function() {
-          tooltip.style("visibility", "hidden");
-        });
+          .attr("cx", d => xScale(d.xVal))
+          .attr("cy", d => yScale(d.yVal))
+          .attr("r", 5)
+          .attr("fill", colors.secondary)
+          .attr("opacity", 0.8)
+          .on("mouseover", (event, d) => {
+            tooltip
+              .style("visibility", "visible")
+              .html(
+                `${formatMetricName(j)}: ${d.xVal.toFixed(3)}<br>` +
+                `${formatMetricName(selectedMetric)}: ${displayValue(selectedMetric, d.yVal)}`
+              );
+          })
+          .on("mousemove", event =>
+            tooltip
+              .style("top",  (event.pageY - 10) + "px")
+              .style("left", (event.pageX + 10) + "px")
+          )
+          .on("mouseout", () => tooltip.style("visibility", "hidden"));
     });
 }
 
@@ -192,11 +219,11 @@ function setupCorrelationGraph(data) {
     .style("margin", "2em 0")
     .style("padding", "1em");
 
-  container.append("h3")
-    .style("color", colors.primary)
-    .style("text-align", "center")
-    .style("margin-bottom", "1em")
-    .text("Explore Swing Metric Correlations");
+  // container.append("h3")
+  //   .style("color", colors.primary)
+  //   .style("text-align", "center")
+  //   .style("margin-bottom", "1em")
+  //   .text("Explore Swing Metric Correlations");
 
   const controls = container.append("div")
     .style("display", "flex")

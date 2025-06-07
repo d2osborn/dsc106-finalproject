@@ -476,10 +476,12 @@ label {
 
 /* —— explanatory text —— */
 .plot-text {
-    flex: 1;
-    max-width: 480px;
-    line-height: 1.55;
-    padding: 0 20px;
+    font-size: 1vw; /* Smaller than title */
+    font-weight: 400; /* Not bold */
+    color: #111; /* Softer than title navy */
+    line-height: 1.6;
+    text-align: justify; /* Optional: for tidy block alignment */
+    margin-bottom: 1.5em;
 }
 .plot-text .hl {
     color: #F5C26B;
@@ -576,17 +578,25 @@ h3 {
     text-align: center;
 }
 
+section, .graph-section {
+  margin-block-start: 0;   /* replaces margin-top in logical notation */
+  margin-block-end:   0;   /* replaces margin-bottom */
+}
+
 .graph-explanation {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 0 20px;
-    line-height: 1.6;
+    padding: 4em 2em;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-weight: bold;
 }
 
 .graph-explanation p {
-    font-size: 1.1rem;
-    color: #333;
-    text-align: justify;
+    font-size: 1vw; /* Smaller than title */
+    font-weight: 400; /* Not bold */
+    color: #111; /* Softer than title navy */
+    line-height: 1.6;
+    text-align: justify; /* Optional: for tidy block alignment */
+    margin-bottom: 1.5em;
 }
 
 /* Chart Container */
@@ -665,9 +675,12 @@ h3 {
 }
 
 .plot-text p {
-    font-size: 1.1rem;
-    color: #333;
-    text-align: justify;
+    font-size: 1vw; /* Smaller than title */
+    font-weight: 400; /* Not bold */
+    color: #111; /* Softer than title navy */
+    line-height: 1.6;
+    text-align: justify; /* Optional: for tidy block alignment */
+    margin-bottom: 1.5em;
 }
 
 /* Responsive Design */
@@ -702,3 +715,23 @@ h3 {
     }
 }
   
+
+.graph-section + .graph-section {
+  /* remove the block-level “gap” that normally appears */
+  margin-top: 0;          /* or reduce to whatever spacing you prefer */
+  padding-top: 0;
+}
+
+/* ---------- suppress the default <p> bottom-margin inside any graph section */
+.graph-section p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- wipe the inline 5-rem margin for your two heatmaps */
+#heatmap0,
+#heatmap2 {
+  margin-top: 0 !important;   /* !important overrides the inline style */
+}
+
+h1,h2,h3,h4,h5,h6,p { margin-block: 0; }
+

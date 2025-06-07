@@ -237,7 +237,7 @@ function setupCorrelationGraph(data) {
   drawScatterMatrix(data, iMetrics[0]);
 }
 
-d3.json("files/BUt/league_trend.json").then(raw => {
+d3.json("files/But/league_trend.json").then(raw => {
   // 1) Convert each raw[col] from an object into a real array
   Object.keys(raw).forEach(col => {
     raw[col] = Object.values(raw[col]);

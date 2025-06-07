@@ -13,7 +13,7 @@ html, body {
     text-align: center;
     z-index: 2;
     width: 100%;
-    color: #000080;
+    color: #002D62;
     text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
@@ -69,7 +69,7 @@ html, body {
 .section-title {
     font-size: 2.8vw; /* Slightly increased */
     font-weight: 900;
-    color: #000080;
+    color: #002D62;
     text-align: center;
     text-transform: uppercase;
     margin-bottom: 1em;
@@ -123,7 +123,7 @@ body, button, input, select, textarea {
     width: auto;
     margin: 0;
     padding: 0.5vh 2vw;
-    color: #000080; /* Navy blue */
+    color: #002D62; /* Navy blue */
     font-size: 1.5vw;
     font-family: 'Montserrat Black', 'Segoe UI', Arial, sans-serif;
     font-weight: 900;
@@ -160,7 +160,7 @@ body, button, input, select, textarea {
     font-family: 'Montserrat Black', 'Segoe UI', Arial, sans-serif;
     font-size: 1.5vw;
     font-weight: 900;
-    color: #000080;
+    color: #002D62;
     letter-spacing: 0.04em;
     text-align: center;
     margin: 0 0 1vw 0;
@@ -183,14 +183,14 @@ body, button, input, select, textarea {
     margin: 0 auto;
     padding: 2em;
     background: #ffffff;
-    color: #000080;
+    color: #002D62;
     text-align: center;
 }
 
 .sandbox-title {
     font-size: 1.8em;
     margin-bottom: 0.5em;
-    color: #000080;
+    color: #002D62;
     text-align: center;
 }
 
@@ -222,7 +222,7 @@ body, button, input, select, textarea {
 
 .small-rectangle {
     width: 200px;
-    background: #000080;
+    background: #002D62;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -332,7 +332,7 @@ body, button, input, select, textarea {
 
 .writeup-dropdown summary {
     font-family: 'Montserrat Black', 'Segoe UI', Arial, sans-serif;
-    color: #000080;
+    color: #002D62;
     font-weight: 900;
     font-size: 1.2vw;
     cursor: pointer;
@@ -344,7 +344,7 @@ body, button, input, select, textarea {
 }
 
 .writeup-dropdown[open] summary {
-    color: #000080;
+    color: #002D62;
 }
 
 .mlb-average {
@@ -428,7 +428,7 @@ label {
 }
 
 #attack-angle-plot polygon {
-    fill: #000080 !important;
+    fill: #002D62 !important;
 }
 
 .no-card {
@@ -572,7 +572,7 @@ h3 {
 }
 
 .graph-section h3 {
-    color: #000080;
+    color: #002D62;
     font-size: 1.5rem;
     margin-bottom: 3rem;
     text-align: center;
@@ -669,7 +669,7 @@ section, .graph-section {
 }
 
 .plot-text h3 {
-    color: #000080;
+    color: #002D62;
     font-size: 1.3rem;
     margin-bottom: 1rem;
 }

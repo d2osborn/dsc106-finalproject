@@ -6,7 +6,7 @@ export function drawBatSpeed(containerSel, data, config) {
         .attr('x', 50)    // was 100
         .attr('y', 10)    // was 20
         .attr('text-anchor', 'middle')
-        .attr('fill', "#000080")
+        .attr('fill', "#002D62")
         .style('font-size', '7px')  // roughly half of 14px
         .text(config.title);
     const bgArc = d3.arc()
@@ -28,7 +28,7 @@ export function drawBatSpeed(containerSel, data, config) {
         .startAngle(-3 * Math.PI/4);
     const fgPath = svg.append('path')
         .attr('transform', `translate(50,50)`)
-        .attr('fill', "#000080");
+        .attr('fill', "#002D62");
     fgPath.transition().duration(1000)
         .attrTween('d', function() {
             const interp = d3.interpolate(-3 * Math.PI/4, scale(avg));
@@ -58,7 +58,7 @@ export function drawBatSpeed(containerSel, data, config) {
         .attr('x', 50)   // was 100
         .attr('y', 60)   // was 120
         .attr('text-anchor', 'middle')
-        .attr('fill', "#000080")
+        .attr('fill', "#002D62")
         .style('font-size', '10px')  // was 20px
         .text('0');
     textVal.transition().delay(200).duration(1000)
@@ -93,7 +93,7 @@ export function drawBatSpeed(containerSel, data, config) {
             .attr("x", lx)
             .attr("y", ly)
             .attr("text-anchor", "middle")
-            .attr("fill", "#000080")
+            .attr("fill", "#002D62")
             .style("font-size", "5px")  // was 10px
             .text(tick);
     });

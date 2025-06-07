@@ -176,9 +176,13 @@
         <!-- Attack Angle Section -->
         <div class="graph-section">
             <h3>Attack Angle Distribution</h3>
-            <div class="chart-container">
+            <div class="chart-container" style="min-height: 100vh;">
                 <div id="chart" class="chart"></div>
                 <div id="chart2" class="chart"></div>
+                <!-- Added container for Explore Swing Metric Correlations -->
+                <div id="leagueCorrelationContainer" style="width:100%; display:flex; justify-content:center; align-items:center; min-height:100vh;">
+                    <canvas id="leagueCorrelationChart" style="width: 100%; height: 100%;"></canvas>
+                </div>
             </div>
             <script type="module" src="story graphs/leagueCorrelation.js"></script>
             <div class="graph-explanation">

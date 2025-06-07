@@ -116,9 +116,11 @@
                     // Compute league or player averages
                     const avgAttack = d3.mean(showData, d => +d.attack_angle) || 0;
                     const avgDir    = d3.mean(showData, d => +d.attack_direction) || 0;
+                    const avgTilt   = d3.mean(showData, d => +d.swing_path_tilt) || 0;
 
                     console.log('showData:', showData);
                     console.log('Calculated avgDir:', avgDir);
+                    console.log('Calculated avgTilt:', avgTilt);
 
                     // Send to 3D swing animation
                     if (window.updateAttackAngleVisualization) {
@@ -126,6 +128,9 @@
                     }
                     if (window.updateDirectionAngleVisualization) {
                         window.updateDirectionAngleVisualization(avgDir);
+                    }
+                    if (window.updateSwingPathTilt) {
+                        window.updateSwingPathTilt(avgTilt);
                     }
                 }
 
@@ -204,13 +209,13 @@
         <!-- Contact Zone Section -->
         <div class="graph-section">
             <h3>Contact Zone Analysis</h3>
-            <div class="heatmap-row">
+            <div class="heatmap-row" style="margin-top: 4rem;">
                 <div class="plot-pair">
                     <div id="heatmap0" class="heatmap"></div>
                     <div id="heatmap2" class="heatmap"></div>
                 </div>
                 <div class="plot-text">
-                    <h3>Contact% Between Counts</h3>
+                    <h3 style="color: #FFA500;">Contact% Between Counts</h3>
                     <p>
                         As we can see from the side-by-side strike zone heatmaps, Yordan's contact% changes drastically from 0-strike counts to 2-strike counts. 
                         We can see how in 0-strike counts, he prefers to make contact more inside and along the middle of the zone, but in 2-strike counts, he expands his zone and even tends to make contact away.

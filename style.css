@@ -712,4 +712,118 @@ h3 {
         font-size: 1rem;
     }
 }
+
+/* Correlation Graphs Section */
+#correlation-section {
+    max-width: 1400px;
+    margin: 2em auto;
+    padding: 2em;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#correlation-section h3 {
+    color: #000080;
+    font-size: 1.8em;
+    margin-bottom: 1.5em;
+    text-align: center;
+    font-weight: 700;
+}
+
+#correlation-graphs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.correlation-graph {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.correlation-graph:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.correlation-graph .title {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #000080;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.correlation-graph svg {
+    display: block;
+    margin: 0 auto;
+}
+
+.correlation-graph .grid line {
+    stroke: #e0e0e0;
+    stroke-opacity: 0.7;
+}
+
+.correlation-graph .tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    pointer-events: none;
+    z-index: 100;
+}
+
+#correlation-select {
+    padding: 0.5em 1em;
+    font-size: 1em;
+    border: 2px solid #000080;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #000080;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+#correlation-select:hover {
+    border-color: #4169E1;
+}
+
+#correlation-select:focus {
+    outline: none;
+    border-color: #4169E1;
+    box-shadow: 0 0 0 2px rgba(65, 105, 225, 0.2);
+}
+
+/* Responsive adjustments for correlation graphs */
+@media (max-width: 1200px) {
+    #correlation-graphs {
+        gap: 1.5rem;
+    }
+    
+    .correlation-graph {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    #correlation-section {
+        padding: 1em;
+    }
+    
+    #correlation-section h3 {
+        font-size: 1.5em;
+    }
+    
+    .correlation-graph .title {
+        font-size: 1em;
+    }
+}
   

@@ -5,6 +5,15 @@ const iMetrics = ['swing%', 'zone_swing%', 'chase%', 'contact%', 'whiff%',
                   'foul%', 'in_play%', 'oppo%', 'gb%', 'barrel%'];
 const jMetrics = ['delta_attack_angle', 'delta_attack_direction', 'delta_swing_path_tilt'];
 
+// Color scheme
+const colors = {
+  primary: '#000080',
+  secondary: '#4169E1',
+  background: '#ffffff',
+  text: '#333333',
+  grid: '#e0e0e0'
+};
+
 function pearsonCorr(x, y) {
   const meanX = d3.mean(x), meanY = d3.mean(y);
   const numerator = d3.sum(x.map((_, i) => (x[i] - meanX) * (y[i] - meanY)));
@@ -15,8 +24,14 @@ function pearsonCorr(x, y) {
   return numerator / denominator;
 }
 
+function formatMetricName(metric) {
+  return metric.replace(/_/g, ' ')
+    .replace(/\b\w/g, l => l.toUpperCase())
+    .replace('Delta ', 'Δ');
+}
+
 function drawScatterMatrix(data, selectedMetric) {
-    const width = 250, height = 250, margin = 40;
+    const width = 300, height = 300, margin = {top: 40, right: 20, bottom: 40, left: 40};
     const container = d3.select("#correlation-graphs");
     container.html(""); // Clear old
   
@@ -31,49 +46,162 @@ function drawScatterMatrix(data, selectedMetric) {
   
       const r = x.length > 1 ? pearsonCorr(x, y).toFixed(2) : "N/A";
   
-      const div = container.append("div").style("margin", "0 10px");
+      const div = container.append("div")
+        .attr("class", "correlation-graph")
+        .style("margin", "1rem")
+        .style("background", colors.background)
+        .style("border-radius", "8px")
+        .style("box-shadow", "0 2px 4px rgba(0,0,0,0.1)")
+        .style("padding", "1rem");
+
+      // Title with correlation coefficient
       div.append("div")
         .attr("class", "title")
         .style("text-align", "center")
-        .text(`${selectedMetric} vs ${j} | r = ${r}`);
+        .style("font-weight", "bold")
+        .style("color", colors.primary)
+        .style("margin-bottom", "0.5rem")
+        .html(`${formatMetricName(selectedMetric)} vs ${formatMetricName(j)}<br>r = ${r}`);
   
       const svg = div.append("svg")
         .attr("width", width)
-        .attr("height", height);
+        .attr("height", height)
+        .style("display", "block");
   
-      const xScale = d3.scaleLinear().domain(d3.extent(x)).nice().range([margin, width - margin]);
-      const yScale = d3.scaleLinear().domain(d3.extent(y)).nice().range([height - margin, margin]);
+      const xScale = d3.scaleLinear()
+        .domain(d3.extent(x))
+        .nice()
+        .range([margin.left, width - margin.right]);
+      
+      const yScale = d3.scaleLinear()
+        .domain(d3.extent(y))
+        .nice()
+        .range([height - margin.bottom, margin.top]);
   
-      svg.append("g").attr("transform", `translate(0,${height - margin})`).call(d3.axisBottom(xScale));
-      svg.append("g").attr("transform", `translate(${margin},0)`).call(d3.axisLeft(yScale));
-  
+      // Add grid lines
+      svg.append("g")
+        .attr("class", "grid")
+        .attr("transform", `translate(0,${height - margin.bottom})`)
+        .call(d3.axisBottom(xScale)
+          .tickSize(-(height - margin.top - margin.bottom))
+          .tickFormat("")
+        )
+        .style("color", colors.grid);
+
+      svg.append("g")
+        .attr("class", "grid")
+        .attr("transform", `translate(${margin.left},0)`)
+        .call(d3.axisLeft(yScale)
+          .tickSize(-(width - margin.left - margin.right))
+          .tickFormat("")
+        )
+        .style("color", colors.grid);
+
+      // Add axes
+      svg.append("g")
+        .attr("transform", `translate(0,${height - margin.bottom})`)
+        .call(d3.axisBottom(xScale))
+        .style("color", colors.text)
+        .append("text")
+        .attr("x", width / 2)
+        .attr("y", margin.bottom - 5)
+        .attr("fill", colors.text)
+        .attr("text-anchor", "middle")
+        .text(formatMetricName(selectedMetric));
+
+      svg.append("g")
+        .attr("transform", `translate(${margin.left},0)`)
+        .call(d3.axisLeft(yScale))
+        .style("color", colors.text)
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("x", -height / 2)
+        .attr("y", -margin.left + 15)
+        .attr("fill", colors.text)
+        .attr("text-anchor", "middle")
+        .text(formatMetricName(j));
+
+      // Add points with tooltips
+      const tooltip = div.append("div")
+        .attr("class", "tooltip")
+        .style("position", "absolute")
+        .style("visibility", "hidden")
+        .style("background", "rgba(0,0,0,0.8)")
+        .style("color", "white")
+        .style("padding", "5px")
+        .style("border-radius", "4px")
+        .style("font-size", "12px");
+
       svg.selectAll("circle")
         .data(x)
         .join("circle")
         .attr("cx", (_, i) => xScale(x[i]))
         .attr("cy", (_, i) => yScale(y[i]))
-        .attr("r", 3)
-        .attr("fill", "steelblue")
-        .attr("opacity", 0.7);
+        .attr("r", 4)
+        .attr("fill", colors.secondary)
+        .attr("opacity", 0.7)
+        .on("mouseover", function(event, d) {
+          const i = x.indexOf(d);
+          tooltip
+            .style("visibility", "visible")
+            .html(`${formatMetricName(selectedMetric)}: ${d.toFixed(2)}<br>${formatMetricName(j)}: ${y[i].toFixed(2)}`);
+        })
+        .on("mousemove", function(event) {
+          tooltip
+            .style("top", (event.pageY - 10) + "px")
+            .style("left", (event.pageX + 10) + "px");
+        })
+        .on("mouseout", function() {
+          tooltip.style("visibility", "hidden");
+        });
     });
-  }
-  
+}
 
 function setupCorrelationGraph(data) {
-  const container = d3.select("body").append("div").attr("id", "correlation-section").style("margin", "2em 0");
-  container.append("h3").text("Explore Swing Metric Correlations");
-  container.append("label")
-    .text("Select Metric: ")
-    .append("select")
+  const container = d3.select("#correlation-section")
+    .style("margin", "2em 0")
+    .style("padding", "1em")
+    .style("background", colors.background)
+    .style("border-radius", "8px")
+    .style("box-shadow", "0 2px 4px rgba(0,0,0,0.1)");
+
+  container.append("h3")
+    .style("color", colors.primary)
+    .style("text-align", "center")
+    .style("margin-bottom", "1em")
+    .text("Explore Swing Metric Correlations");
+
+  const controls = container.append("div")
+    .style("display", "flex")
+    .style("justify-content", "center")
+    .style("align-items", "center")
+    .style("gap", "1em")
+    .style("margin-bottom", "1em");
+
+  controls.append("label")
+    .style("font-weight", "bold")
+    .style("color", colors.text)
+    .text("Select Metric: ");
+
+  controls.append("select")
     .attr("id", "correlation-select")
+    .style("padding", "0.5em")
+    .style("border", `1px solid ${colors.grid}`)
+    .style("border-radius", "4px")
+    .style("background", colors.background)
     .selectAll("option")
     .data(iMetrics)
     .enter()
     .append("option")
     .attr("value", d => d)
-    .text(d => d);
+    .text(d => formatMetricName(d));
 
-  container.append("div").attr("id", "correlation-graphs").style("display", "flex");
+  container.append("div")
+    .attr("id", "correlation-graphs")
+    .style("display", "flex")
+    .style("flex-wrap", "wrap")
+    .style("justify-content", "center")
+    .style("gap", "1rem");
 
   d3.select("#correlation-select").on("change", function() {
     drawScatterMatrix(data, this.value);
@@ -93,4 +221,4 @@ d3.json("files/But/league_trend.json").then(raw => {
     });
   
     setupCorrelationGraph(data);
-  });
+});

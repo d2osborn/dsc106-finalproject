@@ -1,24 +1,4 @@
-// bar_tilt_subset_custom.js
 
-// This D3 script creates a horizontal bar chart of Δ(swing_path_tilt) for a subset of players:
-// 10 players above the target and 30 players below the target, highlighting the target player.
-//
-// Assumes an HTML container:
-// <div id="chart"></div>
-//
-// Also assumes you have a CSV file "delta_angles.csv" with at least these columns:
-//   name_with_stand,delta_swing_path_tilt
-//
-// Example CSV header:
-// name_with_stand,delta_swing_path_tilt
-// Yordan AlvarezL,-14.460727
-// Player A,7.123456
-// Player B,0.345678
-// ...
-
-// -------------------------
-// PARAMETERS
-// -------------------------
 const targetPlayer = "Yordan AlvarezL";
 const csvFile = "files/delta/delta_variance.csv";  // Path to your CSV file
 
@@ -88,6 +68,9 @@ d3.csv(csvFile, d3.autoType).then(data => {
     .nice()
     .range([0, width]);
 
+  console.log('story graphs/tilt.js - x domain:', x.domain());
+  console.log('story graphs/tilt.js - x range:', x.range());
+
   // 6) DRAW AXES
 
   // X Axis (bottom)
@@ -110,19 +93,29 @@ d3.csv(csvFile, d3.autoType).then(data => {
     .selectAll("text")
       .style("font-size", "12px");
 
+  // Add clip path definition
+  svg.append("defs").append("clipPath")
+      .attr("id", "clip")
+    .append("rect")
+      .attr("width", width)
+      .attr("height", height);
+
   // 7) DRAW BARS for the subset
   svg
     .selectAll("rect")
     .data(subset)
     .enter()
     .append("rect")
+      .attr("clip-path", "url(#clip)") // Apply clip path
       .attr("y", d => y(d.name_with_stand))
       .attr("height", y.bandwidth())
-      .attr("x", d => x(Math.min(0, d.delta_swing_path_tilt)))
-      .attr("width", d => Math.abs(x(d.delta_swing_path_tilt) - x(0)))
-      .attr("fill", d =>
-        d.name_with_stand === targetPlayer ? "#ff7f0e" : "steelblue"
-      );
+      .attr("x", x(x.domain()[0])) // All bars start at the leftmost point of the x-axis domain
+      .attr("width", d => {
+        const barWidth = x(d.delta_swing_path_tilt) - x(x.domain()[0]);
+        console.log(`Bar for ${d.name_with_stand}: value=${d.delta_swing_path_tilt}, x=${x(d.delta_swing_path_tilt)}, start_x=${x(x.domain()[0])}, width=${barWidth}`);
+        return barWidth;
+      })
+      .attr("fill", d => d.name_with_stand === targetPlayer ? "#ff7f0e" : "navy");
 
   // 8) ADD VALUE LABELS ON BARS
   svg
@@ -132,13 +125,10 @@ d3.csv(csvFile, d3.autoType).then(data => {
     .append("text")
       .attr("class", "bar-label")
       .attr("y", d => y(d.name_with_stand) + y.bandwidth() / 2 + 4)
-      .attr("x", d => {
-        const val = x(d.delta_swing_path_tilt);
-        return d.delta_swing_path_tilt >= 0 ? val + 5 : val - 5;
-      })
-      .attr("text-anchor", d => (d.delta_swing_path_tilt >= 0 ? "start" : "end"))
+      .attr("x", d => x(d.delta_swing_path_tilt) + 5) // Position label slightly to the right of the bar end
+      .attr("text-anchor", "start") // Anchor labels to the start
       .style("font-size", "11px")
-      .style("fill", d => (d.name_with_stand === targetPlayer ? "#000" : "#fff"))
+      .style("fill", d => d.name_with_stand === targetPlayer ? "#000" : "#fff")
       .text(d => d.delta_swing_path_tilt.toFixed(2));
 
   // 9) TITLE
@@ -155,12 +145,13 @@ d3.csv(csvFile, d3.autoType).then(data => {
   const targetData = subset.find(d => d.name_with_stand === targetPlayer);
   svg
     .append("rect")
+      .attr("clip-path", "url(#clip)") // Apply clip path
       .attr("y", y(targetPlayer) - 2)
       .attr("height", y.bandwidth() + 4)
-      .attr("x", x(Math.min(0, targetData.delta_swing_path_tilt)))
-      .attr("width", Math.abs(x(targetData.delta_swing_path_tilt) - x(0)))
+      .attr("x", x(x.domain()[0])) // Outline starts at the leftmost point of the x-axis domain
+      .attr("width", x(targetData.delta_swing_path_tilt) - x(x.domain()[0])) // Width extends from start of domain to value
       .attr("fill", "none")
       .attr("stroke", "red")
       .attr("stroke-width", 2)
-      .lower();  // ensure the outline is behind the bars
+      .lower();
 });

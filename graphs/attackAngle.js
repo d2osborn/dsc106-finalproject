@@ -7,7 +7,7 @@ export function drawAttackAngle(containerSel, data, config) {
         .attr('x', 200)
         .attr('y', 50)
         .attr('text-anchor', 'middle')
-        .attr('fill', '#000080')
+        .attr('fill', '#002D62')
         .style('font-size', '2vw')
         .text(config.title);
     const angleScale = d3.scaleLinear().domain([0, config.max]).range([0, Math.PI/3]);
@@ -33,7 +33,7 @@ export function drawAttackAngle(containerSel, data, config) {
     const redY = ballY - lineLength * Math.sin(zeroAngle - theta);
     const fillPoly = svg.append('polygon')
         .attr('points', `${ballX},${ballY} ${blackX},${blackY} ${redX},${redY}`)
-        .attr('fill', "#000080")
+        .attr('fill', "#002D62")
         .attr('opacity', 0.5);
     fillPoly.transition().duration(1000).attrTween("points", function() {
         return t => {
@@ -45,7 +45,7 @@ export function drawAttackAngle(containerSel, data, config) {
     const redLine = svg.append('line')
         .attr('x1', ballX).attr('y1', ballY)
         .attr('x2', blackX).attr('y2', blackY)
-        .attr('stroke', '#000080')
+        .attr('stroke', '#002D62')
         .attr('stroke-width', 4);
     redLine.transition().duration(1000)
         .attrTween("x2", () => {

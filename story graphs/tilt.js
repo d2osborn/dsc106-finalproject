@@ -81,7 +81,7 @@ d3.csv(csvFile, d3.autoType).then(data => {
     .append("text")
       .attr("x", width / 2)
       .attr("y", 35)
-      .attr("fill", "#000")
+      .attr("fill", "#002D62")
       .attr("text-anchor", "middle")
       .style("font-size", "14px")
       .text("Δ Swing Path Tilt");
@@ -128,7 +128,7 @@ d3.csv(csvFile, d3.autoType).then(data => {
       .attr("x", d => x(d.delta_swing_path_tilt) + 5) // Position label slightly to the right of the bar end
       .attr("text-anchor", "start") // Anchor labels to the start
       .style("font-size", "11px")
-      .style("fill", d => d.name_with_stand === targetPlayer ? "#000" : "#fff")
+      .style("fill", d => d.name_with_stand === targetPlayer ? "#002D62" : "#fff")
       .text(d => d.delta_swing_path_tilt.toFixed(2));
 
   // 9) TITLE

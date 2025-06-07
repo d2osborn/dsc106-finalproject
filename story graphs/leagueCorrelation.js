@@ -12,10 +12,10 @@ const jMetrics = ['delta_attack_angle', 'delta_attack_direction', 'delta_swing_p
 
 // Color scheme
 const colors = {
-  primary: '#000080',
-  secondary: '#4169E1',
+  primary: '#002D62',
+  secondary: '#EB6E1F',
   background: '#ffffff',
-  text: '#333333',
+  text: '#002D62',
   grid: '#e0e0e0'
 };
 
@@ -40,13 +40,16 @@ function pearsonCorr(x, y) {
 }
 
 function formatMetricName(metric) {
-  // keep brand-style mixed-case names intact
   if (metric === 'wOBA') return 'wOBA';
 
   return metric
-    .replace(/_/g, ' ')            // underscores → spaces
-    .replace(/\b\w/g, l => l.toUpperCase())
-    .replace('Delta ', 'Δ');
+    .split('_')
+    .map((word, i) => {
+      if (word.toLowerCase() === 'gb') return 'GB';
+      if (i === 0 && word === 'delta') return 'Δ';
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join('');
 }
 
 function drawScatterMatrix(data, selectedMetric) {

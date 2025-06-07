@@ -106,7 +106,7 @@ d3.csv(csvFile, d3.autoType).then(data => {
     .append("text")
       .attr("x", width / 2)
       .attr("y", 40)
-      .attr("fill", "#000")
+      .attr("fill", "#002D62")
       .attr("text-anchor", "middle")
       .style("font-size", "14px")
       .text("Delta Attack Angle");
@@ -119,7 +119,7 @@ d3.csv(csvFile, d3.autoType).then(data => {
       .attr("transform", "rotate(-90)")
       .attr("x", -height / 2)
       .attr("y", -40)
-      .attr("fill", "#000")
+      .attr("fill", "#002D62")
       .attr("text-anchor", "middle")
       .style("font-size", "14px")
       .text("Number of Players");
@@ -134,7 +134,7 @@ d3.csv(csvFile, d3.autoType).then(data => {
       .attr("y", d => y(d.length))
       .attr("width", d => Math.max(0, x(d.x1) - x(d.x0) - 1))
       .attr("height", d => height - y(d.length))
-      .attr("fill", "blue")
+      .attr("fill", "#EB6E1F")
       .attr("stroke", "black");
 
   // 5) DRAW VERTICAL LINE FOR TARGET PLAYER

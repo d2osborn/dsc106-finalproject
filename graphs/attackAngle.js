@@ -32,33 +32,28 @@ export function drawAttackAngle(containerSel, data, config) {
     const redX = ballX + lineLength * Math.cos(zeroAngle - theta);
     const redY = ballY - lineLength * Math.sin(zeroAngle - theta);
     const fillPoly = svg.append('polygon')
-        .attr('points', `${ballX},${ballY} ${blackX},${blackY} ${ballX},${ballY}`)
+        .attr('points', `${ballX},${ballY} ${blackX},${blackY} ${redX},${redY}`)
         .attr('fill', "#000080")
         .attr('opacity', 0.5);
-    const prevAngle = window.__prev_attack_angle__ || 0;
-    const prevTheta = angleScale(prevAngle);
-    const prevRedX = ballX + lineLength * Math.cos(zeroAngle - prevTheta);
-    const prevRedY = ballY - lineLength * Math.sin(zeroAngle - prevTheta);
-    window.__prev_attack_angle__ = avg;
     fillPoly.transition().duration(1000).attrTween("points", function() {
         return t => {
-            const currX = prevRedX + (redX - prevRedX) * t;
-            const currY = prevRedY + (redY - prevRedY) * t;
+            const currX = blackX + (redX - blackX) * t;
+            const currY = blackY + (redY - blackY) * t;
             return `${ballX},${ballY} ${blackX},${blackY} ${currX},${currY}`;
         };
     });
     const redLine = svg.append('line')
         .attr('x1', ballX).attr('y1', ballY)
-        .attr('x2', prevRedX).attr('y2', prevRedY)
+        .attr('x2', blackX).attr('y2', blackY)
         .attr('stroke', '#000080')
         .attr('stroke-width', 4);
     redLine.transition().duration(1000)
         .attrTween("x2", () => {
-            const interp = d3.interpolate(prevRedX, redX);
+            const interp = d3.interpolate(blackX, redX);
             return t => interp(t);
         })
         .attrTween("y2", () => {
-            const interp = d3.interpolate(prevRedY, redY);
+            const interp = d3.interpolate(blackY, redY);
             return t => interp(t);
         });
     svg.append('text')
@@ -70,7 +65,7 @@ export function drawAttackAngle(containerSel, data, config) {
         .text(avg.toFixed(1) + "°");
     
     // Replace the MLB Average call with:
-    appendMLBAverage(svg, 200, 380, data, 'attack_angle', "24px");
+    appendMLBAverage(svg, 200, 380, data, 'attack_angle', "20px");
 }
 
 // Append the MLB Average utility function at the bottom:
@@ -81,7 +76,7 @@ function appendMLBAverage(svg, cx, y, data, field, overrideFontSize) {
     } else if (data && data.length > 0) {
         mlbAvg = d3.mean(data, d => +d[field]);
     }
-    const fontSize = overrideFontSize || "24px";
+    const fontSize = overrideFontSize || "20px";
     svg.append('text')
        .attr('x', cx)
        .attr('y', y)

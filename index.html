@@ -176,15 +176,10 @@
         <!-- Attack Angle Section -->
         <div class="graph-section">
             <h3>Attack Angle Distribution</h3>
-            <div class="chart-container" style="min-height: 100vh;">
+            <div class="chart-container">
                 <div id="chart" class="chart"></div>
                 <div id="chart2" class="chart"></div>
-                <!-- Added container for Explore Swing Metric Correlations -->
-                <div id="leagueCorrelationContainer" style="width:100%; display:flex; justify-content:center; align-items:center; min-height:100vh;">
-                    <canvas id="leagueCorrelationChart" style="width: 100%; height: 100%;"></canvas>
-                </div>
             </div>
-            <script type="module" src="story graphs/leagueCorrelation.js"></script>
             <div class="graph-explanation">
                 <p>
                     The distribution of attack angle changes between 0-strike and 2-strike counts reveals how hitters adjust their swing plane.
@@ -213,10 +208,10 @@
         <!-- Contact Zone Section -->
         <div class="graph-section">
             <h3>Contact Zone Analysis</h3>
-            <div class="heatmap-row" style="margin-top: 4rem;">
+            <div class="heatmap-row">
                 <div class="plot-pair">
-                    <div id="heatmap0" class="heatmap"></div>
-                    <div id="heatmap2" class="heatmap"></div>
+                    <div id="heatmap0" class="heatmap" style="margin-top: 5rem;"></div>
+                    <div id="heatmap2" class="heatmap" style="margin-top: 5rem;"></div>
                 </div>
                 <div class="plot-text">
                     <h3 style="color: #FFA500;">Contact% Between Counts</h3>
@@ -273,6 +268,10 @@
             </div>
         </div>
     </section>
+
+    <!-- Correlation Section -->
+    <div id="correlation-section"></div>
+    <script type="module" src="story graphs/leagueCorrelation.js"></script>
 
     <script>
         const titleWords = [

@@ -136,6 +136,7 @@ body, button, input, select, textarea {
     user-select: none;
     pointer-events: none;
     line-height: 1.1;
+    text-transform: uppercase;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -439,49 +440,56 @@ label {
 
 /* —— flex row that holds plots + text —— */
 .heatmap-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 2.5rem;
-  margin: 2rem auto;
-  max-width: 1200px;
-  padding: 0 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 2.5rem;
+    margin: 4rem auto;
+    max-width: 1200px;
+    padding: 0 20px;
 }
 
 /* —— pair of plots —— */
 .plot-pair {
-  display: flex;
-  flex-direction: row;
-  gap: 1.5rem;
-  flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    flex: 0 0 auto;
 }
 
 /* —— each heat-map tile —— */
 .heatmap {
-  width: 300px;      /* bump up from 240 → 300 for less blur */
-  height: 300px;
-  flex: 0 0 auto;    /* keep them fixed-size */
-  position: relative;
-  overflow: hidden;
+    width: 300px;
+    height: 300px;
+    flex: 0 0 auto;
+    position: relative;
+    overflow: hidden;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.heatmap svg     { width: 100%; height: 100%; display: block; }
+.heatmap svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
 
 /* —— explanatory text —— */
 .plot-text {
-  flex: 1;
-  max-width: 480px;
-  line-height: 1.55;
-  padding: 0 20px;
+    flex: 1;
+    max-width: 480px;
+    line-height: 1.55;
+    padding: 0 20px;
 }
 .plot-text .hl {
-  color: #F5C26B;
-  font-weight: 700;
+    color: #F5C26B;
+    font-weight: 700;
 }
 
 /* —— stack vertically on small screens —— */
 @media (max-width: 850px) {
-  .heatmap-row { flex-direction: column; }
-  .plot-pair   { justify-content: center; }
+    .heatmap-row { flex-direction: column; }
+    .plot-pair   { justify-content: center; }
 }
 
 .sandbox-viz {
@@ -490,7 +498,7 @@ label {
   
 
 h3 {
-  color: #EB6E1F;
+    color: #EB6E1F;
 }
 .chart-container {
     display: flex;
@@ -556,7 +564,7 @@ h3 {
 
 /* Graph Sections */
 .graph-section {
-    margin: 3rem auto;
+    margin: 6rem auto;
     max-width: 1200px;
     padding: 0 20px;
 }
@@ -564,7 +572,7 @@ h3 {
 .graph-section h3 {
     color: #000080;
     font-size: 1.5rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 3rem;
     text-align: center;
 }
 
@@ -614,7 +622,7 @@ h3 {
     display: flex;
     align-items: flex-start;
     gap: 2.5rem;
-    margin: 2rem auto;
+    margin: 4rem auto;
     max-width: 1200px;
     padding: 0 20px;
 }
@@ -664,16 +672,6 @@ h3 {
 
 /* Responsive Design */
 @media (max-width: 1200px) {
-    .chart-container {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .chart {
-        width: 100%;
-        max-width: 800px;
-    }
-    
     .heatmap-row {
         flex-direction: column;
         align-items: center;
@@ -687,143 +685,20 @@ h3 {
         max-width: 100%;
         text-align: center;
     }
-    
-    .graph-explanation {
-        text-align: center;
-    }
 }
 
 @media (max-width: 768px) {
-    .chart {
-        height: 300px;
-    }
-    
     .heatmap {
         width: 250px;
         height: 250px;
     }
     
-    .graph-section h3 {
-        font-size: 1.3rem;
+    .plot-text h3 {
+        font-size: 1.2rem;
     }
     
-    .graph-explanation p,
     .plot-text p {
         font-size: 1rem;
-    }
-}
-
-/* Correlation Graphs Section */
-#correlation-section {
-    max-width: 1400px;
-    margin: 2em auto;
-    padding: 2em;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-#correlation-section h3 {
-    color: #000080;
-    font-size: 1.8em;
-    margin-bottom: 1.5em;
-    text-align: center;
-    font-weight: 700;
-}
-
-#correlation-graphs {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2rem;
-    margin-top: 2rem;
-}
-
-.correlation-graph {
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.correlation-graph:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.correlation-graph .title {
-    font-size: 1.1em;
-    font-weight: 600;
-    color: #000080;
-    margin-bottom: 1rem;
-    line-height: 1.4;
-}
-
-.correlation-graph svg {
-    display: block;
-    margin: 0 auto;
-}
-
-.correlation-graph .grid line {
-    stroke: #e0e0e0;
-    stroke-opacity: 0.7;
-}
-
-.correlation-graph .tooltip {
-    position: absolute;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    pointer-events: none;
-    z-index: 100;
-}
-
-#correlation-select {
-    padding: 0.5em 1em;
-    font-size: 1em;
-    border: 2px solid #000080;
-    border-radius: 6px;
-    background: #ffffff;
-    color: #000080;
-    cursor: pointer;
-    transition: border-color 0.2s ease;
-}
-
-#correlation-select:hover {
-    border-color: #4169E1;
-}
-
-#correlation-select:focus {
-    outline: none;
-    border-color: #4169E1;
-    box-shadow: 0 0 0 2px rgba(65, 105, 225, 0.2);
-}
-
-/* Responsive adjustments for correlation graphs */
-@media (max-width: 1200px) {
-    #correlation-graphs {
-        gap: 1.5rem;
-    }
-    
-    .correlation-graph {
-        padding: 1rem;
-    }
-}
-
-@media (max-width: 768px) {
-    #correlation-section {
-        padding: 1em;
-    }
-    
-    #correlation-section h3 {
-        font-size: 1.5em;
-    }
-    
-    .correlation-graph .title {
-        font-size: 1em;
     }
 }
   

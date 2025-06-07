@@ -1,6 +1,11 @@
 // leagueCorrelation.js
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
+// Add error handling for module loading
+window.addEventListener('error', function(e) {
+    console.error('Module loading error:', e);
+});
+
 const iMetrics = ['swing%', 'zone_swing%', 'chase%', 'contact%', 'whiff%', 
                   'foul%', 'in_play%', 'oppo%', 'gb%', 'barrel%'];
 const jMetrics = ['delta_attack_angle', 'delta_attack_direction', 'delta_swing_path_tilt'];
@@ -132,14 +137,36 @@ function drawScatterMatrix(data, selectedMetric) {
         .style("border-radius", "4px")
         .style("font-size", "12px");
 
+      // Calculate regression line
+      const n = x.length;
+      const sumX = d3.sum(x);
+      const sumY = d3.sum(y);
+      const sumXY = d3.sum(x.map((xi, i) => xi * y[i]));
+      const sumX2 = d3.sum(x.map(xi => xi * xi));
+      const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+      const intercept = (sumY - slope * sumX) / n;
+
+      // Add regression line
+      const line = d3.line()
+        .x(d => d)
+        .y(d => slope * d + intercept);
+
+      svg.append("path")
+        .datum(x)
+        .attr("fill", "none")
+        .attr("stroke", colors.primary)
+        .attr("stroke-width", 2)
+        .attr("d", line);
+
+      // Add points with increased size and opacity
       svg.selectAll("circle")
         .data(x)
         .join("circle")
         .attr("cx", (_, i) => xScale(x[i]))
         .attr("cy", (_, i) => yScale(y[i]))
-        .attr("r", 4)
+        .attr("r", 5)  // Increased from 4
         .attr("fill", colors.secondary)
-        .attr("opacity", 0.7)
+        .attr("opacity", 0.8)  // Increased from 0.7
         .on("mouseover", function(event, d) {
           const i = x.indexOf(d);
           tooltip
@@ -160,10 +187,7 @@ function drawScatterMatrix(data, selectedMetric) {
 function setupCorrelationGraph(data) {
   const container = d3.select("#correlation-section")
     .style("margin", "2em 0")
-    .style("padding", "1em")
-    .style("background", colors.background)
-    .style("border-radius", "8px")
-    .style("box-shadow", "0 2px 4px rgba(0,0,0,0.1)");
+    .style("padding", "1em");
 
   container.append("h3")
     .style("color", colors.primary)
@@ -211,14 +235,24 @@ function setupCorrelationGraph(data) {
 }
 
 d3.json("files/But/league_trend.json").then(raw => {
+    console.log("Raw data loaded:", raw);  // Debug log
+    
     const keys = Object.keys(raw);
+    console.log("Data keys:", keys);  // Debug log
+    
     const length = raw[keys[0]].length;
+    console.log("Data length:", length);  // Debug log
   
     const data = Array.from({ length }, (_, i) => {
       const row = {};
       keys.forEach(k => row[k] = raw[k][i]);
       return row;
     });
+    
+    console.log("Processed data sample:", data.slice(0, 3));  // Debug log
+    console.log("Total data points:", data.length);  // Debug log
   
     setupCorrelationGraph(data);
+}).catch(error => {
+    console.error("Error loading data:", error);  // Error handling
 });

@@ -22,11 +22,6 @@ export function drawBatSpeed(containerSel, data, config) {
         .domain([0, 100])
         .range([-3 * Math.PI/4, 3 * Math.PI/4]);
     const avg = d3.mean(data, d => +d.bat_speed) || 0;
-
-    // Get previous speed if it exists
-    const prevSpeed = window.__prev_bat_speed__ || 0;
-    window.__prev_bat_speed__ = avg;
-
     const fgArc = d3.arc()
         .innerRadius(30)
         .outerRadius(34)
@@ -36,24 +31,28 @@ export function drawBatSpeed(containerSel, data, config) {
         .attr('fill', "#000080");
     fgPath.transition().duration(1000)
         .attrTween('d', function() {
-            const interp = d3.interpolate(scale(prevSpeed), scale(avg));
+            const interp = d3.interpolate(-3 * Math.PI/4, scale(avg));
             return t => fgArc.endAngle(interp(t))();
         });
     const needle = svg.append('line')
         .attr('x1', 50)   // was 100
         .attr('y1', 50)   // was 100
-        .attr('x2', 50 + 34 * Math.cos(scale(prevSpeed) - Math.PI/2))  // 68 halved is 34
-        .attr('y2', 50 + 34 * Math.sin(scale(prevSpeed) - Math.PI/2))
+        .attr('x2', 50 + 34 * Math.cos(scale(0) - Math.PI/2))  // 68 halved is 34
+        .attr('y2', 50 + 34 * Math.sin(scale(0) - Math.PI/2))
         .attr('stroke', '#EE3311')
         .attr('stroke-width', 2);  // was 4
     needle.transition().duration(1000)
-        .attrTween('x2', () => {
-            const interp = d3.interpolate(scale(prevSpeed), scale(avg));
-            return t => 50 + 34 * Math.cos(interp(t) - Math.PI/2);
+        .attrTween("x2", function() {
+            return function(t) {
+                const currentAngle = scale(0) + (scale(avg) - scale(0)) * t;
+                return 50 + 34 * Math.cos(currentAngle - Math.PI/2);
+            };
         })
-        .attrTween('y2', () => {
-            const interp = d3.interpolate(scale(prevSpeed), scale(avg));
-            return t => 50 + 34 * Math.sin(interp(t) - Math.PI/2);
+        .attrTween("y2", function() {
+            return function(t) {
+                const currentAngle = scale(0) + (scale(avg) - scale(0)) * t;
+                return 50 + 34 * Math.sin(currentAngle - Math.PI/2);
+            };
         });
     const textVal = svg.append('text')
         .attr('x', 50)   // was 100
@@ -69,18 +68,17 @@ export function drawBatSpeed(containerSel, data, config) {
         });
     
     // Update MLB Average call to match dashboard usage:
-    appendMLBAverage(svg, 50, 90, data, 'bat_speed', "6px");
+    appendMLBAverage(svg, 50, 95, data, 'bat_speed', "5px");
     
-    const tickGroup = svg.append('g')
-        .attr('transform', `translate(50,50)`);
+    const tickGroup = svg.append('g');
     d3.range(0, 101, 20).forEach(tick => {
         const angle = scale(tick);
         const lineStart = 26;      // was (60 - 8) = 52, then half = 26
         const lineEnd = 37.5;      // was (60 + 15) = 75, then half = 37.5
-        const x1 = lineStart * Math.cos(angle - Math.PI/2);
-        const y1 = lineStart * Math.sin(angle - Math.PI/2);
-        const x2 = lineEnd * Math.cos(angle - Math.PI/2);
-        const y2 = lineEnd * Math.sin(angle - Math.PI/2);
+        const x1 = 50 + lineStart * Math.cos(angle - Math.PI/2);
+        const y1 = 50 + lineStart * Math.sin(angle - Math.PI/2);
+        const x2 = 50 + lineEnd * Math.cos(angle - Math.PI/2);
+        const y2 = 50 + lineEnd * Math.sin(angle - Math.PI/2);
         tickGroup.append("line")
             .attr("x1", x1)
             .attr("y1", y1)
@@ -89,8 +87,8 @@ export function drawBatSpeed(containerSel, data, config) {
             .attr("stroke", "#fff")
             .attr("stroke-width", 1);  // was 2
         const labelRadius = 20;      // originally (60-20)=40, half becomes 20
-        const lx = labelRadius * Math.cos(angle - Math.PI/2);
-        const ly = labelRadius * Math.sin(angle - Math.PI/2) + 2; // half of 4 offset
+        const lx = 50 + labelRadius * Math.cos(angle - Math.PI/2);
+        const ly = 50 + labelRadius * Math.sin(angle - Math.PI/2) + 2; // half of 4 offset
         tickGroup.append("text")
             .attr("x", lx)
             .attr("y", ly)
@@ -109,7 +107,7 @@ function appendMLBAverage(svg, cx, y, data, field, overrideFontSize) {
     } else if (data && data.length > 0) {
         mlbAvg = d3.mean(data, d => +d[field]);
     }
-    const fontSize = overrideFontSize || "6px";
+    const fontSize = overrideFontSize || "10px";
     svg.append('text')
        .attr('x', cx)
        .attr('y', y)
@@ -117,5 +115,5 @@ function appendMLBAverage(svg, cx, y, data, field, overrideFontSize) {
        .style('font-size', fontSize)
        .style('fill', '#E63946')
        .text(mlbAvg !== null && !isNaN(mlbAvg) ?
-             `MLB Average: ${mlbAvg.toFixed(1)}${field==="bat_speed"?" mph":""}` : '');
+             `MLB Average: ${mlbAvg.toFixed(1)}${field==="attack_angle"?"°":""}` : '');
 }

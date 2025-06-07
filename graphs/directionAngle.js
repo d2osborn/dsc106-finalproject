@@ -35,36 +35,29 @@ export function drawDirectionAngle(containerSel, data, config) {
         .attr('stroke-dasharray', '8,6');
     const redX = ballX + lineLength * Math.cos(zeroAngle + theta);
     const redY = ballY + lineLength * Math.sin(zeroAngle + theta);
-    // Get previous angle if it exists
-    const prevAngle = window.__prev_direction_angle__ || 0;
-    const prevTheta = angleScale(prevAngle);
-    const prevRedX = ballX + lineLength * Math.cos(zeroAngle + prevTheta);
-    const prevRedY = ballY + lineLength * Math.sin(zeroAngle + prevTheta);
-    // Store current angle for next transition
-    window.__prev_direction_angle__ = avg;
     const fillPoly = svg.append('polygon')
         .attr('points', `${ballX},${ballY} ${blackX},${blackY} ${ballX},${ballY}`)
         .attr('fill', "#000080")
         .attr('opacity', 0.5);
     fillPoly.transition().duration(1000).attrTween("points", function() {
         return t => {
-            const currX = prevRedX + (redX - prevRedX) * t;
-            const currY = prevRedY + (redY - prevRedY) * t;
+            const currX = blackX + (redX - blackX) * t;
+            const currY = blackY + (redY - blackY) * t;
             return `${ballX},${ballY} ${blackX},${blackY} ${currX},${currY}`;
         };
     });
     const redLine = svg.append('line')
         .attr('x1', ballX).attr('y1', ballY)
-        .attr('x2', prevRedX).attr('y2', prevRedY)
+        .attr('x2', blackX).attr('y2', blackY)
         .attr('stroke', '#EE3311')
         .attr('stroke-width', 4);
     redLine.transition().duration(1000)
         .attrTween("x2", () => {
-            const interp = d3.interpolate(prevRedX, redX);
+            const interp = d3.interpolate(blackX, redX);
             return t => interp(t);
         })
         .attrTween("y2", () => {
-            const interp = d3.interpolate(prevRedY, redY);
+            const interp = d3.interpolate(blackY, redY);
             return t => interp(t);
         });
     svg.append('text')
@@ -75,7 +68,7 @@ export function drawDirectionAngle(containerSel, data, config) {
         .style('font-size', '22px')
         .text(avg.toFixed(1) + "°");
 
-    appendMLBAverage(svg, 200, 380, data, 'attack_direction', "24px");
+    appendMLBAverage(svg, 200, 380, data, 'attack_direction', "20px");
 }
 
 function appendMLBAverage(svg, cx, y, data, field, overrideFontSize) {
@@ -85,7 +78,7 @@ function appendMLBAverage(svg, cx, y, data, field, overrideFontSize) {
     } else if (data && data.length > 0) {
         mlbAvg = d3.mean(data, d => +d[field]);
     }
-    const fontSize = overrideFontSize || "24px";
+    const fontSize = overrideFontSize || "20px";
     svg.append('text')
        .attr('x', cx)
        .attr('y', y)

@@ -41,7 +41,7 @@ d3.json("files/yordan/yordansummary.json").then(data => {
       keyPct:     "barrel%_percentile",
       actualKey:  "barrel%",
       label:      "Barrel %",
-      format:     d => (d.actual * 100).toFixed(1) + "%"
+      format:     d => (d.actual * 100).toFixed(1)
     },
     {
       keyPct:     "HRs_percentile",
@@ -70,7 +70,8 @@ d3.json("files/yordan/yordansummary.json").then(data => {
     .attr("x", WIDTH/2)
     .attr("y", HEADER_HEIGHT/2 + 6)
     .attr("text-anchor", "middle")
-    .text("Yordan's 2024 Statistics");
+    .style("fill", "#002D62")
+    .text("Yordan's 2024 Percentiles");
 
   // Create a grid that fills the remaining space
   const gridX = 0;

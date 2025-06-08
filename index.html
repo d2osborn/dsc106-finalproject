@@ -185,8 +185,9 @@
     <section class="section-container">
         <p class="intro">
             Yordan Alverz is known for his consistent at bat approach even at tough situations like 2-strike counts. 
-            At 2 strikes, batters tends to focus more on making contact to survive or to get on the base instead of trying to slug the ball.
-            However, that leads to them loosing quality of hits. 
+            At 2 strikes, it's common knowledge that hitters are taught to use a "B swing".
+            Batters tends to focus more on making contact to survive or to get on the base instead of trying to slug the ball.
+            However, that leads to them losing quality of hits. 
             Yordan Alverz stands out even from the MLB level hitters because even at 2 strikes he successfully make contacts that has high quality(shown in wOBA).
             What is is doing different?
         </p>
@@ -250,22 +251,25 @@
             <br></br>
             For further analysis, we can encorporate Baseball Savant recently released new swing metrics: attack angle (º), attack direction (º), and swing path (tilt) (º)<br><br>
             These new metrics allow the public to take a deeper dive into swing geometry and better understand how hitters approach each at-bat. 
-            For example, offering insight into how a player like Mookie Betts can hit 30 home runs despite being 5'9" with below-average swing speed.
+            Their swing geometry can dramatically affect batted-ball outcomes like wOBA, contact%, and groundball%.
+
             To help reveal the relationship between a hitter's swing characteristics and the outcomes they produce, we have segmented situations based on the strike counts.
-            <br><br>
-            It's common knowledge that hitters are taught to use a "B swing" in two-strike counts. Do the data reveal major leaguers follow this advice?
-            Are they adjusting their swing geometry, when facing two strikes, or is the idea of a two-strike approach more myth than reality?
-            These adjustments can dramatically affect batted-ball outcomes like wOBA, contact%, and groundball%.
+            Let's dive deeper into Yordan Alverz's change in swings.
+            Compared to his 0-strike approach, he shows increase in variance in all three metrics. This results reveals that he adjusts his swings in order to stay alive.
+            Out of all the metrics he showed the greatest change in attack angle, that he will focus more on quality hit than slugging.
+            Compared to other hitters, he was moderate to low in change in variance for Swing tilt or attact direction. This result could mean that although he is changing his tilt of his upper body but the angle that his arms and his body makes remain consistent.
+            Do the data reveal major leaguers follow Yordan's approach?
         </p>
           <!-- Delta Histograms Section -->
           <section class="graph-section">
               <div id="delta-hists" class="histogram-row"></div>
           </section>
-
-          <p class="Therefore">
-              As stated earlier, every hitter has a unique way of managing tough counts; some shorten up, some stay aggressive, and others (like Yordan) retool their entire swing shape.
-              Now it's your turn: explore your favorite players' swing mechanics and outcomes. What makes them successful in two-strike situations?<br>
+          <p class = "But">
+            Here's change in variance scatter plot for the each metrics against important outcome rates.
+            Explore league-wide trend and see how Yordan Alverez's appraoch can be justified.
+            You can also dive deeper into player specific data down in the sandbox.
           </p>
+
       </section>
 
     <!-- Correlation Section -->
@@ -309,7 +313,16 @@
             </div>
         </div>
     </section>
+    <p class="Therefore">
+        There seemed to be no textbook answer for swing adjustment at tough situations. 
+        However, these new metrics brought us more clear idea there are combinations of change in approach that players can benefit from.
+        The players with this knowledge can develop their unique swing geometry change.
+        The mangers and coaches can also get analytical views on their players' approach to build sounder line up.
+        These metrics, even though very insightful, should be taken into considerations of other components such as height, weight, ability to track the ball, bat speed, pressure, mentality.
+        Therefore, it would be more comprehensive for further research that could encompass the other compounding factors. 
+        
 
+    </p>
     <script>
         const titleWords = [
             ["The  ", "Effect"],

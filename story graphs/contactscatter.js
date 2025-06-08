@@ -32,6 +32,7 @@ function drawContactScatter() {
       data.forEach(d => {
         d.wOBA = +d.wOBA;
         d["contact%"] = +d["contact%"];
+        d.cleanName = d.name_with_stand.replace(/[LR]$/, "");
       });
 
       const x = d3.scaleLinear()
@@ -64,7 +65,7 @@ function drawContactScatter() {
         .attr("fill", "orange")
         .attr("opacity", 0.6);
 
-      const target = data.find(d => d.name_with_stand === "Yordan AlvarezL");
+      const target = data.find(d => d.cleanName === "Yordan Alvarez");
       if (target) {
         const xVal = x(target.wOBA);
         const yVal = y(target["contact%"]);
@@ -79,7 +80,7 @@ function drawContactScatter() {
         svg.append("text")
           .attr("x", xVal + 6)
           .attr("y", yVal - 10)
-          .text(target.name_with_stand)
+          .text(target.cleanName)
           .attr("font-weight", "bold")
           .attr("font-size", "12px");
       }

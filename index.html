@@ -163,23 +163,25 @@
         
         <div class="scroll-arrows" onclick="scrollPastVideo()">&#x276F;&#x276F;&#x276F;</div>
     </div>
-    <p class="intro">
-        Yordan Álvarez, the Cuban-born designated hitter/left fielder for the Houston Astros, enjoyed a breakout 2024 campaign in which he slashed .308 AVG, .392 OBP, .567 SLG (.959 OPS) over 147 games (635 PA), belted 35 homers, drove in 86 runs and scored 88 times while earning his third consecutive All-Star nod (his first as the AL's starting DH), hit for the cycle on July 21, and launched his 150th career home run in just 590 games—the eighth-fastest mark in MLB history; he was voted Astros MVP by the local BBWAA chapter, named to the All-MLB Second Team, and finished ninth in AL MVP voting
-    </p>
-        <!-- TOOLTIP -->
-        <div id="tooltip"
-             style="opacity:0; position:absolute; pointer-events:none;
-                    background:white; border:1px solid #ccc; padding:6px;
-                    border-radius:4px; font-size:12px; z-index:1000;">
+    <!-- COMBINED STATS/INTRO/CHART CONTAINER -->
+    <div id="chart-stats-container">
+        <!-- 30%: your stats card -->
+        <div id="stats"></div>
+    
+        <!-- 70%: stacked intro + scatter -->
+        <div id="right-panel">
+        <div id="intro-panel">
+            <p class="intro">
+            Yordan Álvarez, the Cuban-born designated hitter/left fielder…finished ninth in AL MVP voting.
+            </p>
         </div>
-      
-        <!-- …your video, titles, etc… -->
-      
-        <!-- SIDE-BY-SIDE STATS & CHART -->
-        <div id="chart-stats-container" style="display: flex; gap: 20px;">
-            <div id="stats" class="chart" style="flex: 0.6;"></div>
-            <div id="overall-graph" class="chart" style="flex: 1.4;"></div>
+        <div id="chart-panel">
+            <div id="tooltip"></div>
+            <div id="overall-graph" class="chart"></div>
         </div>
+        </div>
+    </div>
+    
       
     
     <section class="section-container">

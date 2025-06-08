@@ -786,55 +786,61 @@ h1,h2,h3,h4,h5,h6,p { margin-block: 0; }
   #tooltip {
     z-index: 1000;
   }
-/* —— 35% stats on left, 65% chart on right —— */
+/* ============= combined stats/intro/chart container ============= */
 #chart-stats-container {
     display: grid;
-    grid-template-columns: 35% 65%;
-    gap: 2rem;
-    align-items: start;
-    margin: 4rem auto;      /* match your page's vertical rhythm */
+    grid-template-columns: 30% 70%;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "stats intro"
+      "stats chart";
+    gap: 1.5rem;
     max-width: 1200px;
-    padding: 0 1rem;
+    margin: 4rem auto;
+    height: 500px; /* adjust to taste */
   }
   
-  /* —— make the stats pane look exactly like that white card —— */
   #stats {
-    background: #ffffff;
+    grid-area: stats;
+    background: #fff;
     border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
     padding: 2rem;
-  }
-  
-  /* —— chart section stacks title + chart vertically —— */
-  .chart-section {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  /* —— nice big heading above the chart —— */
-  .chart-title {
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 0 0 1rem;
-    color: #002D62;
-  }
-  
-  /* —— ensure your D3 SVG fills the rest of the cell —— */
-  #scatter-barrel-woba {
-    flex: 1;
-    min-width: 0;            /* ensure no overflow */
-    overflow: visible !important;
-}
-
-#stats {
-    flex: 1;
-    border-left: 1px solid #ccc;
-    padding-left: 16px;
-    font-size: 14px;
-    line-height: 1.4;
-    max-height: 600px;
+    max-height: 100%;
     overflow-y: auto;
-}
+  }
+  
+  #intro-panel {
+    grid-area: intro;
+    padding: 1rem;
+    overflow: hidden;
+  }
+  #intro-panel .intro {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  
+  #chart-panel {
+    grid-area: chart;
+    position: relative;
+  }
+  #overall-graph {
+    width: 100%;
+    height: 100%;
+  }
+  #tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    opacity: 0;
+    z-index: 1000;
+  }
+  
 
 /* Add new styles for histogram containers */
 #delta-hists {

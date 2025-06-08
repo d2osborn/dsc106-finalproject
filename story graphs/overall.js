@@ -1,10 +1,8 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 function drawOverallScatter() {
-  // Clear any existing SVG to prevent multiple graphs on resize
   d3.select("#overall-graph").select("svg").remove();
 
-  // Get the container element
   const container = document.querySelector("#overall-graph");
   const containerWidth = container.clientWidth;
   const containerHeight = container.clientHeight;
@@ -25,7 +23,14 @@ function drawOverallScatter() {
 
   d3.json("files/yordan/overall_wOBA_vs_barrel_percent.json")
     .then(data => {
-      // parse numerics
+      // Count base names (without L/R suffix)
+      const nameCounts = {};
+      data.forEach(d => {
+        const base = d.name_with_stand.replace(/[LR]$/, "");
+        nameCounts[base] = (nameCounts[base] || 0) + 1;
+      });
+
+      // Parse numerics and assign cleanName based on counts
       data.forEach(d => {
         d.wOBA = +d.wOBA;
         d["barrel%"] = +d["barrel%"];
@@ -38,10 +43,10 @@ function drawOverallScatter() {
         d["in_play%"] = +d["in_play%"];
         d["oppo%"] = +d["oppo%"];
         d["gb%"] = +d["gb%"];
-        d.cleanName = d.name_with_stand.replace(/[LR]$/, "");
+        const base = d.name_with_stand.replace(/[LR]$/, "");
+        d.cleanName = nameCounts[base] === 1 ? base : d.name_with_stand;
       });
 
-      // scales
       const x = d3.scaleLinear()
         .domain(d3.extent(data, d => d.wOBA)).nice()
         .range([0, width]);
@@ -50,21 +55,23 @@ function drawOverallScatter() {
         .domain(d3.extent(data, d => d["barrel%"])).nice()
         .range([height, 0]);
 
-      // axes
       svg.append("g")
         .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(x));
-      svg.append("g")
-        .call(d3.axisLeft(y));
+
+      svg.append("g").call(d3.axisLeft(y));
+
       svg.append("g")
         .call(d3.axisLeft(y).tickSize(-width).tickFormat(""))
         .attr("opacity", 0.3)
         .selectAll("line")
         .attr("stroke-dasharray", "4");
 
-      // draw circles + tooltip
+      // Filter out Yordan before drawing default circles
+      const filtered = data.filter(d => d.cleanName !== "Yordan Alvarez");
+
       svg.selectAll("circle")
-        .data(data)
+        .data(filtered)
         .enter().append("circle")
         .attr("cx", d => x(d.wOBA))
         .attr("cy", d => y(d["barrel%"]))
@@ -75,7 +82,7 @@ function drawOverallScatter() {
           tooltip.html(`
             <strong>${d.cleanName}</strong><br/>
             wOBA: ${d.wOBA.toFixed(3)}<br/>
-            Barrel %: ${(d["barrel%"] * 100).toFixed(1)}%<br/>
+            Barrel%: ${(d["barrel%"] * 100).toFixed(1)}<br/>
           `)
             .style("opacity", 1);
         })
@@ -84,41 +91,74 @@ function drawOverallScatter() {
             .style("left", (event.pageX + 12) + "px")
             .style("top", (event.pageY - 28) + "px");
         })
-        .on("mouseout", () => {
-          tooltip.style("opacity", 0);
-        });
+        .on("mouseout", () => tooltip.style("opacity", 0));
 
-      // highlight Yordan with an image instead of circle
-      const t = data.find(d => d.cleanName === "Yordan Alvarez");
-      if (t) {
-        const xVal = x(t.wOBA),
-              yVal = y(t["barrel%"]);
+      // Highlight Yordan with image instead of circle
+        const t = data.find(d => d.cleanName === "Yordan Alvarez");
+        if (t) {
+          const xVal = x(t.wOBA);
+          const yVal = y(t["barrel%"]);
+          const size = 28; // overall size of the visual bubble
 
-        svg.append("image")
-          .attr("href", "files/yordan/yadro.png")   // <-- your image path here
-          .attr("width", 10)
-          .attr("height", 10)
-          .attr("x", xVal )                        // center the icon
-          .attr("y", yVal );
+          // Define a circular clipPath once (outside the image)
+          svg.append("defs")
+            .append("clipPath")
+            .attr("id", "yordanCircle")
+            .append("circle")
+            .attr("cx", xVal)
+            .attr("cy", yVal)
+            .attr("r", size / 2);
 
-        svg.append("text")
-          .attr("x", xVal + 18)
-          .attr("y", yVal - 18)
-          .text(t.cleanName)
-          .attr("font-weight", "bold")
-          .attr("font-size", "12px");
-      }
+          // Append a circle stroke (border)
+          svg.append("circle")
+            .attr("cx", xVal)
+            .attr("cy", yVal)
+            .attr("r", size / 2)
+            .attr("fill", "#fff")
+            .attr("stroke", "#000")
+            .attr("stroke-width", 1.5);
 
-      // labels
+          // Append the clipped image inside the circle
+          svg.append("image")
+            .attr("href", "files/yordan/yadro.png")
+            .attr("x", xVal - size / 2)
+            .attr("y", yVal - size / 2)
+            .attr("width", size)
+            .attr("height", size)
+            .attr("clip-path", "url(#yordanCircle)")
+            .style("cursor", "pointer")
+            .on("mouseover", () => {
+              tooltip.html(`
+                <strong>${t.cleanName}</strong><br/>
+                wOBA: ${t.wOBA.toFixed(3)}<br/>
+                Barrel%: ${(t["barrel%"] * 100).toFixed(1)}<br/>
+              `)
+                .style("opacity", 1);
+            })
+            .on("mousemove", event => {
+              tooltip
+                .style("left", (event.pageX + 12) + "px")
+                .style("top", (event.pageY - 28) + "px");
+            })
+            .on("mouseout", () => tooltip.style("opacity", 0));
+        }
+
       svg.append("text")
-        .attr("x", width / 2).attr("y", height + margin.bottom / 2)
-        .attr("text-anchor", "middle").text("wOBA");
+        .attr("x", width / 2)
+        .attr("y", height + margin.bottom / 2)
+        .attr("text-anchor", "middle")
+        .text("wOBA");
+
       svg.append("text")
         .attr("transform", "rotate(-90)")
-        .attr("y", -margin.left + 20).attr("x", -height / 2)
-        .attr("text-anchor", "middle").text("Barrel %");
+        .attr("y", -margin.left + 20)
+        .attr("x", -height / 2)
+        .attr("text-anchor", "middle")
+        .text("Barrel %");
+
       svg.append("text")
-        .attr("x", width / 2).attr("y", -margin.top / 2)
+        .attr("x", width / 2)
+        .attr("y", -margin.top / 2)
         .attr("text-anchor", "middle")
         .attr("font-size", "18px")
         .text("Overall: Barrel % vs wOBA");
@@ -126,8 +166,5 @@ function drawOverallScatter() {
     .catch(err => console.error("JSON load error:", err));
 }
 
-// Initial draw
 drawOverallScatter();
-
-// Redraw on window resize
 window.addEventListener('resize', drawOverallScatter);

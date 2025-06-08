@@ -124,7 +124,7 @@ function drawRadarChart() {
 
     svg.append("text")
       .attr("x", width / 2)
-      .attr("y", margin.top / 3)
+      .attr("y", margin.top / 6)
       .attr("text-anchor", "middle")
       .style("font-size", "16px")
       .style("font-weight", "bold")

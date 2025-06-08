@@ -89,8 +89,8 @@ function drawOverallScatter() {
         })
         .on("mousemove", event => {
           tooltip
-            .style("left", (event.clientX - 470) + "px")
-            .style("top", (event.clientY - 80) + "px");
+            .style("left", (event.clientX + 1) + "px")
+            .style("top", (event.clientY - 2) + "px");
         })        
         .on("mouseout", () => tooltip.style("opacity", 0));
 
@@ -99,50 +99,65 @@ function drawOverallScatter() {
         if (t) {
           const xVal = x(t.wOBA);
           const yVal = y(t["barrel%"]);
-          const size = 28; // overall size of the visual bubble
-
-          // Define a circular clipPath once (outside the image)
+          const size = 28;
+        
+          // Define clip path
           svg.append("defs")
             .append("clipPath")
             .attr("id", "yordanCircle")
             .append("circle")
-            .attr("cx", xVal)
-            .attr("cy", yVal)
-            .attr("r", size / 2);
+            .attr("r", size / 2)
+            .attr("cx", 0)
+            .attr("cy", 0);
+        
+          // Wrap in a group for tooltip binding
+          const yordanGroup = svg.append("g")
+            .attr("transform", `translate(${xVal},${yVal})`)
+            .style("cursor", "pointer")
+            .style("pointer-events", "visible");
 
-          // Append a circle stroke (border)
-          svg.append("circle")
-            .attr("cx", xVal)
-            .attr("cy", yVal)
+        
+          // Add stroke circle
+          yordanGroup.append("circle")
             .attr("r", size / 2)
             .attr("fill", "#fff")
             .attr("stroke", "#000")
-            .attr("stroke-width", 1.5);
-
-          // Append the clipped image inside the circle
-          svg.append("image")
+            .attr("stroke-width", 1.5)
+            .attr("pointer-events", "all");
+        
+          // Add clipped image
+          yordanGroup.append("image")
             .attr("href", "files/yordan/yadro.png")
-            .attr("x", xVal - size / 2)
-            .attr("y", yVal - size / 2)
+            .attr("pointer-events", "visiblePainted")
+            .attr("x", -size / 2)
+            .attr("y", -size / 2)
             .attr("width", size)
             .attr("height", size)
             .attr("clip-path", "url(#yordanCircle)")
-            .style("cursor", "pointer")
-            .on("mouseover", () => {
-              tooltip.html(`
-                <strong>${t.cleanName}</strong><br/>
-                wOBA: ${t.wOBA.toFixed(3)}<br/>
-                Barrel%: ${(t["barrel%"] * 100).toFixed(1)}<br/>
-              `)
-                .style("opacity", 1);
-            })
-            .on("mousemove", event => {
-              tooltip
-                .style("left", (event.pageX + 12) + "px")
-                .style("top", (event.pageY - 28) + "px");
-            })
-            .on("mouseout", () => tooltip.style("opacity", 0));
+            .attr("pointer-events", "all");
+
+          // after your .append("image")…
+          yordanGroup.append("circle")
+          .attr("r", size/2)
+          .attr("fill", "transparent")
+          .attr("pointer-events", "all")
+          .on("mouseover", (event, d) => {
+            tooltip.html(`
+              <strong>${t.cleanName}</strong><br/>
+              wOBA: ${t.wOBA.toFixed(3)}<br/>
+              Barrel%: ${(t["barrel%"] * 100).toFixed(1)}<br/>
+            `)
+              .style("opacity", 1);
+          })
+          .on("mousemove", event => {
+            tooltip
+              .style("left", (event.clientX + 1) + "px")
+              .style("top", (event.clientY - 2) + "px");
+          })        
+          .on("mouseout", () => tooltip.style("opacity", 0));
+
         }
+        
 
 
       svg.append("text")

@@ -1,5 +1,5 @@
 // radar.js
-import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js";
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 // 1) CONFIG & SCALES
 const width  = 600;
@@ -91,7 +91,10 @@ metrics.forEach((m, i) => {
 });
 
 // 5) LOAD DATA & DRAW POLYGON
-d3.json("radar.json").then(data => {
+d3.json("files/yordan/radar.json").then(data => {
+  console.log('All players:', data);
+  console.log('Matching entry:', y);
+
   // find Yordan by name_with_stand
   const y = data.find(d => d.name_with_stand === "Yordan AlvarezL");
   if (!y) {
@@ -100,8 +103,11 @@ d3.json("radar.json").then(data => {
   }
 
   // build an array of his percentile values [p1, p2, …, p1] to close the loop
-  const values = metrics.map(m => +y[`${m}_pctile`]);
-  values.push(values[0]);
+  const values = metrics.map(m => {
+    const val = parseFloat(y[`${m}_pctile`]);
+    return isNaN(val) ? 0 : val;
+  });
+  
 
   // lineRadial generator
   const radarLine = d3.lineRadial()

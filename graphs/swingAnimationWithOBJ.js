@@ -65,7 +65,7 @@ let currentDirectionAngle = null;
 // Add these variables at the top with other globals
 let angleVisualizationOffset = {
     x: 0.2,
-    y: 3.25,    // Increased from 2.25 to 3.25
+    y: 2.25,    // Increased y offset
     z: 2.3
 };
 
@@ -82,7 +82,7 @@ gltfLoader.load(
       }
     });
     bat.scale.set(3.0, 3.0, 3.0);
-    bat.position.set(0.7, 2.2, 0.0);  // Increased y position from 1.2 to 2.2
+    bat.position.set(0.7, 1.2, 0.0);  // Increased y position from 0.7 to 1.2
     bat.rotation.x = THREE.MathUtils.degToRad(90);
     bat.rotation.y = THREE.MathUtils.degToRad(180);
     batMeshObject = bat;
@@ -364,7 +364,7 @@ function updateSwingPathTiltVisual(swingTiltDegrees) {
         if (currentAttackAngle !== null) {
             // Adjusted y-axis movement to maintain higher position
             const yOffset = (swingTiltDegrees / 30);
-            angleVisualizationOffset.y = 3.25 - yOffset; // Changed from 2.25 to 3.25
+            angleVisualizationOffset.y = 2.25 - yOffset; // Changed from 0.0 to 2.25
             
             // Simple linear scaling for z-axis movement with smaller increment
             const zOffset = (swingTiltDegrees / 60);

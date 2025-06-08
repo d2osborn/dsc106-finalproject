@@ -93,7 +93,7 @@ function drawOverallScatter() {
         })
         .on("mouseout", () => tooltip.style("opacity", 0));
 
-      // Highlight Yordan with image instead of circle
+        // Highlight Yordan with circular-framed image
         const t = data.find(d => d.cleanName === "Yordan Alvarez");
         if (t) {
           const xVal = x(t.wOBA);
@@ -142,6 +142,7 @@ function drawOverallScatter() {
             })
             .on("mouseout", () => tooltip.style("opacity", 0));
         }
+
 
       svg.append("text")
         .attr("x", width / 2)

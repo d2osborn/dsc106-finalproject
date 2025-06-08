@@ -792,7 +792,7 @@ h1,h2,h3,h4,h5,h6,p { margin-block: 0; }
     grid-template-columns: 35% 65%;
     gap: 2rem;
     align-items: start;
-    margin: 4rem auto;      /* match your page’s vertical rhythm */
+    margin: 4rem auto;      /* match your page's vertical rhythm */
     max-width: 1200px;
     padding: 0 1rem;
   }
@@ -834,4 +834,71 @@ h1,h2,h3,h4,h5,h6,p { margin-block: 0; }
     line-height: 1.4;
     max-height: 600px;
     overflow-y: auto;
+}
+
+/* Add new styles for histogram containers */
+#delta-hists {
+    width: 100%;
+    padding: 0 2rem;
+}
+
+#delta-hists .hist-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 0.75rem;
+    transition: transform 0.2s;
+}
+
+#delta-hists .hist-container:hover {
+    transform: translateY(-5px);
+}
+
+/* Remove the duplicate delta-hists section */
+section.graph-section {
+    margin: 0;
+    padding: 0;
+}
+
+/* Add hover effects to all graph containers */
+.chart, .heatmap, .sandbox-viz, .hist-container {
+    transition: all 0.3s ease;
+    transform: translateY(0);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.chart:hover, .heatmap:hover, .sandbox-viz:hover, .hist-container:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+/* Specific styles for different graph types */
+.chart {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.heatmap {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.sandbox-viz {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+/* Ensure proper stacking context */
+.graph-section, .heatmap-row, .sandbox-layout {
+    position: relative;
+    z-index: 0;
+}
+
+/* Add smooth transition for all interactive elements */
+.chart *, .heatmap *, .sandbox-viz *, .hist-container * {
+    transition: all 0.3s ease;
 }

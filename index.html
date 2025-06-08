@@ -11,7 +11,6 @@
     <script type="module" src="story graphs/radar.js"></script>
     <script type="module" src="story graphs/yordanstats.js"></script>
     <script type="module" src="story graphs/overall.js"></script>
-    <script type="module" src="story graphs/deltaHists.js"></script>    
 
     <script type="module">
         import { drawAttackAngle } from './graphs/attackAngle.js';
@@ -20,6 +19,12 @@
         import { drawDirectionAngle } from './graphs/directionAngle.js';
 
         window.addEventListener('DOMContentLoaded', () => {
+            // Load deltaHists.js after DOM is ready
+            const deltaHistsScript = document.createElement('script');
+            deltaHistsScript.type = 'module';
+            deltaHistsScript.src = 'story graphs/deltaHists.js';
+            document.head.appendChild(deltaHistsScript);
+
             const controls = d3.select('.sandbox-controls');
             controls.html(`
                 <div style="display:flex;align-items:center;gap:1em;">
@@ -159,7 +164,7 @@
         <div class="scroll-arrows" onclick="scrollPastVideo()">&#x276F;&#x276F;&#x276F;</div>
     </div>
     <p class="intro">
-        Yordan Álvarez, the Cuban-born designated hitter/left fielder for the Houston Astros, enjoyed a breakout 2024 campaign in which he slashed .308 AVG, .392 OBP, .567 SLG (.959 OPS) over 147 games (635 PA), belted 35 homers, drove in 86 runs and scored 88 times while earning his third consecutive All-Star nod (his first as the AL’s starting DH), hit for the cycle on July 21, and launched his 150th career home run in just 590 games—the eighth-fastest mark in MLB history; he was voted Astros MVP by the local BBWAA chapter, named to the All-MLB Second Team, and finished ninth in AL MVP voting
+        Yordan Álvarez, the Cuban-born designated hitter/left fielder for the Houston Astros, enjoyed a breakout 2024 campaign in which he slashed .308 AVG, .392 OBP, .567 SLG (.959 OPS) over 147 games (635 PA), belted 35 homers, drove in 86 runs and scored 88 times while earning his third consecutive All-Star nod (his first as the AL's starting DH), hit for the cycle on July 21, and launched his 150th career home run in just 590 games—the eighth-fastest mark in MLB history; he was voted Astros MVP by the local BBWAA chapter, named to the All-MLB Second Team, and finished ninth in AL MVP voting
     </p>
         <!-- TOOLTIP -->
         <div id="tooltip"
@@ -240,6 +245,7 @@
                   </div>
               </div>
           </div>
+          <div id="delta-hists" style="display: flex; justify-content: center; gap: 2rem; margin: 2rem 0;"></div>
           <p class="And">
             <br></br>
             For further analysis, we can encorporate Baseball Savant recently released new swing metrics: attack angle (º), attack direction (º), and swing path (tilt) (º)<br><br>

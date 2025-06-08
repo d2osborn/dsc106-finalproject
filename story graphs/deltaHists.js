@@ -1,15 +1,18 @@
 // deltaHists.js
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
+console.log("deltaHists.js script started");
+
 const targetPlayer = "Yordan AlvarezL";
 const angles = ["attack_angle","attack_direction","swing_path_tilt"];
 
 const margin = { top: 30, right: 20, bottom: 40, left: 50 };
-const chartW = 500 - margin.left - margin.right;
+const chartW = 400 - margin.left - margin.right;
 const chartH = 300 - margin.top  - margin.bottom;
 
 // A helper to compute percentile ranks in [%]
 function computePercentiles(data, key) {
+  console.log(`Computing percentiles for ${key}`);
   const vals = data.map(d => +d[key]).sort(d3.ascending);
   data.forEach(d => {
     const v = +d[key];
@@ -18,32 +21,141 @@ function computePercentiles(data, key) {
   });
 }
 
-d3.json("delta_angles.json")
-  .then(data => {
-    console.log("delta_angles.json data loaded:", data);
+// Function to handle window resize
+function handleResize() {
+  const container = d3.select("#delta-hists");
+  const containerWidth = container.node().getBoundingClientRect().width;
+  const newChartWidth = Math.min(300, (containerWidth - 100) / 3); // Divide by 3 for three charts, minus some padding
+  
+  // Update all charts
+  container.selectAll(".hist-container")
+    .style("width", `${newChartWidth + margin.left + margin.right}px`)
+    .each(function() {
+      const svg = d3.select(this).select("svg");
+      svg.attr("width", newChartWidth + margin.left + margin.right);
+      
+      // Update scales and redraw if needed
+      const angle = d3.select(this).datum();
+      updateChart(svg, angle, newChartWidth);
+    });
+}
+
+// Function to update a single chart
+function updateChart(svg, angle, width) {
+  const key = `delta_${angle}`;
+  const pctKey = `${key}_pct`;
+  
+  // Update x scale
+  const x = d3.scaleLinear()
+    .domain(d3.extent(data, d => +d[key]))
+    .nice()
+    .range([0, width]);
+
+  // Update bins
+  const bins = d3.bin()
+    .domain(x.domain())
+    .thresholds(13)
+    (data.map(d => +d[key]));
+
+  // Update densities
+  const densities = bins.map(b => b.length / (data.length * (b.x1 - b.x0)));
+
+  // Update y scale
+  const y = d3.scaleLinear()
+    .domain([0, d3.max(densities)])
+    .nice()
+    .range([chartH, 0]);
+
+  // Update bars
+  svg.selectAll("rect")
+    .data(bins)
+    .join("rect")
+    .attr("x", b => x(b.x0) + 1)
+    .attr("y", (_,i) => y(densities[i]))
+    .attr("width", b => Math.max(0, x(b.x1) - x(b.x0) - 1))
+    .attr("height", (_,i) => chartH - y(densities[i]))
+    .attr("fill", "#1f77b4")
+    .attr("fill-opacity", 1.0);
+
+  // Update axes
+  svg.select(".x-axis").call(d3.axisBottom(x));
+  svg.select(".y-axis").call(d3.axisLeft(y));
+}
+
+let data; // Store data globally for resize handler
+
+console.log("Attempting to load delta_angles.json...");
+d3.json("files/yordan/delta_angles.json")
+  .then(loadedData => {
+    data = loadedData; // Store data globally
+    console.log("delta_angles.json data loaded successfully:", data);
+    console.log("Number of records:", data.length);
+    console.log("Sample record:", data[0]);
+    
     const container = d3.select("#delta-hists");
-    console.log("Delta hists container:", container.node());
+    console.log("Delta hists container found:", container.node());
+    
+    if (!container.node()) {
+      console.error("Container #delta-hists not found in the DOM");
+      return;
+    }
 
-    angles.forEach(angle => {
-      const key     = `delta_${angle}`;
-      const pctKey  = `${key}_pct`;
+    // Clear any existing content
+    container.html("");
 
-      // 1) compute percentiles
+    // Create individual containers for each histogram
+    const containers = container.selectAll(".hist-container")
+      .data(angles)
+      .enter()
+      .append("div")
+      .attr("class", "hist-container")
+      .style("background", "white")
+      .style("border-radius", "8px")
+      .style("box-shadow", "0 4px 6px rgba(0, 0, 0, 0.1)")
+      .style("padding", "0.75rem")
+      .style("width", `${chartW + margin.left + margin.right}px`)
+      .style("margin", "0 1rem")
+      .style("transition", "transform 0.2s")
+      .style("cursor", "pointer")
+      .on("mouseover", function() {
+        d3.select(this).style("transform", "translateY(-5px)");
+      })
+      .on("mouseout", function() {
+        d3.select(this).style("transform", "translateY(0)");
+      });
+
+    // Add titles to each container with smaller font
+    containers.append("h4")
+      .style("text-align", "center")
+      .style("margin", "0 0 0.5rem 0")
+      .style("color", "#333")
+      .style("font-size", "0.7rem")  // Even smaller font size
+      .style("font-weight", "bold")
+      .text(d => `Δ ${d.replace("_", " ").replace(/\b\w/g, l => l.toUpperCase())}`);
+
+    // Create SVGs in each container
+    containers.each(function(angle) {
+      const key = `delta_${angle}`;
+      const pctKey = `${key}_pct`;
+
+      // Compute percentiles
       computePercentiles(data, key);
 
-      // 2) extract Yordan's values
+      // Extract Yordan's values
       const you = data.find(d => d.name_with_stand === targetPlayer);
-      if (!you) return console.error("No record for", targetPlayer);
-      const x0  = +you[key];
-      const p0  = you[pctKey];
+      if (!you) {
+        console.error(`No record found for player: ${targetPlayer}`);
+        return;
+      }
+      const x0 = +you[key];
+      const p0 = you[pctKey];
 
-      // 3) set up SVG for this angle
-      const svg = container.append("svg")
-        .attr("width",  chartW + margin.left + margin.right)
-        .attr("height", chartH + margin.top  + margin.bottom)
+      // Create SVG
+      const svg = d3.select(this).append("svg")
+        .attr("width", chartW + margin.left + margin.right)
+        .attr("height", chartH + margin.top + margin.bottom)
         .append("g")
-          .attr("transform", `translate(${margin.left},${margin.top})`);
-      console.log(`SVG for ${angle} created with width ${chartW + margin.left + margin.right}, height ${chartH + margin.top + margin.bottom}`);
+        .attr("transform", `translate(${margin.left},${margin.top})`);
 
       // 4) x‐scale
       const x = d3.scaleLinear()
@@ -66,22 +178,24 @@ d3.json("delta_angles.json")
         .nice()
         .range([chartH, 0]);
 
-      // 8) draw bars (opacity=1.0)
+      // 8) draw bars (changed color to blue)
       svg.selectAll("rect")
         .data(bins)
         .join("rect")
-          .attr("x",    b => x(b.x0) + 1)
-          .attr("y",    (_,i) => y(densities[i]))
-          .attr("width", b => Math.max(0, x(b.x1) - x(b.x0) - 1))
-          .attr("height", (_,i) => chartH - y(densities[i]))
-          .attr("fill",  "steelblue")
-          .attr("fill-opacity", 1.0);
+        .attr("x", b => x(b.x0) + 1)
+        .attr("y", (_,i) => y(densities[i]))
+        .attr("width", b => Math.max(0, x(b.x1) - x(b.x0) - 1))
+        .attr("height", (_,i) => chartH - y(densities[i]))
+        .attr("fill", "#1f77b4")
+        .attr("fill-opacity", 1.0);
 
       // 9) axes
       svg.append("g")
+        .attr("class", "x-axis")
         .attr("transform", `translate(0,${chartH})`)
         .call(d3.axisBottom(x));
       svg.append("g")
+        .attr("class", "y-axis")
         .call(d3.axisLeft(y));
 
       // 10) vertical line at Yordan's delta
@@ -92,22 +206,26 @@ d3.json("delta_angles.json")
         .attr("stroke-width", 2)
         .attr("stroke-dasharray", "4,2");
 
-      // 11) annotation
+      // 11) annotation - centered and without connecting line
       svg.append("text")
         .attr("x", x(x0))
         .attr("y", y(d3.max(densities)) * 0.1)
         .attr("text-anchor", "middle")
         .attr("fill", "red")
-        .attr("font-size", "0.9rem")
-        .text(`${targetPlayer}  Δ=${x0.toFixed(2)}  Pct=${p0.toFixed(1)}th`);
-
-      // 12) title
-      svg.append("text")
-        .attr("x", chartW/2)
-        .attr("y", -10)
-        .attr("text-anchor", "middle")
-        .attr("font-weight", "bold")
-        .text(`Histogram of Δ Var(${angle.replace("_"," ")})`);
+        .attr("font-size", "0.7rem")
+        .attr("dy", "-0.5em")  // Move text up slightly
+        .text(`${targetPlayer}`)
+        .append("tspan")
+        .attr("x", x(x0))
+        .attr("dy", "1.2em")
+        .text(`Δ=${x0.toFixed(2)}`)
+        .append("tspan")
+        .attr("x", x(x0))
+        .attr("dy", "1.2em")
+        .text(`Pct=${p0.toFixed(1)}th`);
     });
+
+    // Add resize listener
+    window.addEventListener('resize', handleResize);
   })
   .catch(console.error);

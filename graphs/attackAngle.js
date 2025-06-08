@@ -38,7 +38,7 @@ export function drawAttackAngle(containerSel, data, config) {
     const redY = ballY - lineLength * Math.sin(zeroAngle - theta);
     const fillPoly = svg.append('polygon')
         .attr('points', `${ballX},${ballY} ${blackX},${blackY} ${initialRedX},${initialRedY}`)
-        .attr('fill', "#002D62")
+        .attr('fill', "#EB6E1F")
         .attr('opacity', 0.5);
     fillPoly.transition().duration(1000).attrTween("points", function() {
         return t => {
@@ -89,7 +89,7 @@ function appendMLBAverage(svg, cx, y, data, field, overrideFontSize) {
        .attr('y', y)
        .attr('text-anchor', 'middle')
        .style('font-size', fontSize)
-       .style('fill', '#E63946')
+       .style('fill', '#EB6E1F')
        .text(mlbAvg !== null && !isNaN(mlbAvg) ?
              `MLB Average: ${mlbAvg.toFixed(1)}${field==="attack_angle"?"°":""}` : '');
 }

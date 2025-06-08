@@ -31,6 +31,30 @@ controls.minDistance     = 2;
 controls.maxDistance     = 10;
 controls.target.set(0.8, 1.05, 0.8);
 
+// Add hover message element
+const hoverMessage = document.createElement('div');
+hoverMessage.style.position = 'absolute';
+hoverMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+hoverMessage.style.color = 'white';
+hoverMessage.style.padding = '10px';
+hoverMessage.style.borderRadius = '5px';
+hoverMessage.style.display = 'none';
+hoverMessage.style.zIndex = '1000';
+hoverMessage.innerHTML = 'Click on Attack Angle or Direction Angle graphs to view their 3D visualization';
+container.appendChild(hoverMessage);
+
+// Add hover event listeners
+container.addEventListener('mouseenter', () => {
+    hoverMessage.style.display = 'block';
+});
+
+container.addEventListener('mouseleave', () => {
+    hoverMessage.style.display = 'none';
+});
+
+// Add global variables for tracking which visualization is active
+let activeVisualization = null; // Can be 'attack', 'direction', or null
+
 // ─────────────── LIGHTING ───────────────
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
@@ -110,14 +134,10 @@ gltfLoader.load(
 
 function checkIfReady() {
   if (batMeshObject && ballMeshObject) {
-    // Once both models are loaded, start the animation loop.
+
     startAnimationLoop();
-    // After models are loaded, signal that the 3D scene is ready to receive updates
-    // The index.html script will call createAttackAngle3D once data is loaded and filtered
     console.log('3D models loaded. Ready for data updates.');
     
-    // If we have already received the attack angle data from index.html,
-    // create the 3D visualization now that models are ready.
     if (currentAttackAngle !== null) {
         console.log('Models loaded and attack angle received. Creating initial attack angle visualization.');
         createAttackAngle3D(currentAttackAngle);
@@ -129,6 +149,9 @@ function checkIfReady() {
         console.log('Models loaded and direction angle received. Creating initial direction angle visualization.');
         createDirectionAngle3D(currentDirectionAngle);
     }
+    
+    // NEW: Create a yellow 2D square at the ball's center (slightly up)
+    createBallCenterSquare();
   }
 }
 
@@ -136,10 +159,20 @@ function checkIfReady() {
 function updateAttackAngleVisualization(attackAngleDegrees) {
     console.log('Received attack angle data:', attackAngleDegrees);
     currentAttackAngle = attackAngleDegrees;
+    
+    // Hide direction angle if it's visible
+    if (directionAngleGroup) {
+        directionAngleGroup.visible = false;
+    }
+    
     // If models are already loaded, update the visualization immediately
     if (batMeshObject && ballMeshObject) {
         console.log('Models already loaded, updating attack angle visualization...');
         createAttackAngle3D(currentAttackAngle);
+        if (attackAngleGroup) {
+            attackAngleGroup.visible = true;
+        }
+        activeVisualization = 'attack';
     } else {
         console.log('Models not yet loaded, will create attack angle visualization when ready.');
     }
@@ -153,10 +186,20 @@ function updateDirectionAngleVisualization(directionAngleDegrees) {
     console.log('updateDirectionAngleVisualization called.');
     console.log('Received direction angle data in updateDirectionAngleVisualization:', directionAngleDegrees);
     currentDirectionAngle = directionAngleDegrees;
+    
+    // Hide attack angle if it's visible
+    if (attackAngleGroup) {
+        attackAngleGroup.visible = false;
+    }
+    
     // If models are already loaded, update the visualization immediately
     if (batMeshObject && ballMeshObject) {
         console.log('Models already loaded, attempting to update direction angle visualization with angle:', currentDirectionAngle);
         createDirectionAngle3D(currentDirectionAngle);
+        if (directionAngleGroup) {
+            directionAngleGroup.visible = true;
+        }
+        activeVisualization = 'direction';
     } else {
         console.log('Models not yet loaded, will create direction angle visualization when ready (from update).');
     }
@@ -168,51 +211,44 @@ window.updateDirectionAngleVisualization = updateDirectionAngleVisualization;
 // ─────────────── CREATE 3D ATTACK ANGLE ───────────────
 function createAttackAngle3D(attackAngleDegrees) {
     // Remove previous visualization elements if they exist
-    if (attackAngleGroup) {
-        scene.remove(attackAngleGroup);
-    }
-
-    // Create a new group for attack angle visualization
+    if (attackAngleGroup) { scene.remove(attackAngleGroup); }
     attackAngleGroup = new THREE.Group();
     scene.add(attackAngleGroup);
-
-    // Define the origin point for the visualization.
+    
+    // Set initial visibility based on active visualization
+    attackAngleGroup.visible = (activeVisualization === 'attack');
+  
+    // Use new origin shifted up by 0.6 (instead of 0.1)
     const origin = new THREE.Vector3(
         ballMeshObject.position.x,
-        ballMeshObject.position.y + 0.1,
+        ballMeshObject.position.y + 1.1,  // moved up by 0.5 more (from 0.6 to 1.1)
         ballMeshObject.position.z
     );
-
-    // Convert degrees to radians
-    const theta = THREE.MathUtils.degToRad(attackAngleDegrees);
-
-    // Define a horizontal baseline extending outwards from the origin
+    // Use this origin directly for the baseline
+    const baselineOrigin = origin.clone();
     const visualizationSize = 0.5;
     const baselineDir = new THREE.Vector3(1, 0, 0);
-    const baselineEnd = origin.clone().add(baselineDir.clone().multiplyScalar(visualizationSize));
-
+    const baselineEnd = baselineOrigin.clone().add(baselineDir.clone().multiplyScalar(visualizationSize));
+    // Create a thicker yellow baseline line
+    const baselineGeometry = new THREE.BufferGeometry().setFromPoints([baselineOrigin, baselineEnd]);
+    const baselineMaterial = new THREE.LineBasicMaterial({ color: 0xffff00, linewidth: 3 });
+    baselineLine = new THREE.Line(baselineGeometry, baselineMaterial);
+    attackAngleGroup.add(baselineLine);
+  
     // Define the attack-angle endpoint
+    const theta = THREE.MathUtils.degToRad(attackAngleDegrees);
     const attackDir = new THREE.Vector3(
         Math.cos(theta) * visualizationSize,
         Math.sin(theta) * visualizationSize,
         0
     );
     const attackEnd = origin.clone().add(attackDir);
-
+  
     // Line geometry for baseline (white, thin)
-    const baselineGeometry = new THREE.BufferGeometry().setFromPoints([origin, baselineEnd]);
-    const baselineMaterial = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 1 });
-    baselineLine = new THREE.Line(baselineGeometry, baselineMaterial);
-    attackAngleGroup.add(baselineLine);
-
-    // Create arrow for attack angle
-    const arrowLength = visualizationSize;
-    const arrowHeadLength = 0.08;
-    const arrowHeadWidth = 0.03;
     const shaftRadius = 0.005;  // Reduced from 0.02 to make it much skinnier
-
+  
     // Create arrow shaft as a cylinder
-    const shaftGeometry = new THREE.CylinderGeometry(shaftRadius, shaftRadius, arrowLength, 8);
+    const shaftGeometry = new THREE.CylinderGeometry(shaftRadius, shaftRadius, visualizationSize, 8);
     const shaftMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
     const shaft = new THREE.Mesh(shaftGeometry, shaftMaterial);
     
@@ -221,8 +257,10 @@ function createAttackAngle3D(attackAngleDegrees) {
     const shaftDirection = attackDir.clone().normalize();
     shaft.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), shaftDirection);
     attackAngleGroup.add(shaft);
-
+  
     // Create arrow head
+    const arrowHeadLength = 0.08;
+    const arrowHeadWidth = 0.03;
     const arrowHeadGeometry = new THREE.ConeGeometry(arrowHeadWidth, arrowHeadLength, 8);
     const arrowHeadMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
     const arrowHead = new THREE.Mesh(arrowHeadGeometry, arrowHeadMaterial);
@@ -232,10 +270,10 @@ function createAttackAngle3D(attackAngleDegrees) {
     const arrowDirection = attackDir.clone().normalize();
     arrowHead.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), arrowDirection);
     attackAngleGroup.add(arrowHead);
-
+  
     // Label: at the end of the attack angle arrow, with offset
     const labelPositionAttack = attackEnd.clone().add(attackDir.clone().normalize().multiplyScalar(0.05)); // Offset outwards
-
+  
     // Create a new label sprite with red text
     labelSprite = createTextLabel(`${attackAngleDegrees.toFixed(1)}°`, labelPositionAttack.x, labelPositionAttack.y, labelPositionAttack.z, 0xff0000);
     attackAngleGroup.add(labelSprite);
@@ -243,41 +281,46 @@ function createAttackAngle3D(attackAngleDegrees) {
 
 // ─────────────── CREATE 3D DIRECTION ANGLE ───────────────
 function createDirectionAngle3D(directionAngleDegrees) {
-    console.log('createDirectionAngle3D called with angle:', directionAngleDegrees);
-    // Remove previous visualization elements if they exist
-    if (directionAngleGroup) {
-        scene.remove(directionAngleGroup);
-    }
-
-    // Create a new group for direction angle visualization
+    if (directionAngleGroup) { scene.remove(directionAngleGroup); }
     directionAngleGroup = new THREE.Group();
     scene.add(directionAngleGroup);
-
-    // Define the origin point for the visualization (same as ball position)
+    
+    // Set initial visibility based on active visualization
+    directionAngleGroup.visible = (activeVisualization === 'direction');
+  
+    // Use new origin shifted up by 0.6
     const origin = new THREE.Vector3(
         ballMeshObject.position.x,
-        ballMeshObject.position.y + 0.1,
+        ballMeshObject.position.y + 1.1,  // moved up by 0.5 more (from 0.6 to 1.1)
         ballMeshObject.position.z
     );
-
+    const baselineOrigin = origin.clone();
+    const visualizationSize = 0.5;
+    const baselineDir = new THREE.Vector3(1, 0, 0);
+    const baselineEnd = baselineOrigin.clone().add(baselineDir.clone().multiplyScalar(visualizationSize));
+    // Create a thicker yellow baseline line
+    const baselineGeometry = new THREE.BufferGeometry().setFromPoints([baselineOrigin, baselineEnd]);
+    const baselineMaterial = new THREE.LineBasicMaterial({ color: 0xffff00, linewidth: 3 });
+    directionBaselineLine = new THREE.Line(baselineGeometry, baselineMaterial);
+    directionAngleGroup.add(directionBaselineLine);
+  
     // Convert degrees to radians
     const theta = THREE.MathUtils.degToRad(directionAngleDegrees);
-
+  
     // Define the direction angle line (horizontal rotation from X-axis)
-    const visualizationSize = 0.5;
     const directionDir = new THREE.Vector3(
         Math.cos(theta) * visualizationSize,
         0, // Direction angle rotates in the XZ plane (horizontal)
         Math.sin(theta) * visualizationSize
     );
     const directionEnd = origin.clone().add(directionDir);
-
+  
     // Create arrow for direction angle
     const arrowLength = visualizationSize;
     const arrowHeadLength = 0.08;
     const arrowHeadWidth = 0.03;
     const shaftRadius = 0.005;  // Skinny shaft like attack angle
-
+  
     // Create arrow shaft as a cylinder
     const shaftGeometry = new THREE.CylinderGeometry(shaftRadius, shaftRadius, arrowLength, 8);
     const shaftMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
@@ -288,7 +331,7 @@ function createDirectionAngle3D(directionAngleDegrees) {
     const shaftDirection = directionDir.clone().normalize();
     shaft.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), shaftDirection);
     directionAngleGroup.add(shaft);
-
+  
     // Create arrow head
     const arrowHeadGeometry = new THREE.ConeGeometry(arrowHeadWidth, arrowHeadLength, 8);
     const arrowHeadMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
@@ -299,10 +342,10 @@ function createDirectionAngle3D(directionAngleDegrees) {
     const arrowDirection = directionDir.clone().normalize();
     arrowHead.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), arrowDirection);
     directionAngleGroup.add(arrowHead);
-
+  
     // Label: at the end of the direction angle arrow, with offset
     const labelPositionDirection = directionEnd.clone().add(directionDir.clone().normalize().multiplyScalar(0.05)); // Offset outwards
-
+  
     // Create a new label sprite with green text showing just the angle
     const labelText = `${directionAngleDegrees.toFixed(1)}°`;
     labelSprite = createTextLabel(labelText, labelPositionDirection.x, labelPositionDirection.y, labelPositionDirection.z, 0x00ff00);
@@ -311,21 +354,10 @@ function createDirectionAngle3D(directionAngleDegrees) {
 
 // ─────────────── ANIMATION LOOP ───────────────
 function startAnimationLoop() {
-  // Compute bat rotation (keeping original orientation)
-  const avgSwingTilt = 5; // static tilt—or compute dynamically if desired
-  const baseRotation  = Math.PI / 2;                      // horizontal orientation
-  const extraRotation = -THREE.MathUtils.degToRad(avgSwingTilt);
-  const finalBatRotation = baseRotation + extraRotation;
-    
   function animate() {
     requestAnimationFrame(animate);
     controls.update();
 
-    // Restore bat rotation
-    batMeshObject.rotation.set(0, 0, 0);
-    batMeshObject.rotation.x = finalBatRotation;
-
-    // Keep ball orientation fixed
     ballMeshObject.rotation.set(0, 0, 0);
 
     // Update direction angle visibility based on camera angle
@@ -359,8 +391,59 @@ function createTextLabel(text, x, y, z, color = 0xffd700) {
 
     const texture = new THREE.CanvasTexture(canvas);
     const material = new THREE.SpriteMaterial({ map: texture });
+    const texture = new THREE.CanvasTexture(canvas);
+    const material = new THREE.SpriteMaterial({ map: texture });
     const sprite = new THREE.Sprite(material);
     sprite.position.set(x, y, z);
     sprite.scale.set(0.5, 0.125, 1);
     return sprite;
+}
+
+// Add below the existing functions (e.g., after startAnimationLoop)
+
+function updateSwingPathTiltVisual(swingTiltDegrees) {
+    // Ensure we have stored base values/ Add below the existing functions (e.g., after startAnimationLoop)
+    if (batMeshObject && batMeshObject.userData.baseRotationX === undefined) {
+        batMeshObject.userData.baseRotationX = batMeshObject.rotation.x;
+    }    // Ensure we have stored base values
+    if (ballMeshObject && ballMeshObject.userData.baseY === undefined) {tationX === undefined) {
+        ballMeshObject.userData.baseY = ballMeshObject.position.y;ionX = batMeshObject.rotation.x;
+    }
+
+    // Calculate extra rotation (in radians) for the bat. Negative sign to tilt downward.   ballMeshObject.userData.baseY = ballMeshObject.position.y;
+    const extraRotation = THREE.MathUtils.degToRad(swingTiltDegrees);
+    if (batMeshObject) {
+        batMeshObject.rotation.x = batMeshObject.userData.baseRotationX - extraRotation;/ Calculate extra rotation (in radians) for the bat. Negative sign to tilt downward.
+    }    const extraRotation = THREE.MathUtils.degToRad(swingTiltDegrees);
+    // Calculate vertical offset for the ball.
+    // For example, use a factor of 0.05 (adjustable) to compute the downward shift.nX - extraRotation;
+    const yOffset = 0.05 * swingTiltDegrees;
+    if (ballMeshObject) {
+        ballMeshObject.position.y = ballMeshObject.userData.baseY - yOffset;/ For example, use a factor of 0.05 (adjustable) to compute the downward shift.
+    }
+    console.log(`Updated swing path tilt visualization: swingTiltDegrees=${swingTiltDegrees}, yOffset=${yOffset}`);
+}Object.userData.baseY - yOffset;
+
+window.updateSwingPathTilt = updateSwingPathTiltVisual;wingTiltDegrees}, yOffset=${yOffset}`);
+
+// NEW: Create a yellow 2D square at the ball's center (slightly up)
+// Modify createBallCenterSquare to attach square to ballMeshObject and force on top:indow.updateSwingPathTilt = updateSwingPathTiltVisual;
+function createBallCenterSquare() {
+    if (!ballMeshObject) return;
+    // Remove old square if it exists
+    if (ballMeshObject.userData.centerSquare) {
+        ballMeshObject.remove(ballMeshObject.userData.centerSquare);
+    }
+    const size = 0.4; // Increased size to better cover the ball
+    const geometry = new THREE.PlaneGeometry(size, size);
+    const material = new THREE.MeshBasicMaterial({ color: 0xffff00, side: THREE.DoubleSide });
+    // Force square to render on top
+    material.depthTest = false;
+    const square = new THREE.Mesh(geometry, material);
+    // Position square at ball's local center and lift it a bit
+    square.position.set(0, 0.3, 0); // Moved up slightly more
+    // Orient square toward the camera
+    square.renderOrder = 999;
+    ballMeshObject.add(square);
+    ballMeshObject.userData.centerSquare = square;
 }

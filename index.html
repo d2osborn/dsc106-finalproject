@@ -153,6 +153,88 @@
             });
         });
     </script>
+    <style>
+        #stats, #overall-graph, #scatter-contact-woba, #radarChart, #heatmap0, #heatmap2, #delta-hists, #correlation-graphs, .correlation-graph {
+            background: transparent;
+            border: none;
+            box-shadow: none !important;
+        }
+        
+        .card-circle {
+            fill: transparent;
+            stroke: #EB6E1F;
+            stroke-width: 2;
+        }
+        
+        .circle-value, .circle-actual {
+            fill: #EB6E1F;
+        }
+        
+        .circle-value.highlight {
+            fill: #EB6E1F;
+        }
+
+        #scatter-contact-woba svg, #radarChart svg, #heatmap0 svg, #heatmap2 svg, #delta-hists svg, .correlation-graph svg {
+            background: transparent;
+            box-shadow: none !important;
+        }
+
+        .radar-container, .heatmap, .hist-container {
+            background: transparent;
+            border: none;
+            box-shadow: none !important;
+        }
+
+        /* Make histogram wider */
+        #delta-hists {
+            width: 120%;
+            margin-left: -10%;
+        }
+
+        .hist-container {
+            width: 100%;
+            background: transparent !important;
+            box-shadow: none !important;
+        }
+
+        .heatmap {
+            background: transparent !important;
+            box-shadow: none !important;
+        }
+
+        /* Remove shadow from stats container */
+        #stats {
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+
+        /* Remove shadow from radar container */
+        .radar-section {
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+
+        .radar-container {
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+
+        /* Correlation section styles */
+        #correlation-section {
+            background: transparent !important;
+            box-shadow: none !important;
+        }
+
+        .correlation-graph {
+            background: transparent !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+
+        .correlation-graph .title {
+            color: #EB6E1F !important;
+        }
+    </style>
 </head>
 <body>
     <h1 class="main-title" id="dynamic-title"></h1>
@@ -177,6 +259,7 @@
         </div>
         <div id="chart-panel">
             <div id="tooltip"></div>
+            <p style="text-align: center; margin-bottom: 20px; font-size: 1.1em;">Yordan Alvarez stands out as one of the most productive hitters in baseball, combining elite power with exceptional contact ability. His ability to maintain high barrel rates while producing strong wOBA numbers demonstrates his unique combination of power and plate discipline.</p>
             <div id="overall-graph" class="chart"></div>
         </div>
         </div>

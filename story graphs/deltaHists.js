@@ -8,7 +8,7 @@ const angles = ["attack_angle", "attack_direction", "swing_path_tilt"];
 let currentIndex = 0;
 
 const margin = { top: 30, right: 20, bottom: 40, left: 50 };
-const chartW = 400 - margin.left - margin.right;
+const chartW = 600 - margin.left - margin.right;
 const chartH = 300 - margin.top - margin.bottom;
 
 // A helper to compute percentile ranks in [%]
@@ -127,7 +127,7 @@ d3.json("files/yordan/delta_angles.json")
       .style("position", "relative")
       .style("width", `${chartW + margin.left + margin.right}px`)
       .style("height", `${chartH + margin.top + margin.bottom + 40}px`)
-      .style("margin", "0 0 0 auto");
+      .style("margin", "0 auto");
 
     // Create individual containers for each histogram
     const containers = histContainer.selectAll(".hist-container")
@@ -140,9 +140,9 @@ d3.json("files/yordan/delta_angles.json")
       .style("left", "0")
       .style("width", "100%")
       .style("height", "100%")
-      .style("background", "white")
+      .style("background", "transparent")
       .style("border-radius", "8px")
-      .style("box-shadow", "0 4px 6px rgba(0, 0, 0, 0.1)")
+      .style("box-shadow", "none")
       .style("padding", "0.75rem")
       .style("transition", "all 0.5s ease")
       .style("cursor", "pointer")

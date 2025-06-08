@@ -65,7 +65,7 @@ let currentDirectionAngle = null;
 // Add these variables at the top with other globals
 let angleVisualizationOffset = {
     x: 0.2,
-    y: 1.5,    // was 0.0, moved up by 0.5
+    y: 1.75,    // was 0.0, moved up by 0.5
     z: 2.3    // was 2.2, increased by 0.05
 };
 

@@ -1,4 +1,3 @@
-// radar.js (or your scatter script)
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 function drawOverallScatter() {
@@ -30,7 +29,6 @@ function drawOverallScatter() {
       data.forEach(d => {
         d.wOBA = +d.wOBA;
         d["barrel%"] = +d["barrel%"];
-        // make sure all %‐fields exist as numbers!
         d["swing%"] = +d["swing%"];
         d["zone_swing%"] = +d["zone_swing%"];
         d["chase%"] = +d["chase%"];
@@ -70,7 +68,7 @@ function drawOverallScatter() {
         .enter().append("circle")
         .attr("cx", d => x(d.wOBA))
         .attr("cy", d => y(d["barrel%"]))
-        .attr("r", 4)
+        .attr("r", 6)
         .attr("fill", "steelblue")
         .attr("opacity", 0.6)
         .on("mouseover", (event, d) => {
@@ -90,17 +88,25 @@ function drawOverallScatter() {
           tooltip.style("opacity", 0);
         });
 
-      // highlight Yordan
-      const t = data.find(d => d.cleanName  === "Yordan Alvarez");
+      // highlight Yordan with an image instead of circle
+      const t = data.find(d => d.cleanName === "Yordan Alvarez");
       if (t) {
-        const xVal = x(t.wOBA), yVal = y(t["barrel%"]);
-        svg.append("circle")
-          .attr("cx", xVal).attr("cy", yVal)
-          .attr("r", 8).attr("stroke", "black").attr("fill", "none");
+        const xVal = x(t.wOBA),
+              yVal = y(t["barrel%"]);
+
+        svg.append("image")
+          .attr("href", "files/yordan/yadro.png")   // <-- your image path here
+          .attr("width", 10)
+          .attr("height", 10)
+          .attr("x", xVal )                        // center the icon
+          .attr("y", yVal );
+
         svg.append("text")
-          .attr("x", xVal + 6).attr("y", yVal - 10)
+          .attr("x", xVal + 18)
+          .attr("y", yVal - 18)
           .text(t.cleanName)
-          .attr("font-weight", "bold").attr("font-size", "12px");
+          .attr("font-weight", "bold")
+          .attr("font-size", "12px");
       }
 
       // labels
@@ -113,7 +119,8 @@ function drawOverallScatter() {
         .attr("text-anchor", "middle").text("Barrel %");
       svg.append("text")
         .attr("x", width / 2).attr("y", -margin.top / 2)
-        .attr("text-anchor", "middle").attr("font-size", "18px")
+        .attr("text-anchor", "middle")
+        .attr("font-size", "18px")
         .text("Overall: Barrel % vs wOBA");
     })
     .catch(err => console.error("JSON load error:", err));

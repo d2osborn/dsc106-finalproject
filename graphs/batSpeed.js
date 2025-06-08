@@ -112,7 +112,7 @@ function appendMLBAverage(svg, cx, y, data, field, overrideFontSize) {
        .attr('y', y)
        .attr('text-anchor', 'middle')
        .style('font-size', fontSize)
-       .style('fill', '#E63946')
+       .style('fill', '#EB6E1F')
        .text(mlbAvg !== null && !isNaN(mlbAvg) ?
              `MLB Average: ${mlbAvg.toFixed(1)}${field==="attack_angle"?"°":""}` : '');
 }

@@ -44,7 +44,7 @@ export function drawDirectionAngle(containerSel, data, config) {
     const initialRedY = ballY + lineLength * Math.sin(zeroAngle + prevTheta);
     const fillPoly = svg.append('polygon')
         .attr('points', `${ballX},${ballY} ${blackX},${blackY} ${initialRedX},${initialRedY}`)
-        .attr('fill', "#002D62")
+        .attr('fill', "#EB6E1F")
         .attr('opacity', 0.5);
     fillPoly.transition().duration(1000).attrTween("points", function() {
         return t => {
@@ -91,7 +91,7 @@ function appendMLBAverage(svg, cx, y, data, field, overrideFontSize) {
        .attr('y', y)
        .attr('text-anchor', 'middle')
        .style('font-size', fontSize)
-       .style('fill', '#E63946')
+       .style('fill', '#EB6E1F')
        .text(mlbAvg !== null && !isNaN(mlbAvg) ?
              `MLB Average: ${mlbAvg.toFixed(1)}${field==="attack_direction" ? "°" : ""}` : '');
 }

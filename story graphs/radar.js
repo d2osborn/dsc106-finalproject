@@ -9,7 +9,7 @@ const innerH = height - margin.top  - margin.bottom;
 const radius = Math.min(innerW, innerH) / 2;
 
 // Metrics and scales (chase and oppo swapped)
-const metrics = ["wOBA", "contact%", "oppo%", "chase%", "barrel%", "OBP"];
+const metrics = ["wOBA", "contact%", "oppo%", "chase%", "barrel%"];
 const angleSlice = (Math.PI * 2) / metrics.length;
 const rScale = d3.scaleLinear().domain([0, 1]).range([0, radius]);
 
@@ -28,7 +28,7 @@ for (let lvl = 1; lvl <= levels; lvl++) {
   g.append("circle")
     .attr("r", radius * (lvl / levels))
     .attr("fill", "none")
-    .attr("stroke", "#CDCDCD")
+    .attr("stroke", "#002D62")
     .attr("stroke-dasharray", "2 2");
 }
 g.selectAll(".radar-level-label")
@@ -40,7 +40,7 @@ g.selectAll(".radar-level-label")
     .attr("dy", "-0.3em")
     .attr("text-anchor", "middle")
     .style("font-size", "10px")
-    .attr("fill", "#777")
+    .attr("fill", "#002D62")
     .text(d => `${d * (100 / levels)}%`);
 
 // 4) DRAW AXES AND AXIS LABELS
@@ -52,7 +52,7 @@ metrics.forEach((m, i) => {
     .attr("x1", 0).attr("y1", 0)
     .attr("x2", Math.cos(angle) * radius)
     .attr("y2", Math.sin(angle) * radius)
-    .attr("stroke", "#888")
+    .attr("stroke", "#002D62")
     .attr("stroke-width", 1);
 
   axis.append("text")
@@ -99,9 +99,9 @@ d3.json(dataPath).then(data => {
   g.append("path")
     .datum(values)
     .attr("d", radarLine)
-    .attr("fill", "crimson")
+    .attr("fill", "#EB6E1F")
     .attr("fill-opacity", 0.3)
-    .attr("stroke", "crimson")
+    .attr("stroke", "#EB6E1F")
     .attr("stroke-width", 2);
 
   svg.append("text")

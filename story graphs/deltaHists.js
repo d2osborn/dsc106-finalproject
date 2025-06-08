@@ -201,7 +201,7 @@ d3.json("files/yordan/delta_angles.json")
       // 10) vertical line at Yordan's delta
       svg.append("line")
         .attr("x1", x(x0)).attr("x2", x(x0))
-        .attr("y1", 0)     .attr("y2", chartH)
+        .attr("y1", 24)     .attr("y2", chartH)
         .attr("stroke", "red")
         .attr("stroke-width", 2)
         .attr("stroke-dasharray", "4,2");

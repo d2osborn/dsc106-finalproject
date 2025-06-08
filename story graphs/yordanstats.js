@@ -64,14 +64,26 @@ d3.json("files/yordan/yordansummary.json").then(data => {
     format:  r.format
   }));
 
-  // Place header text centered
-  svg.append("text")
+  const title = svg.append("text")
     .attr("class", "player-name")
-    .attr("x", WIDTH/2)
-    .attr("y", HEADER_HEIGHT/2 + 6)
-    .attr("text-anchor", "middle")
+    .attr("x", WIDTH / 2)
+    .attr("y", HEADER_HEIGHT / 2 + 6)
+    .attr("text-anchor", "middle");
+
+  // Add "Yordan's"
+  title.append("tspan")
     .style("fill", "#002D62")
-    .text("Yordan's 2024 Percentiles");
+    .text("Yordan's ");
+
+  // Add "2024"
+  title.append("tspan")
+    .style("fill", "#EB6E1F")
+    .text("2024 ");
+
+  // Add "Percentiles"
+  title.append("tspan")
+    .style("fill", "#002D62")
+    .text("Percentiles");
 
   // Create a grid that fills the remaining space
   const gridX = 0;

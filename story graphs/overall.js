@@ -78,17 +78,6 @@ function drawOverallScatter() {
             <strong>${d.cleanName}</strong><br/>
             wOBA: ${d.wOBA.toFixed(3)}<br/>
             Barrel %: ${(d["barrel%"] * 100).toFixed(1)}%<br/>
-            Swing %: ${(d["swing%"] * 100).toFixed(1)}%<br/>
-            Zone swing %: ${(d["zone_swing%"] * 100).toFixed(1)}%<br/>
-            Chase %: ${(d["chase%"] * 100).toFixed(1)}%<br/>
-            Contact %: ${(d["contact%"] * 100).toFixed(1)}%<br/>
-            Whiff %: ${(d["whiff%"] * 100).toFixed(1)}%<br/>
-            Foul %: ${(d["foul%"] * 100).toFixed(1)}%<br/>
-            In‐play %: ${(d["in_play%"] * 100).toFixed(1)}%<br/>
-            Oppo %: ${(d["oppo%"] * 100).toFixed(1)}%<br/>
-            GB %: ${(d["gb%"] * 100).toFixed(1)}%<br/>
-            Barrel hits: ${d.is_barrel}<br/>
-            Pitches seen: ${d.pitches_seen}
           `)
             .style("opacity", 1);
         })

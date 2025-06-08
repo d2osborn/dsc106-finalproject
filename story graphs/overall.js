@@ -89,9 +89,9 @@ function drawOverallScatter() {
         })
         .on("mousemove", event => {
           tooltip
-            .style("left", (event.pageX + 12) + "px")
-            .style("top", (event.pageY - 28) + "px");
-        })
+            .style("left", (event.clientX - 470) + "px")
+            .style("top", (event.clientY - 80) + "px");
+        })        
         .on("mouseout", () => tooltip.style("opacity", 0));
 
         // Highlight Yordan with circular-framed image

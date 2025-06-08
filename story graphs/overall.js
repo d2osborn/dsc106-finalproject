@@ -1,23 +1,38 @@
+// radar.js (or your scatter script)
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
-const margin = { top: 60, right: 30, bottom: 60, left: 80 }; // minimal adjustments
-const width = 900 - margin.left - margin.right;
-const height = 600 - margin.top - margin.bottom;
+const margin = { top: 60, right: 30, bottom: 60, left: 80 };
+const width  = 900 - margin.left - margin.right;
+const height = 600 - margin.top  - margin.bottom;
 
 const svg = d3.select("#scatter-barrel-woba")
   .append("svg")
-  .attr("width", width + margin.left + margin.right)
-  .attr("height", height + margin.top + margin.bottom)
+    .attr("width",  width + margin.left + margin.right)
+    .attr("height", height + margin.top  + margin.bottom)
   .append("g")
-  .attr("transform", `translate(${margin.left},${margin.top})`);
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+const tooltip = d3.select("#tooltip");
 
 d3.json("files/yordan/overall_wOBA_vs_barrel_percent.json")
   .then(data => {
+    // parse numerics
     data.forEach(d => {
-      d.wOBA = +d.wOBA;
+      d.wOBA     = +d.wOBA;
       d["barrel%"] = +d["barrel%"];
+      // make sure all %‐fields exist as numbers!
+      d["swing%"]      = +d["swing%"];
+      d["zone_swing%"] = +d["zone_swing%"];
+      d["chase%"]      = +d["chase%"];
+      d["contact%"]    = +d["contact%"];
+      d["whiff%"]      = +d["whiff%"];
+      d["foul%"]       = +d["foul%"];
+      d["in_play%"]    = +d["in_play%"];
+      d["oppo%"]       = +d["oppo%"];
+      d["gb%"]         = +d["gb%"];
     });
 
+    // scales
     const x = d3.scaleLinear()
       .domain(d3.extent(data, d => d.wOBA)).nice()
       .range([0, width]);
@@ -26,68 +41,79 @@ d3.json("files/yordan/overall_wOBA_vs_barrel_percent.json")
       .domain(d3.extent(data, d => d["barrel%"])).nice()
       .range([height, 0]);
 
+    // axes
     svg.append("g")
-      .attr("transform", `translate(0,${height})`)
-      .call(d3.axisBottom(x));
-
-    svg.append("g").call(d3.axisLeft(y));
-
+       .attr("transform", `translate(0,${height})`)
+       .call(d3.axisBottom(x));
     svg.append("g")
-      .call(d3.axisLeft(y).tickSize(-width).tickFormat(""))
-      .attr("opacity", 0.3)
-      .selectAll("line")
-      .attr("stroke-dasharray", "4");
+       .call(d3.axisLeft(y));
+    svg.append("g")
+       .call(d3.axisLeft(y).tickSize(-width).tickFormat(""))
+       .attr("opacity", 0.3)
+       .selectAll("line")
+       .attr("stroke-dasharray", "4");
 
+    // draw circles + tooltip
     svg.selectAll("circle")
       .data(data)
-      .enter()
-      .append("circle")
-      .attr("cx", d => x(d.wOBA))
-      .attr("cy", d => y(d["barrel%"]))
-      .attr("r", 4)
-      .attr("fill", "steelblue")
-      .attr("opacity", 0.6);
+      .enter().append("circle")
+        .attr("cx",     d => x(d.wOBA))
+        .attr("cy",     d => y(d["barrel%"]))
+        .attr("r",      4)
+        .attr("fill",   "steelblue")
+        .attr("opacity",0.6)
+      .on("mouseover", (event, d) => {
+        tooltip.html(`
+          <strong>${d.name_with_stand}</strong><br/>
+          wOBA: ${d.wOBA.toFixed(3)}<br/>
+          Barrel %: ${(d["barrel%"]*100).toFixed(1)}%<br/>
+          Swing %: ${(d["swing%"]*100).toFixed(1)}%<br/>
+          Zone swing %: ${(d["zone_swing%"]*100).toFixed(1)}%<br/>
+          Chase %: ${(d["chase%"]*100).toFixed(1)}%<br/>
+          Contact %: ${(d["contact%"]*100).toFixed(1)}%<br/>
+          Whiff %: ${(d["whiff%"]*100).toFixed(1)}%<br/>
+          Foul %: ${(d["foul%"]*100).toFixed(1)}%<br/>
+          In‐play %: ${(d["in_play%"]*100).toFixed(1)}%<br/>
+          Oppo %: ${(d["oppo%"]*100).toFixed(1)}%<br/>
+          GB %: ${(d["gb%"]*100).toFixed(1)}%<br/>
+          Barrel hits: ${d.is_barrel}<br/>
+          Pitches seen: ${d.pitches_seen}
+        `)
+        .style("opacity", 1);
+      })
+      .on("mousemove", event => {
+        tooltip
+          .style("left", (event.pageX + 12) + "px")
+          .style("top",  (event.pageY - 28) + "px");
+      })
+      .on("mouseout", () => {
+        tooltip.style("opacity", 0);
+      });
 
-    const target = data.find(d => d.name_with_stand === "Yordan AlvarezL");
-    if (target) {
-      const xVal = x(target.wOBA);
-      const yVal = y(target["barrel%"]);
-
+    // highlight Yordan
+    const t = data.find(d => d.name_with_stand === "Yordan AlvarezL");
+    if (t) {
+      const xVal = x(t.wOBA), yVal = y(t["barrel%"]);
       svg.append("circle")
-        .attr("cx", xVal)
-        .attr("cy", yVal)
-        .attr("r", 8)
-        .attr("stroke", "black")
-        .attr("fill", "none");
-
+         .attr("cx", xVal).attr("cy", yVal)
+         .attr("r", 8).attr("stroke","black").attr("fill","none");
       svg.append("text")
-        .attr("x", xVal + 6)
-        .attr("y", yVal - 10)
-        .text(target.name_with_stand)
-        .attr("font-weight", "bold")
-        .attr("font-size", "12px");
+         .attr("x", xVal + 6).attr("y", yVal - 10)
+         .text(t.name_with_stand)
+         .attr("font-weight","bold").attr("font-size","12px");
     }
 
+    // labels
     svg.append("text")
-      .attr("x", width / 2)
-      .attr("y", height + 45)
-      .attr("text-anchor", "middle")
-      .text("wOBA");
-
+      .attr("x", width/2).attr("y", height+45)
+      .attr("text-anchor","middle").text("wOBA");
     svg.append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", -65) // was -50
-      .attr("x", -height / 2)
-      .attr("text-anchor", "middle")
-      .text("Barrel %");
-
+      .attr("transform","rotate(-90)")
+      .attr("y",-65).attr("x",-height/2)
+      .attr("text-anchor","middle").text("Barrel %");
     svg.append("text")
-      .attr("x", width / 2)
-      .attr("y", -30) // was -20
-      .attr("text-anchor", "middle")
-      .attr("font-size", 18)
+      .attr("x", width/2).attr("y",-30)
+      .attr("text-anchor","middle").attr("font-size","18px")
       .text("Overall: Barrel % vs wOBA");
   })
-  .catch(error => {
-    console.error("Failed to load JSON data:", error);
-  });
+  .catch(err => console.error("JSON load error:", err));

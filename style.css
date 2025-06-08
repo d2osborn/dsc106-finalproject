@@ -517,7 +517,7 @@ h3 {
     height: 400px;
     min-width: 0; /* Prevents flex items from overflowing */
     position: relative;
-    overflow: hidden;
+    overflow: visible !important;
 }
   
 .chart svg {
@@ -778,4 +778,28 @@ h1,h2,h3,h4,h5,h6,p { margin-block: 0; }
     fill: #222;
     text-anchor: middle;
   }
+  #tooltip {
+    z-index: 1000;
+  }
+  #chart-stats-container {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+#scatter-barrel-woba {
+    flex: 1;
+    min-width: 0;            /* ensure no overflow */
+    overflow: visible !important;
+}
+
+#stats {
+    flex: 1;
+    border-left: 1px solid #ccc;
+    padding-left: 16px;
+    font-size: 14px;
+    line-height: 1.4;
+    max-height: 600px;
+    overflow-y: auto;
+}
   

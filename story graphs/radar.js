@@ -56,12 +56,12 @@ metrics.forEach((m, i) => {
     .attr("stroke-width", 1);
 
   axis.append("text")
-    .attr("x", Math.cos(angle) * (radius + 20))
-    .attr("y", Math.sin(angle) * (radius + 20))
+    .attr("x", m === "wOBA" ? Math.cos(angle) * (radius + 20) : Math.cos(angle) * (radius + 30))
+    .attr("y", m === "wOBA" ? Math.sin(angle) * (radius + 20) : Math.sin(angle) * (radius + 30))
     .attr("dy", "0.35em")
     .attr("text-anchor", "middle")
     .style("font-size", "11px")
-    .text(m.replace("%", ""));
+    .text(m === "wOBA" ? "wOBA" : m.replace("%", "") + "%");
 });
 
 // 5) LOAD DATA & PLOT POLYGON

@@ -41,7 +41,7 @@ function pearsonCorr(x, y) {
 
 function formatMetricName(metric) {
   if (metric === 'wOBA') return 'wOBA';
-  if (metric === 'gb%')  return 'Ground Ball %';
+  if (metric === 'gb%')  return 'GB%';
   return metric
     .split('_')
     .map((word, i) => {

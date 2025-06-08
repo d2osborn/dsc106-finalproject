@@ -86,7 +86,7 @@ d3.json("files/yordan/overall_wOBA_vs_barrel_percent.json")
       .attr("y", -30) // was -20
       .attr("text-anchor", "middle")
       .attr("font-size", 18)
-      .text("Player Barrel % vs wOBA");
+      .text("Overall: Barrel % vs wOBA");
   })
   .catch(error => {
     console.error("Failed to load JSON data:", error);

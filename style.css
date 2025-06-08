@@ -447,7 +447,7 @@ label {
 .heatmap-row {
     display: flex;
     align-items: flex-start;
-    gap: 2.5rem;
+    gap: 3.5rem;
     margin: 4rem auto;
     max-width: 1200px;
     padding: 0 20px;
@@ -459,6 +459,9 @@ label {
     flex-direction: row;
     gap: 1.5rem;
     flex: 0 0 auto;
+    align-items: center;
+    justify-content: flex-end;
+    margin-right: 2rem;
 }
 
 /* —— each heat-map tile —— */
@@ -636,7 +639,7 @@ section, .graph-section {
 .heatmap-row {
     display: flex;
     align-items: flex-start;
-    gap: 2.5rem;
+    gap: 3.5rem;
     margin: 4rem auto;
     max-width: 1200px;
     padding: 0 20px;
@@ -647,6 +650,9 @@ section, .graph-section {
     flex-direction: row;
     gap: 1.5rem;
     flex: 0 0 auto;
+    align-items: center;
+    justify-content: flex-end;
+    margin-right: 2rem;
 }
 
 .heatmap {
@@ -786,52 +792,49 @@ h1,h2,h3,h4,h5,h6,p { margin-block: 0; }
   #tooltip {
     z-index: 1000;
   }
-  #chart-stats-container {
+/* ============= combined stats/intro/chart container ============= */
+#chart-stats-container {
     display: grid;
     grid-template-columns: 30% 70%;
-    grid-template-rows: auto 2fr;
+    grid-template-rows: 1fr;
     grid-template-areas:
-      "stats intro"
       "stats chart";
     gap: 1.5rem;
     max-width: 1200px;
     margin: 4rem auto;
-    min-height: 650px; /* instead of height */
+    height: auto; /* Changed from fixed height to auto */
+    min-height: 400px; /* Added minimum height to ensure scatter plot has space */
 }
-
   
-  #stats {
+#stats {
     grid-area: stats;
     background: #fff;
     border-radius: 16px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-    padding: 2rem;
-    max-height: 100%;
-    overflow-y: auto;
-  }
-  
-  #intro-panel {
-    grid-area: intro;
     padding: 1rem;
-    overflow: hidden;
-  }
-  #intro-panel .intro {
+    height: auto; /* Changed from fixed height to auto */
+    overflow: hidden; /* Changed from overflow-y: auto to hidden */
+}
+  
+#intro-panel {
+    display: none;
+}
+#intro-panel .intro {
     margin: 0;
     font-size: 1rem;
     line-height: 1.5;
-  }
+}
   
-  #chart-panel {
+#chart-panel {
     grid-area: chart;
     position: relative;
-    min-height: 00px; /* Add this to force minimum space */
+    height: 100%;
 }
-
-  #overall-graph {
+#overall-graph {
     width: 100%;
-    height: 600px;
-  }
-  #tooltip {
+    height: 100%;
+}
+#tooltip {
     position: absolute;
     pointer-events: none;
     background: white;
@@ -841,13 +844,16 @@ h1,h2,h3,h4,h5,h6,p { margin-block: 0; }
     font-size: 12px;
     opacity: 0;
     z-index: 1000;
-  }
+}
   
 
 /* Add new styles for histogram containers */
 #delta-hists {
     width: 100%;
-    padding: 0 2rem;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #delta-hists .hist-container {
@@ -869,32 +875,20 @@ section.graph-section {
 }
 
 /* Add hover effects to all graph containers */
-.chart, .heatmap, .sandbox-viz, .hist-container {
+.chart, .heatmap, .sandbox-viz, .hist-container, .radar-container, #stats {
     transition: all 0.3s ease;
     transform: translateY(0);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.chart:hover, .heatmap:hover, .sandbox-viz:hover, .hist-container:hover {
+.chart:hover, .heatmap:hover, .sandbox-viz:hover, .hist-container:hover, .radar-container:hover, #stats:hover {
     transform: translateY(-8px);
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
     z-index: 1;
 }
 
 /* Specific styles for different graph types */
-.chart {
-    background: white;
-    border-radius: 8px;
-    padding: 1rem;
-}
-
-.heatmap {
-    background: white;
-    border-radius: 8px;
-    padding: 1rem;
-}
-
-.sandbox-viz {
+.chart, .heatmap, .sandbox-viz, .radar-container, #stats {
     background: white;
     border-radius: 8px;
     padding: 1rem;
@@ -909,4 +903,172 @@ section.graph-section {
 /* Add smooth transition for all interactive elements */
 .chart *, .heatmap *, .sandbox-viz *, .hist-container * {
     transition: all 0.3s ease;
+}
+
+#scatter-contact-woba {
+    width: 100%;
+    height: 400px; /* Keep scatter plot height fixed */
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+/* Radar chart section layout */
+.radar-section {
+    display: flex;
+    align-items: flex-start;
+    gap: 2.5rem;
+    margin: 4rem auto;
+    max-width: 1200px;
+    padding: 0 20px;
+}
+
+.radar-text {
+    flex: 1;
+    max-width: 480px;
+    line-height: 1.55;
+    padding: 0 20px;
+    order: 1; /* Add order to control position */
+}
+
+.radar-container {
+    flex: 0 0 auto;
+    width: 600px;
+    height: 600px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    order: 2; /* Add order to control position */
+}
+
+.radar-container svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.radar-text h3 {
+    color: #002D62;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+}
+
+.radar-text p {
+    font-size: 1vw;
+    font-weight: 400;
+    color: #111;
+    line-height: 1.6;
+    text-align: justify;
+    margin-bottom: 1.5em;
+}
+
+/* Responsive design for radar section */
+@media (max-width: 1200px) {
+    .radar-section {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .radar-container {
+        width: 100%;
+        max-width: 600px;
+        height: auto;
+        aspect-ratio: 1;
+    }
+    
+    .radar-text {
+        max-width: 100%;
+        text-align: center;
+    }
+    
+    .radar-text p {
+        font-size: 1rem;
+    }
+}
+
+/* Histogram Card Styles */
+.histograms-stack {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  float: right;
+  margin-right: 2rem;
+}
+
+.hist-container {
+  backface-visibility: hidden;
+  transform-origin: center center;
+  transition: all 0.5s ease;
+  will-change: transform, opacity;
+}
+
+.hist-container:not(.active) {
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+}
+
+.hist-container.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+.hist-title {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin: 0 0 0.5rem 0;
+  padding: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.hist-navigation {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2rem;
+  z-index: 2;
+}
+
+.nav-arrow {
+  color: #ff6b00;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  user-select: none;
+}
+
+.nav-arrow:hover {
+  transform: scale(1.2);
+}
+
+.hist-counter {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 2rem;
+  clear: both;
+}
+
+/* Update histogram row styles to match heatmap */
+.histogram-row {
+    width: 600px;
+    height: 400px;
+    flex: 0 0 auto;
+    position: relative;
+    overflow: hidden;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 0;
+    padding: 1rem;
 }

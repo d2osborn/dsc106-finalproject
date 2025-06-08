@@ -65,8 +65,8 @@ let currentDirectionAngle = null;
 // Add these variables at the top with other globals
 let angleVisualizationOffset = {
     x: 0.2,
-    y: 2.25,    // Increased y offset
-    z: 2.3
+    y: 1.75,    // was 0.0, moved up by 0.5
+    z: 2.3    // was 2.2, increased by 0.05
 };
 
 // ─────────────── LOAD 3D MODELS ───────────────
@@ -82,7 +82,7 @@ gltfLoader.load(
       }
     });
     bat.scale.set(3.0, 3.0, 3.0);
-    bat.position.set(0.7, 1.2, 0.0);  // Increased y position from 0.7 to 1.2
+    bat.position.set(0.7, 0.7, 0.0);  // Updated to match the provided position
     bat.rotation.x = THREE.MathUtils.degToRad(90);
     bat.rotation.y = THREE.MathUtils.degToRad(180);
     batMeshObject = bat;
@@ -352,7 +352,7 @@ function updateSwingPathTiltVisual(swingTiltDegrees) {
             canvas.width = 256;
             canvas.height = 64;
             context.font = 'Bold 40px Arial';
-            context.fillStyle = '#ffff00';
+            context.fillStyle = '#ffff00'; // Changed to yellow
             context.fillText(`${swingTiltDegrees.toFixed(1)}°`, 10, 40);
 
             const texture = new THREE.CanvasTexture(canvas);
@@ -362,13 +362,13 @@ function updateSwingPathTiltVisual(swingTiltDegrees) {
 
         // Update the angle visualization position based on tilt
         if (currentAttackAngle !== null) {
-            // Adjusted y-axis movement to maintain higher position
-            const yOffset = (swingTiltDegrees / 30);
-            angleVisualizationOffset.y = 2.25 - yOffset; // Changed from 0.0 to 2.25
+            // Simple linear scaling for y-axis movement
+            const yOffset = (swingTiltDegrees / 30); // Divide by 30 for more subtle movement
+            angleVisualizationOffset.y = 0.0 - yOffset; // Changed from 0.45 to 0.0
             
             // Simple linear scaling for z-axis movement with smaller increment
-            const zOffset = (swingTiltDegrees / 60);
-            angleVisualizationOffset.z = 2.3 - zOffset;
+            const zOffset = (swingTiltDegrees / 60); // Changed from 40 to 60 for smaller increment
+            angleVisualizationOffset.z = 2.2 - zOffset; // Changed from 2.0 to 2.2
             
             // Update the visualizations
             createAttackAngle3D(currentAttackAngle);

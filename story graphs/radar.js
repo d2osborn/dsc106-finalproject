@@ -30,8 +30,9 @@ const g = svg.append("g")
 // 3) DRAW RADIAL GRID
 const levels = 5;
 for (let lvl = 1; lvl <= levels; lvl++) {
+  const circleRadius = Math.abs(radius * (lvl / levels));
   g.append("circle")
-    .attr("r", radius * (lvl / levels))
+    .attr("r", circleRadius)
     .attr("fill", "none")
     .attr("stroke", "#002D62")
     .attr("stroke-dasharray", "2 2");
@@ -41,7 +42,7 @@ g.selectAll(".radar-level-label")
   .enter()
   .append("text")
     .attr("class", "radar-level-label")
-    .attr("y", d => -rScale(d / levels))
+    .attr("y", d => -Math.abs(rScale(d / levels)))
     .attr("dy", "-0.3em")
     .attr("text-anchor", "middle")
     .style("font-size", "10px")

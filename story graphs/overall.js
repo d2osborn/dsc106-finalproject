@@ -168,13 +168,8 @@ function drawOverallScatter() {
     .catch(err => console.error("JSON load error:", err));
 }
 
-<<<<<<< HEAD
 // Initial draw
 window.addEventListener('DOMContentLoaded', drawOverallScatter);
 
 // Redraw on window resize
 window.addEventListener('resize', drawOverallScatter);
-=======
-drawOverallScatter();
-window.addEventListener('resize', drawOverallScatter);
->>>>>>> 9681982a9e4015bbdd760f99d62488202f7f2373

@@ -735,3 +735,47 @@ section, .graph-section {
 
 h1,h2,h3,h4,h5,h6,p { margin-block: 0; }
 
+/* big container */
+.outer-box {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 1.5;
+  }
+  
+  /* title at top */
+  .player-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    fill: #333;
+  }
+  
+  /* circles: no fill, only stroke */
+  .card-circle {
+    fill: none;
+    stroke: #bbb;
+    stroke-width: 1.2;
+  }
+  
+  /* big percentile text */
+  .circle-value {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: #333;
+  }
+  
+  /* highlight high percentiles in orange */
+  .highlight {
+    fill: #ff7f0e;
+  }
+  
+  /* “Metric @ Value” under the big number */
+  .circle-actual {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    fill: #222;
+    text-anchor: middle;
+  }
+  

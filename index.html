@@ -158,6 +158,9 @@
         
         <div class="scroll-arrows" onclick="scrollPastVideo()">&#x276F;&#x276F;&#x276F;</div>
     </div>
+    <p class="intro">
+        Yordan Álvarez, the Cuban-born designated hitter/left fielder for the Houston Astros, enjoyed a breakout 2024 campaign in which he slashed .308 AVG, .392 OBP, .567 SLG (.959 OPS) over 147 games (635 PA), belted 35 homers, drove in 86 runs and scored 88 times while earning his third consecutive All-Star nod (his first as the AL’s starting DH), hit for the cycle on July 21, and launched his 150th career home run in just 590 games—the eighth-fastest mark in MLB history; he was voted Astros MVP by the local BBWAA chapter, named to the All-MLB Second Team, and finished ninth in AL MVP voting
+    </p>
         <!-- TOOLTIP -->
         <div id="tooltip"
              style="opacity:0; position:absolute; pointer-events:none;
@@ -168,35 +171,31 @@
         <!-- …your video, titles, etc… -->
       
         <!-- SIDE-BY-SIDE STATS & CHART -->
-        <!-- Replace the existing side-by-side charts container with the new layout -->
-        <section class="section-container">
-          <h2 class="section-title" style="color: #002D62;">
+        <div id="chart-stats-container">
+            <div id="stats" class="chart"></div>
+
+          <div id="scatter-barrel-woba" class="chart"></div>
+        </div>
+      
+    
+    <section class="section-container">
+        <h2 class="section-title" style="color: #002D62;">
             3 strikes and you're out!<br><br>
             How are MLB hitters staying alive?
           </h2>
-          <!-- New layout: small stats box + contact scatter side by side -->
-          <div class="stats-scatter-container">
-            <div id="stats" class="small-stats">
-              <!-- Yordan stats will be rendered here -->
-            </div>
-            <div id="scatter-contact-woba" class="side-chart">
-              <!-- Contact scatter chart -->
-            </div>
-          </div>
-          <!-- Overall graph container below -->
-          <div id="overall-graph" class="overall-chart"></div>
+          <div id="scatter-contact-woba" class="chart"></div>
 
-          <p class="And">
-              <br></br>
-              Baseball Savant recently released new swing metrics: attack angle (º), attack direction (º), and swing path (tilt) (º)<br><br>
-              These new metrics allow the public to take a deeper dive into swing geometry and better understand how hitters approach each at-bat. 
-              For example, offering insight into how a player like Mookie Betts can hit 30 home runs despite being 5'9" with below-average swing speed.
-              To help reveal the relationship between a hitter's swing characteristics and the outcomes they produce, we have segmented situations based on the strike counts.
-              <br><br>
-              It's common knowledge that hitters are taught to use a "B swing" in two-strike counts. Do the data reveal major leaguers follow this advice?
-              Are they adjusting their swing geometry, when facing two strikes, or is the idea of a two-strike approach more myth than reality?
-              These adjustments can dramatically affect batted-ball outcomes like wOBA, contact%, and groundball%.
-          </p>
+        <p class="And">
+            <br></br>
+            Baseball Savant recently released new swing metrics: attack angle (º), attack direction (º), and swing path (tilt) (º)<br><br>
+            These new metrics allow the public to take a deeper dive into swing geometry and better understand how hitters approach each at-bat. 
+            For example, offering insight into how a player like Mookie Betts can hit 30 home runs despite being 5'9" with below-average swing speed.
+            To help reveal the relationship between a hitter's swing characteristics and the outcomes they produce, we have segmented situations based on the strike counts.
+            <br><br>
+            It's common knowledge that hitters are taught to use a "B swing" in two-strike counts. Do the data reveal major leaguers follow this advice?
+            Are they adjusting their swing geometry, when facing two strikes, or is the idea of a two-strike approach more myth than reality?
+            These adjustments can dramatically affect batted-ball outcomes like wOBA, contact%, and groundball%.
+        </p>
 
           <!-- Attack Angle Section -->
           <div id="radarChart"></div>

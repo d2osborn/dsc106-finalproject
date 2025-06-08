@@ -15,6 +15,9 @@ export function drawSwingPathTilt(containerSel, data, config) {
     
     // Compute average swing_path_tilt (absolute value) and convert degrees to radians
     const avg = d3.mean(data, d => +d.swing_path_tilt) || 0;
+    const prevAvg = window.previousSwingPathTilt !== undefined ? window.previousSwingPathTilt : 0;
+    window.previousSwingPathTilt = avg;
+    const prevTheta = Math.abs(prevAvg) * Math.PI / 180;
     const theta = Math.abs(avg) * Math.PI / 180;
     
     // Set up base positioning similar to attackAngle graph
@@ -41,13 +44,17 @@ export function drawSwingPathTilt(containerSel, data, config) {
     
     // Draw filled polygon (triangle) between baseline and red endpoint with transition
     const fillPoly = svg.append('polygon')
-        .attr('points', `${ballX},${ballY} ${blackX},${blackY} ${ballX},${ballY}`)
+        .attr('points', `${ballX},${ballY} ${blackX},${blackY} ${ballX + lineLength * Math.cos(zeroAngle + prevTheta)},${ballY - lineLength * Math.sin(zeroAngle + prevTheta)}`)
         .attr('fill', "#002D62")
         .attr('opacity', 0.5);
     fillPoly.transition().duration(1000).attrTween("points", function() {
         return t => {
-            const currX = blackX + (redX - blackX) * t;
-            const currY = blackY + (redY - blackY) * t;
+            const initX = ballX + lineLength * Math.cos(zeroAngle + prevTheta);
+            const initY = ballY - lineLength * Math.sin(zeroAngle + prevTheta);
+            const finalX = ballX + lineLength * Math.cos(zeroAngle + theta);
+            const finalY = ballY - lineLength * Math.sin(zeroAngle + theta);
+            const currX = initX + (finalX - initX) * t;
+            const currY = initY + (finalY - initY) * t;
             return `${ballX},${ballY} ${blackX},${blackY} ${currX},${currY}`;
         };
     });
@@ -70,11 +77,13 @@ export function drawSwingPathTilt(containerSel, data, config) {
       .attr('y', -newHeight/2) // vertically centered
       .attr('transform', 'scale(-1,1)');
 
-    // 3) Tween the ROTATION on the GROUP from 0 → –(avg in degrees) (for a CCW swing):
+    // 3) Tween the ROTATION on the GROUP from the previous angle to –(avg in degrees) (for a CCW swing):
     batG.transition()
       .duration(1000)
       .attrTween('transform', () => {
-          const interp = d3.interpolateNumber(0, - (Math.abs(avg) || 0));
+          const startAngle = -Math.abs(prevAvg);  // previous swing tilt in degrees (negative)
+          const endAngle = -Math.abs(avg);          // current swing tilt in degrees (negative)
+          const interp = d3.interpolateNumber(startAngle, endAngle);
           return t => `translate(${ballX},${ballY}) rotate(${interp(t)})`;
       });
     
@@ -89,8 +98,8 @@ export function drawSwingPathTilt(containerSel, data, config) {
         .style('font-size', '22px')
         .text(avg.toFixed(1) + "°");
     
-    // Update MLB Average call to use uniform placement for 400x400 svg:
-    appendMLBAverage(svg, 200, 380, data, 'swing_path_tilt', "20px");
+    // Update MLB Average text: enlarge by changing override font size from "20px" to "32px"
+    appendMLBAverage(svg, 200, 380, data, 'swing_path_tilt', "36px");
 }
 
 // Append the utility function directly:

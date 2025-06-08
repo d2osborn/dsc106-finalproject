@@ -90,7 +90,7 @@ function drawOverallScatter() {
         .on("mousemove", event => {
           tooltip
             .style("left", (event.clientX - 450) + "px")
-            .style("top", (event.clientY - 250) + "px");
+            .style("top", (event.clientY - 120) + "px");
         })        
         .on("mouseout", () => tooltip.style("opacity", 0));
 
@@ -152,7 +152,7 @@ function drawOverallScatter() {
           .on("mousemove", event => {
             tooltip
               .style("left", (event.clientX -450) + "px")
-              .style("top", (event.clientY - 250) + "px");
+              .style("top", (event.clientY - 120) + "px");
           })        
           .on("mouseout", () => tooltip.style("opacity", 0));
 

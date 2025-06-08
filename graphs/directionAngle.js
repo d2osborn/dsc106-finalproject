@@ -42,9 +42,11 @@ export function drawDirectionAngle(containerSel, data, config) {
     // Compute initial red endpoint using previous angle
     const initialRedX = ballX + lineLength * Math.cos(zeroAngle + prevTheta);
     const initialRedY = ballY + lineLength * Math.sin(zeroAngle + prevTheta);
+    // Append polygon with class "orangeFill"
     const fillPoly = svg.append('polygon')
+        .attr('class', 'orangeFill') // added class to override CSS
         .attr('points', `${ballX},${ballY} ${blackX},${blackY} ${initialRedX},${initialRedY}`)
-        .attr('fill', "#EB6E1F")
+        .attr('fill', "orange") // fill set to orange
         .attr('opacity', 0.5);
     fillPoly.transition().duration(1000).attrTween("points", function() {
         return t => {

@@ -11,7 +11,7 @@
     <script type="module" src="story graphs/radar.js"></script>
     <script type="module" src="story graphs/yordanstats.js"></script>
     <script type="module" src="story graphs/overall.js"></script>
-    <script type="module" src="deltaHists.js"></script>    
+    <script type="module" src="story graphs/deltaHists.js"></script>    
 
     <script type="module">
         import { drawAttackAngle } from './graphs/attackAngle.js';
@@ -168,84 +168,91 @@
         <!-- …your video, titles, etc… -->
       
         <!-- SIDE-BY-SIDE STATS & CHART -->
-        <div id="chart-stats-container">
-            <div id="stats" class="chart"></div>
-
-          <div id="scatter-barrel-woba" class="chart"></div>
-        </div>
-      
-    
-    <section class="section-container">
-        <h2 class="section-title" style="color: #002D62;">
+        <!-- Replace the existing side-by-side charts container with the new layout -->
+        <section class="section-container">
+          <h2 class="section-title" style="color: #002D62;">
             3 strikes and you're out!<br><br>
             How are MLB hitters staying alive?
           </h2>
-          <div id="scatter-contact-woba" class="chart"></div>
-
-        <p class="And">
-            <br></br>
-            Baseball Savant recently released new swing metrics: attack angle (º), attack direction (º), and swing path (tilt) (º)<br><br>
-            These new metrics allow the public to take a deeper dive into swing geometry and better understand how hitters approach each at-bat. 
-            For example, offering insight into how a player like Mookie Betts can hit 30 home runs despite being 5'9" with below-average swing speed.
-            To help reveal the relationship between a hitter's swing characteristics and the outcomes they produce, we have segmented situations based on the strike counts.
-            <br><br>
-            It's common knowledge that hitters are taught to use a "B swing" in two-strike counts. Do the data reveal major leaguers follow this advice?
-            Are they adjusting their swing geometry, when facing two strikes, or is the idea of a two-strike approach more myth than reality?
-            These adjustments can dramatically affect batted-ball outcomes like wOBA, contact%, and groundball%.
-        </p>
-
-        <!-- Attack Angle Section -->
-        <div id="radarChart"></div>
-        <div class="graph-section">
-            <div class="graph-explanation">
-                <p>
-                    The distribution of attack angle changes between 0-strike and 2-strike counts reveals how hitters adjust their swing plane.
-                    Yordan Alvarez shows a significant shift in his attack angle, moving from a more upward swing in 0-strike counts to a flatter plane with two strikes.
-                    This adjustment helps him maintain contact while sacrificing some power potential.
-                </p>
+          <!-- New layout: small stats box + contact scatter side by side -->
+          <div class="stats-scatter-container">
+            <div id="stats" class="small-stats">
+              <!-- Yordan stats will be rendered here -->
             </div>
-        </div>
-
-        <!-- Swing Path Tilt Section
-        <div class="graph-section">
-            <div class="chart-container">
-                <div id="swing-path-chart" class="chart"></div>
-                <div id="swing-path-comparison" class="chart"></div>
+            <div id="scatter-contact-woba" class="side-chart">
+              <!-- Contact scatter chart -->
             </div>
-            <div class="graph-explanation">
-                <p>
-                    The swing path tilt visualization shows how hitters modify their swing plane's orientation.
-                    With two strikes, many hitters flatten their swing path to increase contact probability.
-                    Alvarez's ability to maintain power despite these adjustments is what makes his two-strike approach unique.
-                </p>
-            </div>
-        </div> -->
+          </div>
+          <!-- Overall graph container below -->
+          <div id="overall-graph" class="overall-chart"></div>
 
-        <!-- Contact Zone Section -->
-        <div class="graph-section">
-            <div class="heatmap-row">
-                <div class="plot-pair">
-                    <div id="heatmap0" class="heatmap" style="margin-top: 5rem;"></div>
-                    <div id="heatmap2" class="heatmap" style="margin-top: 5rem;"></div>
-                </div>
-                <div class="plot-text">
-                    <h3 style="color: #EB6E1F;">Contact% Between Counts</h3>
-                    <p>
-                        As we can see from the side-by-side strike zone heatmaps, Yordan's contact% changes drastically from 0-strike counts to 2-strike counts. 
-                        We can see how in 0-strike counts, he prefers to make contact more inside and along the middle of the zone, but in 2-strike counts, he expands his zone and even tends to make contact away.
-                        This not only tells us that Yordan is willing to adjust his approach, but also that he can maintain quality contact even when expanding his zone.
-                    </p>
-                </div>
-            </div>
-        </div>
+          <p class="And">
+              <br></br>
+              Baseball Savant recently released new swing metrics: attack angle (º), attack direction (º), and swing path (tilt) (º)<br><br>
+              These new metrics allow the public to take a deeper dive into swing geometry and better understand how hitters approach each at-bat. 
+              For example, offering insight into how a player like Mookie Betts can hit 30 home runs despite being 5'9" with below-average swing speed.
+              To help reveal the relationship between a hitter's swing characteristics and the outcomes they produce, we have segmented situations based on the strike counts.
+              <br><br>
+              It's common knowledge that hitters are taught to use a "B swing" in two-strike counts. Do the data reveal major leaguers follow this advice?
+              Are they adjusting their swing geometry, when facing two strikes, or is the idea of a two-strike approach more myth than reality?
+              These adjustments can dramatically affect batted-ball outcomes like wOBA, contact%, and groundball%.
+          </p>
 
-        <div id="delta-hists"></div>
+          <!-- Attack Angle Section -->
+          <div id="radarChart"></div>
+          <div class="graph-section">
+              <div class="graph-explanation">
+                  <p>
+                      The distribution of attack angle changes between 0-strike and 2-strike counts reveals how hitters adjust their swing plane.
+                      Yordan Alvarez shows a significant shift in his attack angle, moving from a more upward swing in 0-strike counts to a flatter plane with two strikes.
+                      This adjustment helps him maintain contact while sacrificing some power potential.
+                  </p>
+              </div>
+          </div>
 
-        <p class="Therefore">
-            As stated earlier, every hitter has a unique way of managing tough counts; some shorten up, some stay aggressive, and others (like Yordan) retool their entire swing shape.
-            Now it's your turn: explore your favorite players' swing mechanics and outcomes. What makes them successful in two-strike situations?<br>
-        </p>
-    </section>
+          <!-- Swing Path Tilt Section
+          <div class="graph-section">
+              <div class="chart-container">
+                  <div id="swing-path-chart" class="chart"></div>
+                  <div id="swing-path-comparison" class="chart"></div>
+              </div>
+              <div class="graph-explanation">
+                  <p>
+                      The swing path tilt visualization shows how hitters modify their swing plane's orientation.
+                      With two strikes, many hitters flatten their swing path to increase contact probability.
+                      Alvarez's ability to maintain power despite these adjustments is what makes his two-strike approach unique.
+                  </p>
+              </div>
+          </div> -->
+
+          <!-- Contact Zone Section -->
+          <div class="graph-section">
+              <div class="heatmap-row">
+                  <div class="plot-pair">
+                      <div id="heatmap0" class="heatmap" style="margin-top: 5rem;"></div>
+                      <div id="heatmap2" class="heatmap" style="margin-top: 5rem;"></div>
+                  </div>
+                  <div class="plot-text">
+                      <h3 style="color: #EB6E1F;">Contact% Between Counts</h3>
+                      <p>
+                          As we can see from the side-by-side strike zone heatmaps, Yordan's contact% changes drastically from 0-strike counts to 2-strike counts. 
+                          We can see how in 0-strike counts, he prefers to make contact more inside and along the middle of the zone, but in 2-strike counts, he expands his zone and even tends to make contact away.
+                          This not only tells us that Yordan is willing to adjust his approach, but also that he can maintain quality contact even when expanding his zone.
+                      </p>
+                  </div>
+              </div>
+          </div>
+
+          <!-- Delta Histograms Section -->
+          <section class="graph-section">
+              <div id="delta-hists" class="histogram-row"></div>
+          </section>
+
+          <p class="Therefore">
+              As stated earlier, every hitter has a unique way of managing tough counts; some shorten up, some stay aggressive, and others (like Yordan) retool their entire swing shape.
+              Now it's your turn: explore your favorite players' swing mechanics and outcomes. What makes them successful in two-strike situations?<br>
+          </p>
+      </section>
 
     <!-- Correlation Section -->
     <div id="correlation-section"></div>

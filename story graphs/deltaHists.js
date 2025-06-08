@@ -4,11 +4,12 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 console.log("deltaHists.js script started");
 
 const targetPlayer = "Yordan AlvarezL";
-const angles = ["attack_angle","attack_direction","swing_path_tilt"];
+const angles = ["attack_angle", "attack_direction", "swing_path_tilt"];
+let currentIndex = 0;
 
 const margin = { top: 30, right: 20, bottom: 40, left: 50 };
 const chartW = 400 - margin.left - margin.right;
-const chartH = 300 - margin.top  - margin.bottom;
+const chartH = 300 - margin.top - margin.bottom;
 
 // A helper to compute percentile ranks in [%]
 function computePercentiles(data, key) {
@@ -25,10 +26,10 @@ function computePercentiles(data, key) {
 function handleResize() {
   const container = d3.select("#delta-hists");
   const containerWidth = container.node().getBoundingClientRect().width;
-  const newChartWidth = Math.min(300, (containerWidth - 100) / 3); // Divide by 3 for three charts, minus some padding
+  const newChartWidth = Math.min(400, containerWidth - 100);
   
-  // Update all charts
-  container.selectAll(".hist-container")
+  // Update the active chart
+  container.select(".hist-container.active")
     .style("width", `${newChartWidth + margin.left + margin.right}px`)
     .each(function() {
       const svg = d3.select(this).select("svg");
@@ -38,6 +39,33 @@ function handleResize() {
       const angle = d3.select(this).datum();
       updateChart(svg, angle, newChartWidth);
     });
+}
+
+// Function to switch between histograms
+function switchHistogram(direction) {
+  const container = d3.select("#delta-hists");
+  const containers = container.selectAll(".hist-container");
+  const total = containers.size();
+  
+  // Remove active class from current
+  containers.classed("active", false)
+    .style("opacity", "0")
+    .style("pointer-events", "none")
+    .style("transform", "translateY(20px)");
+  
+  // Update current index
+  currentIndex = (currentIndex + direction + total) % total;
+  
+  // Add active class to new current
+  containers.filter((d, i) => i === currentIndex)
+    .classed("active", true)
+    .style("opacity", "1")
+    .style("pointer-events", "all")
+    .style("transform", "translateY(0)")
+    .style("z-index", "1");
+  
+  // Update counter
+  container.select(".hist-counter").text(`${currentIndex + 1}/${angles.length}`);
 }
 
 // Function to update a single chart
@@ -87,51 +115,75 @@ let data; // Store data globally for resize handler
 console.log("Attempting to load delta_angles.json...");
 d3.json("files/yordan/delta_angles.json")
   .then(loadedData => {
-    data = loadedData; // Store data globally
+    data = loadedData;
     console.log("delta_angles.json data loaded successfully:", data);
-    console.log("Number of records:", data.length);
-    console.log("Sample record:", data[0]);
     
     const container = d3.select("#delta-hists");
-    console.log("Delta hists container found:", container.node());
-    
-    if (!container.node()) {
-      console.error("Container #delta-hists not found in the DOM");
-      return;
-    }
-
-    // Clear any existing content
     container.html("");
 
+    // Create container for all histograms
+    const histContainer = container.append("div")
+      .attr("class", "histograms-stack")
+      .style("position", "relative")
+      .style("width", `${chartW + margin.left + margin.right}px`)
+      .style("height", `${chartH + margin.top + margin.bottom + 40}px`)
+      .style("margin", "0 0 0 auto");
+
     // Create individual containers for each histogram
-    const containers = container.selectAll(".hist-container")
+    const containers = histContainer.selectAll(".hist-container")
       .data(angles)
       .enter()
       .append("div")
       .attr("class", "hist-container")
+      .style("position", "absolute")
+      .style("top", "0")
+      .style("left", "0")
+      .style("width", "100%")
+      .style("height", "100%")
       .style("background", "white")
       .style("border-radius", "8px")
       .style("box-shadow", "0 4px 6px rgba(0, 0, 0, 0.1)")
       .style("padding", "0.75rem")
-      .style("width", `${chartW + margin.left + margin.right}px`)
-      .style("margin", "0 1rem")
-      .style("transition", "transform 0.2s")
+      .style("transition", "all 0.5s ease")
       .style("cursor", "pointer")
-      .on("mouseover", function() {
-        d3.select(this).style("transform", "translateY(-5px)");
-      })
-      .on("mouseout", function() {
-        d3.select(this).style("transform", "translateY(0)");
+      .style("opacity", (d, i) => i === 0 ? 1 : 0)
+      .style("transform", (d, i) => i === 0 ? "translateY(0)" : "translateY(20px)")
+      .style("z-index", (d, i) => i === 0 ? 1 : 0)
+      .classed("active", (d, i) => i === 0)
+      .on("click", function() {
+        switchHistogram(1);
       });
 
-    // Add titles to each container with smaller font
+    // Add titles to each container
     containers.append("h4")
+      .attr("class", "hist-title")
       .style("text-align", "center")
       .style("margin", "0 0 0.5rem 0")
       .style("color", "#333")
-      .style("font-size", "0.7rem")  // Even smaller font size
+      .style("font-size", "0.9rem")
       .style("font-weight", "bold")
       .text(d => `Δ ${d.replace("_", " ").replace(/\b\w/g, l => l.toUpperCase())}`);
+
+    // Add navigation arrows
+    histContainer.append("div")
+      .attr("class", "hist-navigation")
+      .style("position", "absolute")
+      .style("bottom", "-30px")
+      .style("left", "50%")
+      .style("transform", "translateX(-50%)")
+      .style("display", "flex")
+      .style("gap", "2rem")
+      .html(`
+        <div class="nav-arrow left">←</div>
+        <div class="nav-arrow right">→</div>
+      `);
+
+    // Add counter
+    container.append("div")
+      .attr("class", "hist-counter")
+      .style("text-align", "center")
+      .style("margin-top", "2rem")
+      .text(`1/${angles.length}`);
 
     // Create SVGs in each container
     containers.each(function(angle) {

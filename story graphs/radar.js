@@ -1,11 +1,14 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 // 1) CONFIGURATION & DIMENSIONS
-const width  = 600;
-const height = 600;
+const container = document.querySelector('#radarChart');
+const containerWidth = container.clientWidth;
+const containerHeight = container.clientHeight;
+const width = Math.min(containerWidth, containerHeight);
+const height = width;
 const margin = { top: 60, right: 60, bottom: 60, left: 60 };
-const innerW = width  - margin.left - margin.right;
-const innerH = height - margin.top  - margin.bottom;
+const innerW = width - margin.left - margin.right;
+const innerH = height - margin.top - margin.bottom;
 const radius = Math.min(innerW, innerH) / 2;
 
 // Metrics and scales (chase and oppo swapped)
@@ -17,7 +20,9 @@ const rScale = d3.scaleLinear().domain([0, 1]).range([0, radius]);
 const svg = d3.select("#radarChart")
   .append("svg")
     .attr("width", width)
-    .attr("height", height);
+    .attr("height", height)
+    .attr("viewBox", `0 0 ${width} ${height}`)
+    .attr("preserveAspectRatio", "xMidYMid meet");
 
 const g = svg.append("g")
     .attr("transform", `translate(${margin.left + innerW/2}, ${margin.top + innerH/2})`);

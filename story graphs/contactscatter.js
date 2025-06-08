@@ -24,6 +24,7 @@ function drawContactScatter() {
     .attr("width", "100%")
     .attr("height", "100%")
     .attr("viewBox", `0 0 ${containerWidth} ${containerHeight}`)
+    .attr("preserveAspectRatio", "xMidYMid meet")
     .append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
 

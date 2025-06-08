@@ -195,17 +195,23 @@
         </p>
           <div id="scatter-contact-woba" class="chart"></div>
 
-
+          <!-- Radar Chart Section -->
+          <div class="radar-section">
+              <div class="radar-text">
+                  <h3>Yordan's 2-Strike Profile</h3>
+                  <p>
+                      Yordan Alvarez, compared to other MLB hitters, has noticeable top-notch attributes.
+                      A couple of things to focus on in this radar graph are the chase and oppo rates.
+                      The oppo rate represents his ability to hit to the opposite field, while the chase rate shows how often he expands his zone to make contact.
+                      This analysis can be highlighted more in the density graph.
+                  </p>
+              </div>
+              <div class="radar-container">
+                  <div id="radarChart"></div>
+              </div>
+          </div>
 
           <!-- Attack Angle Section -->
-          <div id="radarChart"></div>
-          <p class="radar">
-            Yordan Alverz, compare to other MLB hitters, has noticible top notch attributes.
-            Couple of things to focus on this radar graph are the chase and the oppo rate.
-            Oppo rate represents ...
-            Chase rate represents that he came out of his comfort zone and trying his best to make contact.
-            This analysis can be highlighted more in density graph.
-        </p>
           <div class="graph-section">
               <div class="graph-explanation">
                   <p>
@@ -248,7 +254,25 @@
                   </div>
               </div>
           </div>
-          <div id="delta-hists" style="display: flex; justify-content: center; gap: 2rem; margin: 2rem 0;"></div>
+
+          <!-- Delta Histograms Section -->
+          <div class="graph-section">
+              <div class="heatmap-row">
+                  <div class="plot-text">
+                      <h3 style="color: #EB6E1F;">Changes in Swing Metrics</h3>
+                      <p>
+                          The histograms show how Yordan Alvarez's swing metrics change between 0-strike and 2-strike counts.
+                          Each graph represents a different aspect of his swing: attack angle, attack direction, and swing path tilt.
+                          The red line indicates Yordan's position relative to other MLB hitters, showing how his adjustments compare to the league average.
+                          Click through the graphs to explore each metric in detail.
+                      </p>
+                  </div>
+                  <div class="plot-pair" style="margin-left: auto; margin-right: 0;">
+                      <div id="delta-hists" style="margin-left: auto;"></div>
+                  </div>
+              </div>
+          </div>
+
           <p class="And">
             <br></br>
             For further analysis, we can encorporate Baseball Savant recently released new swing metrics: attack angle (º), attack direction (º), and swing path (tilt) (º)<br><br>
@@ -262,10 +286,6 @@
             Compared to other hitters, he was moderate to low in change in variance for Swing tilt or attact direction. This result could mean that although he is changing his tilt of his upper body but the angle that his arms and his body makes remain consistent.
             Do the data reveal major leaguers follow Yordan's approach?
         </p>
-          <!-- Delta Histograms Section -->
-          <section class="graph-section">
-              <div id="delta-hists" class="histogram-row"></div>
-          </section>
           <p class = "But">
             Here's change in variance scatter plot for the each metrics against important outcome rates.
             Explore league-wide trend and see how Yordan Alverez's appraoch can be justified.

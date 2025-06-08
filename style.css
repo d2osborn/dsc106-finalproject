@@ -790,15 +790,16 @@ h1,h2,h3,h4,h5,h6,p { margin-block: 0; }
 #chart-stats-container {
     display: grid;
     grid-template-columns: 30% 70%;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto 2fr;
     grid-template-areas:
       "stats intro"
       "stats chart";
     gap: 1.5rem;
     max-width: 1200px;
     margin: 4rem auto;
-    height: 500px; /* adjust to taste */
-  }
+    min-height: 650px; /* instead of height */
+}
+
   
   #stats {
     grid-area: stats;
@@ -824,10 +825,13 @@ h1,h2,h3,h4,h5,h6,p { margin-block: 0; }
   #chart-panel {
     grid-area: chart;
     position: relative;
-  }
+    min-height: 00px;
+}
+
+
   #overall-graph {
     width: 100%;
-    height: 100%;
+    height: 650px;
   }
   #tooltip {
     position: absolute;

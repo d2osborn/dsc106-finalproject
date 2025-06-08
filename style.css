@@ -269,6 +269,11 @@ body, button, input, select, textarea {
     overflow: hidden;
 }
 
+/* Override fill for direction angle polygon */
+#attack-angle-plot polygon.orangeFill {
+  fill: orange !important;
+}
+
 /* Responsive design */
 @media (max-width: 1600px) {
     .sandbox-layout {
@@ -717,7 +722,7 @@ section, .graph-section {
   
 
 .graph-section + .graph-section {
-  /* remove the block-level “gap” that normally appears */
+  /* remove the block-level "gap" that normally appears */
   margin-top: 0;          /* or reduce to whatever spacing you prefer */
   padding-top: 0;
 }
@@ -771,7 +776,7 @@ h1,h2,h3,h4,h5,h6,p { margin-block: 0; }
     fill: #ff7f0e;
   }
   
-  /* “Metric @ Value” under the big number */
+  /* "Metric @ Value" under the big number */
   .circle-actual {
     font-family: 'Montserrat', sans-serif;
     font-size: 0.9rem;
@@ -817,6 +822,153 @@ h1,h2,h3,h4,h5,h6,p { margin-block: 0; }
   /* —— ensure your D3 SVG fills the rest of the cell —— */
   #scatter-barrel-woba {
     flex: 1;
+<<<<<<< HEAD
+    min-width: 0;            /* ensure no overflow */
+    overflow: visible !important;
+}
+
+#stats {
+    flex: 1;
+    border-left: 1px solid #ccc;
+    padding-left: 16px;
+    font-size: 14px;
+    line-height: 1.4;
+    max-height: 600px;
+    /* Removed overflow-y: auto to disable scrolling */
+}
+
+/* New unique graph container styles */
+.unique-graph-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin: 20px auto;
+  max-width: 1200px;
+  padding: 10px;
+  border: 2px solid #002D62;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 8px;
+}
+
+.unique-graph {
+  flex: 1 1 45%;
+  box-sizing: border-box;
+  background: #fff;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .unique-graph {
+    flex: 1 1 100%;
+  }
+}
+
+/* New side-by-side graphs in section "How are MLB hitters staying alive?" */
+.side-by-side-graphs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.side-by-side-graphs .side-graph {
+  width: calc(50% - 10px); /* 50% of parent width, minus half of the 20px gap */
+  height: 400px; /* Fixed height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.side-by-side-graphs .side-graph svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .side-by-side-graphs .side-graph {
+    width: 100%; /* Full width on smaller screens */
+    height: 300px;
+  }
+}
+
+/* New layout for stats and scatter charts */
+.stats-scatter-container {
+  display: flex;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 20px auto;
+  align-items: stretch;
+}
+
+/* Updated stats box: smaller width */
+.small-stats {
+  width: 300px;         /* Reduced fixed width */
+  height: 400px;
+  padding: 20px;
+  background: #ffffff;  /* Pure white background */
+  border: none;         /* No border lines */
+  border-radius: 8px;
+  flex-shrink: 0;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.3s ease;
+}
+
+.small-stats:hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Scatter charts remain flexible */
+.side-chart {
+  flex: 1;
+  height: 400px;
+  background: #fff;
+  border: none;     /* Removed border outline */
+  border-radius: 8px;
+  padding: 10px;
+  box-sizing: border-box;
+  overflow: hidden;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.3s ease;
+}
+
+.side-chart:hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Updated overall-chart similarly */
+.overall-chart {
+  margin: 20px auto;
+  max-width: 1200px;
+  height: 400px;
+  background: #fff;
+  border: none;     /* Removed border outline */
+  border-radius: 8px;
+  padding: 10px;
+  box-sizing: border-box;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.3s ease;
+}
+
+.overall-chart:hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+=======
     min-height: 400px;  /* or whatever your chart’s natural height is */
   }
   
@@ -826,3 +978,4 @@ h1,h2,h3,h4,h5,h6,p { margin-block: 0; }
     display: block;
   }
   
+>>>>>>> 712d6af720208f09a5c9324fdae69fbd8faa8a36

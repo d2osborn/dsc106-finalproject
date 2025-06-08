@@ -10,21 +10,26 @@ function ordinalSuffix(i) {
   return "th";
 }
 
-const WIDTH         = 800;
-const HEIGHT        = 400;
-const PADDING       = 20;
-const HEADER_HEIGHT = 40;   // reserve space at top for the name
+// Use dynamic sizing by reading container dimensions; fallback defaults used if necessary
+const containerNode = d3.select("#stats").node();
+const rect = containerNode.getBoundingClientRect();
+const WIDTH  = rect.width || 300;
+const HEIGHT = rect.height || 300;
+const PADDING = 10;
+const HEADER_HEIGHT = 30;
 
 const svg = d3.select("#stats")
   .append("svg")
-    .attr("width",  WIDTH)
-    .attr("height", HEIGHT);
+    .attr("width", "100%")
+    .attr("height", "100%")
+    .attr("viewBox", `0 0 ${WIDTH} ${HEIGHT}`)
+    .attr("preserveAspectRatio", "xMidYMid meet");
 
 d3.json("files/yordan/yordansummary.json").then(data => {
   const y = data.find(d => d.name_with_stand === "Yordan AlvarezL");
   if (!y) return console.error("Yordan not found");
 
-  // 3) Build stats array
+  // Build stats array
   const raw = [
     {
       keyPct:     "wOBA_percentile",
@@ -59,66 +64,55 @@ d3.json("files/yordan/yordansummary.json").then(data => {
     format:  r.format
   }));
 
-  // 4) One big, centered outer box
-  const BOX_WIDTH  = 450;
-  const BOX_HEIGHT = HEIGHT - 2*PADDING - HEADER_HEIGHT;
-  const BOX_X      = (WIDTH - BOX_WIDTH) / 2;
-  const BOX_Y      = PADDING;
-
-  svg.append("rect")
-    .attr("class", "outer-box")
-    .attr("x",      BOX_X)
-    .attr("y",      BOX_Y)
-    .attr("width",  BOX_WIDTH)
-    .attr("height", BOX_HEIGHT + HEADER_HEIGHT)
-    .attr("rx",     8);
-
-  // 5) Name inside the box, vertically centered in header
+  // Place header text centered
   svg.append("text")
-    .attr("class",       "player-name")
-    .attr("x",           BOX_X + BOX_WIDTH/2)
-    .attr("y",           BOX_Y + HEADER_HEIGHT/2 + 6)  // +6 to adjust for baseline
+    .attr("class", "player-name")
+    .attr("x", WIDTH/2)
+    .attr("y", HEADER_HEIGHT/2 + 6)
     .attr("text-anchor", "middle")
     .text("Yordan's 2024 Statistics");
 
-  // 6) 2×2 grid inside the box, below header
-  const GUTTER = 10;
-  const cols   = 2, rows = 2;
-  const cellW  = (BOX_WIDTH  - GUTTER) / cols;
-  const cellH  = (BOX_HEIGHT - GUTTER) / rows;
+  // Create a grid that fills the remaining space
+  const gridX = 0;
+  const gridY = HEADER_HEIGHT + PADDING;
+  const gridWidth = WIDTH;
+  const gridHeight = HEIGHT - HEADER_HEIGHT - 2 * PADDING;
+
+  const GUTTER = 10,
+        cols = 2,
+        rows = 2,
+        cellW = (gridWidth - GUTTER) / cols,
+        cellH = (gridHeight - GUTTER) / rows;
 
   const blocks = svg.selectAll("g.block")
     .data(stats)
     .join("g")
       .attr("class", "block")
-      .attr("transform", (d,i) => {
+      .attr("transform", (d, i) => {
         const col = i % cols;
         const row = Math.floor(i / cols);
-        const x   = BOX_X + col*(cellW + GUTTER);
-        const y   = BOX_Y + HEADER_HEIGHT + row*(cellH + GUTTER);
+        const x = gridX + col * (cellW + GUTTER);
+        const y = gridY + row * (cellH + GUTTER);
         return `translate(${x},${y})`;
       });
 
-  // 7) Draw each circle + texts
+  // Draw circles and texts in each grid cell
   blocks.each(function(d) {
     const g  = d3.select(this);
-    const cx = cellW/2;
-    const cy = cellH/2 - 10;
-    const r  = Math.min(cellW, cellH)*0.42;
-
+    const cx = cellW / 2;
+    const cy = cellH / 2 - 8;
+    const r  = Math.min(cellW, cellH) * 0.42;
     g.append("circle")
       .attr("class", "card-circle")
       .attr("cx", cx)
       .attr("cy", cy)
-      .attr("r",  r);
-
+      .attr("r", r);
     g.append("text")
       .attr("class", "circle-value")
       .classed("highlight", d.value >= 90)
       .attr("x", cx)
       .attr("y", cy - 8)
       .text(d.value + ordinalSuffix(d.value));
-
     g.append("text")
       .attr("class", "circle-actual")
       .attr("x", cx)

@@ -12,6 +12,8 @@ export function drawAttackAngle(containerSel, data, config) {
         .text(config.title);
     const angleScale = d3.scaleLinear().domain([0, config.max]).range([0, Math.PI/3]);
     const avg = d3.mean(data, d => +d.attack_angle) || 0;
+    const prevAvg = window.previousAttackAngle !== undefined ? window.previousAttackAngle : 0;
+    window.previousAttackAngle = avg;
     const theta = angleScale(avg);
     const r = 180, cx = 200, cy = 200;
     const ballX = cx + r * 0.85, ballY = cy;
@@ -29,32 +31,37 @@ export function drawAttackAngle(containerSel, data, config) {
         .attr('stroke', '#111')
         .attr('stroke-width', 3)
         .attr('stroke-dasharray', '8,6');
+    const prevTheta = angleScale(prevAvg);
+    const initialRedX = ballX + lineLength * Math.cos(zeroAngle - prevTheta);
+    const initialRedY = ballY - lineLength * Math.sin(zeroAngle - prevTheta);
     const redX = ballX + lineLength * Math.cos(zeroAngle - theta);
     const redY = ballY - lineLength * Math.sin(zeroAngle - theta);
     const fillPoly = svg.append('polygon')
-        .attr('points', `${ballX},${ballY} ${blackX},${blackY} ${redX},${redY}`)
+        .attr('points', `${ballX},${ballY} ${blackX},${blackY} ${initialRedX},${initialRedY}`)
         .attr('fill', "#002D62")
         .attr('opacity', 0.5);
     fillPoly.transition().duration(1000).attrTween("points", function() {
         return t => {
-            const currX = blackX + (redX - blackX) * t;
-            const currY = blackY + (redY - blackY) * t;
+            const currX = initialRedX + (redX - initialRedX) * t;
+            const currY = initialRedY + (redY - initialRedY) * t;
             return `${ballX},${ballY} ${blackX},${blackY} ${currX},${currY}`;
         };
     });
     const redLine = svg.append('line')
         .attr('x1', ballX).attr('y1', ballY)
-        .attr('x2', blackX).attr('y2', blackY)
-        .attr('stroke', '#002D62')
+        // Set initial red endpoint from previous value
+        .attr('x2', ballX + lineLength * Math.cos(zeroAngle - angleScale(prevAvg)))
+        .attr('y2', ballY - lineLength * Math.sin(zeroAngle - angleScale(prevAvg)))
+        .attr('stroke', '#ff0000') // changed from blue to red
         .attr('stroke-width', 4);
     redLine.transition().duration(1000)
         .attrTween("x2", () => {
-            const interp = d3.interpolate(blackX, redX);
-            return t => interp(t);
+             const interp = d3.interpolateNumber(angleScale(prevAvg), angleScale(avg));
+             return t => ballX + lineLength * Math.cos(zeroAngle - interp(t));
         })
         .attrTween("y2", () => {
-            const interp = d3.interpolate(blackY, redY);
-            return t => interp(t);
+             const interp = d3.interpolateNumber(angleScale(prevAvg), angleScale(avg));
+             return t => ballY - lineLength * Math.sin(zeroAngle - interp(t));
         });
     svg.append('text')
         .attr('x', 210)
@@ -64,8 +71,8 @@ export function drawAttackAngle(containerSel, data, config) {
         .style('font-size', '22px')
         .text(avg.toFixed(1) + "°");
     
-    // Replace the MLB Average call with:
-    appendMLBAverage(svg, 200, 380, data, 'attack_angle', "20px");
+    // Enlarge MLB Average text: change override font size from "28px" to "32px"
+    appendMLBAverage(svg, 200, 380, data, 'attack_angle', "32px");
 }
 
 // Append the MLB Average utility function at the bottom:

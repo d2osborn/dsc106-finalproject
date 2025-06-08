@@ -22,6 +22,9 @@ export function drawBatSpeed(containerSel, data, config) {
         .domain([0, 100])
         .range([-3 * Math.PI/4, 3 * Math.PI/4]);
     const avg = d3.mean(data, d => +d.bat_speed) || 0;
+    // Use previous gauge value if available:
+    const prevAvg = window.previousBatSpeed !== undefined ? window.previousBatSpeed : 0;
+    window.previousBatSpeed = avg;
     const fgArc = d3.arc()
         .innerRadius(30)
         .outerRadius(34)
@@ -35,24 +38,20 @@ export function drawBatSpeed(containerSel, data, config) {
             return t => fgArc.endAngle(interp(t))();
         });
     const needle = svg.append('line')
-        .attr('x1', 50)   // was 100
-        .attr('y1', 50)   // was 100
-        .attr('x2', 50 + 34 * Math.cos(scale(0) - Math.PI/2))  // 68 halved is 34
-        .attr('y2', 50 + 34 * Math.sin(scale(0) - Math.PI/2))
+        .attr('x1', 50)
+        .attr('y1', 50)
+        .attr('x2', 50 + 34 * Math.cos(scale(prevAvg) - Math.PI/2))
+        .attr('y2', 50 + 34 * Math.sin(scale(prevAvg) - Math.PI/2))
         .attr('stroke', '#EE3311')
-        .attr('stroke-width', 2);  // was 4
+        .attr('stroke-width', 2);
     needle.transition().duration(1000)
         .attrTween("x2", function() {
-            return function(t) {
-                const currentAngle = scale(0) + (scale(avg) - scale(0)) * t;
-                return 50 + 34 * Math.cos(currentAngle - Math.PI/2);
-            };
+             const interp = d3.interpolateNumber(scale(prevAvg), scale(avg));
+             return t => 50 + 34 * Math.cos(interp(t) - Math.PI/2);
         })
         .attrTween("y2", function() {
-            return function(t) {
-                const currentAngle = scale(0) + (scale(avg) - scale(0)) * t;
-                return 50 + 34 * Math.sin(currentAngle - Math.PI/2);
-            };
+             const interp = d3.interpolateNumber(scale(prevAvg), scale(avg));
+             return t => 50 + 34 * Math.sin(interp(t) - Math.PI/2);
         });
     const textVal = svg.append('text')
         .attr('x', 50)   // was 100
@@ -68,7 +67,7 @@ export function drawBatSpeed(containerSel, data, config) {
         });
     
     // Update MLB Average call to match dashboard usage:
-    appendMLBAverage(svg, 50, 95, data, 'bat_speed', "5px");
+    appendMLBAverage(svg, 50, 95, data, 'bat_speed', "10px");
     
     const tickGroup = svg.append('g');
     d3.range(0, 101, 20).forEach(tick => {

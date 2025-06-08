@@ -781,25 +781,48 @@ h1,h2,h3,h4,h5,h6,p { margin-block: 0; }
   #tooltip {
     z-index: 1000;
   }
-  #chart-stats-container {
+/* —— 35% stats on left, 65% chart on right —— */
+#chart-stats-container {
+    display: grid;
+    grid-template-columns: 35% 65%;
+    gap: 2rem;
+    align-items: start;
+    margin: 4rem auto;      /* match your page’s vertical rhythm */
+    max-width: 1200px;
+    padding: 0 1rem;
+  }
+  
+  /* —— make the stats pane look exactly like that white card —— */
+  #stats {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+  }
+  
+  /* —— chart section stacks title + chart vertically —— */
+  .chart-section {
     display: flex;
-    gap: 20px;
-    align-items: flex-start;
-}
-
-#scatter-barrel-woba {
+    flex-direction: column;
+  }
+  
+  /* —— nice big heading above the chart —— */
+  .chart-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 1rem;
+    color: #002D62;
+  }
+  
+  /* —— ensure your D3 SVG fills the rest of the cell —— */
+  #scatter-barrel-woba {
     flex: 1;
-    min-width: 0;            /* ensure no overflow */
-    overflow: visible !important;
-}
-
-#stats {
-    flex: 1;
-    border-left: 1px solid #ccc;
-    padding-left: 16px;
-    font-size: 14px;
-    line-height: 1.4;
-    max-height: 600px;
-    overflow-y: auto;
-}
+    min-height: 400px;  /* or whatever your chart’s natural height is */
+  }
+  
+  #scatter-barrel-woba svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
   

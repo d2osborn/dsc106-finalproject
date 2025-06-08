@@ -40,6 +40,7 @@ function drawOverallScatter() {
         d["in_play%"] = +d["in_play%"];
         d["oppo%"] = +d["oppo%"];
         d["gb%"] = +d["gb%"];
+        d.cleanName = d.name_with_stand.replace(/[LR]$/, "");
       });
 
       // scales
@@ -74,7 +75,7 @@ function drawOverallScatter() {
         .attr("opacity", 0.6)
         .on("mouseover", (event, d) => {
           tooltip.html(`
-            <strong>${d.name_with_stand}</strong><br/>
+            <strong>${d.cleanName}</strong><br/>
             wOBA: ${d.wOBA.toFixed(3)}<br/>
             Barrel %: ${(d["barrel%"] * 100).toFixed(1)}%<br/>
             Swing %: ${(d["swing%"] * 100).toFixed(1)}%<br/>
@@ -101,7 +102,7 @@ function drawOverallScatter() {
         });
 
       // highlight Yordan
-      const t = data.find(d => d.name_with_stand === "Yordan AlvarezL");
+      const t = data.find(d => d.cleanName  === "Yordan Alvarez");
       if (t) {
         const xVal = x(t.wOBA), yVal = y(t["barrel%"]);
         svg.append("circle")
@@ -109,7 +110,7 @@ function drawOverallScatter() {
           .attr("r", 8).attr("stroke", "black").attr("fill", "none");
         svg.append("text")
           .attr("x", xVal + 6).attr("y", yVal - 10)
-          .text(t.name_with_stand)
+          .text(t.cleanName)
           .attr("font-weight", "bold").attr("font-size", "12px");
       }
 

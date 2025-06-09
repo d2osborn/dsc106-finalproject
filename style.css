@@ -851,9 +851,6 @@ h1,h2,h3,h4,h5,h6,p { margin-block: 0; }
     fill: #222;
     text-anchor: middle;
   }
-  #tooltip {
-    z-index: 1000;
-  }
 /* ============= combined stats/intro/chart container ============= */
 #chart-stats-container {
     display: grid;

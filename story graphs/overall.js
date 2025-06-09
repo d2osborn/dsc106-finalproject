@@ -125,8 +125,8 @@ function drawOverallScatter() {
         })
         .on("mousemove", event => {
           tooltip
-            .style("left", (event.clientX - 450) + "px")
-            .style("top", (event.clientY - 120) + "px");
+            .style("left", (event.clientX ) + "px")
+            .style("top", (event.clientY +750) + "px");
         })        
         .on("mouseout", () => tooltip.style("opacity", 0));
 
@@ -187,8 +187,8 @@ function drawOverallScatter() {
           })
           .on("mousemove", event => {
             tooltip
-              .style("left", (event.clientX - 450) + "px")
-              .style("top", (event.clientY - 120) + "px");
+              .style("left", (event.clientX ) + "px")
+              .style("top", (event.clientY +750) + "px");
           })        
           .on("mouseout", () => tooltip.style("opacity", 0));
 

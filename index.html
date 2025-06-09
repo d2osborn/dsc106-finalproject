@@ -12,6 +12,9 @@
     <script type="module" src="story graphs/yordanstats.js"></script>
     <script type="module" src="story graphs/overall.js"></script>
 
+    <!-- Import the 3D animation script -->
+    <script type="module" src="./graphs/swingAnimationWithOBJ.js"></script>
+
     <script type="module">
         import { drawAttackAngle } from './graphs/attackAngle.js';
         import { drawBatSpeed } from './graphs/batSpeed.js';
@@ -33,124 +36,87 @@
                                style="padding:0.4em 0.8em;font-size:1em;">
                         <datalist id="player-list"></datalist>
                     </label>
-                    <label style="color:#fff;font-weight:bold;">Count:
-                        <label><input type="radio" name="count" value="0-0" checked>0-0</label>
-                        <label><input type="radio" name="count" value="0-2">0-2</label>
+                    <label style="color:#fff;font-weight:bold;">Strikes:
+                        <label><input type="radio" name="count" value="0" checked> 0 Strikes</label>
+                        <label style="margin-left:10px;"><input type="radio" name="count" value="2"> 2 Strikes</label>
                     </label>
                 </div>
             `);
+
             const inputElem = document.getElementById('player-input');
             const dataList = document.getElementById('player-list');
             const radios = Array.from(document.getElementsByName('count'));
 
-            d3.csv('files/combined_data.csv', d3.autoType).then(data => {
-                const players = Array.from(new Set(
-                  data.map(d => d.batter_name.trim()).filter(n => n)
-                )).sort();
-                function populate(list) {
-                    dataList.innerHTML = list.map(n => `<option value="${n}">`).join('');
+            // Load JSONs
+            Promise.all([
+                d3.json('files/sandbox/players_angles_0str.json'),
+                d3.json('files/sandbox/players_angles_2str.json'),
+                d3.json('files/sandbox/zerostr_stats.json'),
+                d3.json('files/sandbox/twostr_stats.json')
+            ]).then(([players0, players2, zeroStats, twoStats]) => {
+                // Build lookups
+                const playerLookup = { '0': players0, '2': players2 };
+                const leagueLookup = { '0': zeroStats[0], '2': twoStats[0] };
+
+                // Autocomplete list from 0-strike players
+                const players = players0.map(d => d.name_with_stand).sort();
+                function populateList(filter = '') {
+                    const opts = filter
+                        ? players.filter(p => p.toLowerCase().includes(filter.toLowerCase())).slice(0, 10)
+                        : [];
+                    dataList.innerHTML = opts.map(p => `<option value="${p}">`).join('');
                 }
+                inputElem.addEventListener('input', () => populateList(inputElem.value));
 
-                inputElem.addEventListener('input', () => {
-                    const v = inputElem.value.toLowerCase();
-                    populate(
-                      v ? players.filter(p => p.toLowerCase().includes(v)).slice(0, 10) : []
-                    );
-                });
-
-                function getMax(field) {
-                    if (field === 'attack_angle') return 25;
-                    const m = d3.max(data, d => +d[field]) || 1;
-                    return Math.ceil(m / 10) * 10;
-                }
-                const maxAttackAngle   = getMax('attack_angle');
-                const maxBatSpeed      = getMax('bat_speed');
-                const maxSwingPathTilt = Math.ceil(
-                  (d3.max(data, d => Math.abs(+d.swing_path_tilt)) || 60) / 10
-                ) * 10;
-
-                function getCount() {
-                    const c = radios.find(r => r.checked);
-                    return c ? c.value : null;
+                function getSelectedCount() {
+                    return radios.find(r => r.checked).value;
                 }
 
                 function update() {
-                    const p = inputElem.value.trim();
-                    const c = getCount();
-                    let filtered = [], showData = [];
+                    const count = getSelectedCount();
+                    const playerName = inputElem.value.trim();
 
-                    if (players.includes(p) && c) {
-                        filtered = data.filter(d =>
-                          d.batter_name === p &&
-                          ((c === '0-0' && d.balls === 0 && d.strikes === 0) ||
-                           (c === '0-2' && d.balls === 0 && d.strikes === 2))
-                        );
-                        showData = filtered.length > 0 ? filtered : [];
-                    }
-                    if (showData.length === 0 && c) {
-                        showData = data.filter(d =>
-                          (c === '0-0' && d.balls === 0 && d.strikes === 0) ||
-                          (c === '0-2' && d.balls === 0 && d.strikes === 2)
-                        );
-                    }
-                    if (showData.length === 0) {
-                        showData = data;
-                    }
+                    // Attempt to find player stats
+                    const playerEntry = playerLookup[count].find(d => d.name_with_stand === playerName);
 
-                    // Clear prior charts
-                    d3.select('#zone-map').html('');
-                    d3.select('#outcome-scatter').html('');
-                    d3.select('#attack-angle-plot').html('');
-                    d3.select('#direction-angle-plot').html('');
+                    // Prepare drawData: single object array
+                    const drawObj = playerEntry
+                        ? playerEntry
+                        : Object.assign({ name_with_stand: 'League Average' }, leagueLookup[count]);
+                    const drawData = [drawObj];
 
-                    // Re‐draw all four graphs
-                    drawAttackAngle(d3.select('#zone-map'), showData, {
-                        title: 'Attack Angle (°)',
-                        max:   maxAttackAngle
-                    });
-                    drawBatSpeed(d3.select('#outcome-scatter'), showData, {
-                        title: 'Bat Speed (mph)',
-                        max:   maxBatSpeed
-                    });
-                    drawSwingPathTilt(d3.select('#direction-angle-plot'), showData, {
-                        title: 'Swing Path Tilt (°)',
-                        max:   maxSwingPathTilt
-                    });
-                    drawDirectionAngle(d3.select('#attack-angle-plot'), showData, {
-                        title: 'Direction Angle (°)',
-                        max:   maxAttackAngle
-                    });
+                    console.log('Drawing with data:', drawObj); // Debug log
 
-                    // Compute league or player averages
-                    const avgAttack = d3.mean(showData, d => +d.attack_angle) || 0;
-                    const avgDir    = d3.mean(showData, d => +d.attack_direction) || 0;
-                    const avgTilt   = d3.mean(showData, d => +d.swing_path_tilt) || 0;
+                    // Clear previous
+                    d3.selectAll('.sandbox-viz').html('');
 
-                    console.log('showData:', showData);
-                    console.log('Calculated avgDir:', avgDir);
-                    console.log('Calculated avgTilt:', avgTilt);
+                    // Draw
+                    drawAttackAngle(d3.select('#zone-map'), drawData, { title: 'Attack Angle (°)', max: 60 });
+                    drawBatSpeed(d3.select('#outcome-scatter'), drawData, { title: 'Bat Speed (mph)', max: 120 });
+                    drawSwingPathTilt(d3.select('#direction-angle-plot'), drawData, { title: 'Swing Path Tilt (°)', max: 60 });
+                    drawDirectionAngle(d3.select('#attack-angle-plot'), drawData, { title: 'Direction Angle (°)', max: 60 });
 
-                    // Send to 3D swing animation
+                    // 3D updates
                     if (window.updateAttackAngleVisualization) {
-                        window.updateAttackAngleVisualization(avgAttack);
+                        window.updateAttackAngleVisualization(drawObj.attack_angle);
                     }
                     if (window.updateDirectionAngleVisualization) {
-                        window.updateDirectionAngleVisualization(avgDir);
+                        window.updateDirectionAngleVisualization(drawObj.attack_direction);
                     }
                     if (window.updateSwingPathTilt) {
-                        window.updateSwingPathTilt(avgTilt);
+                        window.updateSwingPathTilt(drawObj.swing_path_tilt);
                     }
                 }
 
+                // Event listeners
+                radios.forEach(r => r.addEventListener('change', update));
                 inputElem.addEventListener('change', update);
                 inputElem.addEventListener('keyup', e => { if (e.key === 'Enter') update(); });
-                radios.forEach(r => r.addEventListener('change', update));
 
-                // Initial draw (MLB averages)
+                // Initial
+                populateList();
                 update();
-
-                window.__statcast_full_data__ = data;
-            });
+            }).catch(err => console.error('Error loading JSON:', err));
         });
     </script>
     <style>
@@ -259,16 +225,7 @@
         </div>
         <div id="chart-panel">
             <div id="tooltip"></div>
-            <p style="text-align: center; margin-bottom: 20px; font-size: 1em;">
-                Yordan Alvarez is an outfielder/designated hitter for the Houston Astros.<br> 
-                In 2024, he was voted an All-Star starter at the DH spot and an All-Star <br>
-                for his third consecutive year and finished top 10 in AL MVP voting.<br> <br> 
-                Yordan's 2024 overall statistics speaks for itself: <br> 
-                his weighted on base average (wOBA) was 96th percentile amongst MLB hitters.<br>
-                Yordan Alvarez stands out in particularly tough sitiation two strikes <br>
-                Let's investigate he was able to consistenly perfrom great in different counts.<br>
-                
-            </p>
+            <p style="text-align: center; margin-bottom: 20px; font-size: 1.1em;">Yordan Alvarez stands out as one of the most productive hitters in baseball, combining elite power with exceptional contact ability. His ability to maintain high barrel rates while producing strong wOBA numbers demonstrates his unique combination of power and plate discipline.</p>
             <div id="overall-graph" class="chart"></div>
         </div>
         </div>
@@ -277,12 +234,12 @@
       
     
     <section class="section-container">
-        <h3>Why does he stand out?</h3>
         <p class="intro">
-            At 2 strikes, it's common knowledge that hitters are taught to use a "B swing". <br>
-            Batters tends to focus more on making contact to survive or to get on the base instead of trying to slug the ball. <br>
-            However, that leads to them losing quality of hits; Making two-strike contact rate and wOBA a contradicting pair.  <br>
-            Yordan Alverz's statistics prove that he did not sacrifice hie quality of swings for contact. <br>
+            Yordan Alverz is known for his consistent at bat approach even at tough situations like 2-strike counts. 
+            At 2 strikes, it's common knowledge that hitters are taught to use a "B swing".
+            Batters tends to focus more on making contact to survive or to get on the base instead of trying to slug the ball.
+            However, that leads to them losing quality of hits. 
+            Yordan Alverz stands out even from the MLB level hitters because even at 2 strikes he successfully make contacts that has high quality(shown in wOBA).
             What is is doing different?
         </p>
           <div id="scatter-contact-woba" class="chart"></div>
@@ -304,22 +261,15 @@
           </div>
 
           <!-- Attack Angle Section -->
-
-
-          <!-- Swing Path Tilt Section
           <div class="graph-section">
-              <div class="chart-container">
-                  <div id="swing-path-chart" class="chart"></div>
-                  <div id="swing-path-comparison" class="chart"></div>
-              </div>
               <div class="graph-explanation">
                   <p>
-                      The swing path tilt visualization shows how hitters modify their swing plane's orientation.
-                      With two strikes, many hitters flatten their swing path to increase contact probability.
-                      Alvarez's ability to maintain power despite these adjustments is what makes his two-strike approach unique.
+                      The distribution of attack angle changes between 0-strike and 2-strike counts reveals how hitters adjust their swing plane.
+                      Yordan Alvarez shows a significant shift in his attack angle, moving from a more upward swing in 0-strike counts to a flatter plane with two strikes.
+                      This adjustment helps him maintain contact while sacrificing some power potential.
                   </p>
               </div>
-          </div> -->
+          </div>
 
           <!-- Contact Zone Section -->
           <div class="graph-section">
@@ -346,9 +296,6 @@
                       <h3 style="color: #EB6E1F;">Changes in Swing Metrics</h3>
                       <p>
                           The histograms show how Yordan Alvarez's swing metrics change between 0-strike and 2-strike counts.
-                          The distribution of attack angle changes between 0-strike and 2-strike counts reveals how hitters adjust their swing plane.
-                          Yordan Alvarez shows a significant shift in his attack angle, moving from a more upward swing in 0-strike counts to a flatter plane with two strikes.
-                          This adjustment helps him maintain contact while sacrificing some power potential.
                           Each graph represents a different aspect of his swing: attack angle, attack direction, and swing path tilt.
                           The red line indicates Yordan's position relative to other MLB hitters, showing how his adjustments compare to the league average.
                           Click through the graphs to explore each metric in detail.
@@ -396,23 +343,23 @@
                            style="padding:0.4em 0.8em;font-size:1em;">
                     <datalist id="player-list"></datalist>
                 </label>
-                <label style="color:#fff;font-weight:bold;">Count:
-                    <label><input type="radio" name="count" value="0-0" checked>0-0</label>
-                    <label><input type="radio" name="count" value="0-2">0-2</label>
+                <label style="color:#fff;font-weight:bold;">Strikes:
+                    <label><input type="radio" name="count" value="0" checked> 0 Strikes</label>
+                    <label style="margin-left:10px;"><input type="radio" name="count" value="2"> 2 Strikes</label>
                 </label>
             </div>
         </div>
 
         <!-- Dashboard Layout -->
         <div class="sandbox-layout">
-            <!-- Left side: Small rectangle and 3D model container -->
-            <div class="left-container">
-                <div class="small-rectangle"></div>
-                <div class="animation-container">
-                    <div class="sandbox-viz" id="animation-swing"></div>
-                </div>
+            <!-- Left side: Blue rectangle -->
+            <div class="small-rectangle"></div>
+
+            <!-- Middle: 3D model container -->
+            <div class="animation-container">
+                <div id="animation-swing"></div>
             </div>
-            
+
             <!-- Right side: 2x2 grid of squares -->
             <div class="graphs-container">
                 <div id="zone-map" class="sandbox-viz"></div>
@@ -422,6 +369,7 @@
             </div>
         </div>
     </section>
+
     <p class="Therefore">
         There seemed to be no textbook answer for swing adjustment at tough situations. 
         However, these new metrics brought us more clear idea there are combinations of change in approach that players can benefit from.
@@ -429,9 +377,11 @@
         The mangers and coaches can also get analytical views on their players' approach to build sounder line up.
         These metrics, even though very insightful, should be taken into considerations of other components such as height, weight, ability to track the ball, bat speed, pressure, mentality.
         Therefore, it would be more comprehensive for further research that could encompass the other compounding factors. 
-        
-
     </p>
+
+    <script type="module" src="vis/heatmap.js"></script>
+    <script type="module" src="story graphs/leagueCorrelation.js"></script>
+
     <script>
         const titleWords = [
             ["The  ", "Effect"],
@@ -497,11 +447,5 @@
             });
         }
     </script>
-    
-
-    <!-- Import the 3D animation script -->
-    <script type="module" src="./graphs/swingAnimationWithOBJ.js"></script>
-    <script type="module" src="vis/heatmap.js"></script>
-    <script type="module" src="story graphs/leagueCorrelation.js"></script>
 </body>
 </html>

@@ -211,25 +211,46 @@ body, button, input, select, textarea {
 .sandbox-layout {
     display: flex;
     gap: 1vw;
-    height: 600px;
+    height: 600px;  /* Fixed height for the layout */
+    align-items: center;
 }
 
 .left-container {
     display: flex;
     gap: 1vw;
     flex: 2;
+    height: 100%;  /* Take full height of parent */
 }
 
 .small-rectangle {
     width: 200px;
+    height: 100%;
     background: #002D62;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .animation-container {
-    flex: 1;
+    flex: 2;
     position: relative;
+    height: 100%;  /* Take full height of parent */
+    min-height: 400px;  /* Minimum height */
+    display: flex;  /* Enable flex layout */
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: none;
+}
+
+#animation-swing {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .graphs-container {
@@ -241,18 +262,16 @@ body, button, input, select, textarea {
 }
 
 .sandbox-viz {
-    background: #ffffff;
+    background: transparent;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: none;
     position: relative;
     overflow: hidden;
 }
 
-#animation-swing {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    background: #ffffff;
+/* Ensure the canvas itself is white */
+#animation-swing canvas {
+    background: #ffffff !important;
 }
 
 /* Ensure graphs are properly sized and contained */
@@ -293,6 +312,7 @@ body, button, input, select, textarea {
     
     .left-container {
         flex-direction: column;
+        height: auto;
     }
     
     .small-rectangle {
@@ -301,7 +321,7 @@ body, button, input, select, textarea {
     }
     
     .animation-container {
-        height: 400px;
+        height: 400px;  /* Fixed height on mobile */
     }
     
     .graphs-container {

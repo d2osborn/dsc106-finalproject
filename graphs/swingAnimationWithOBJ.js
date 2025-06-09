@@ -21,8 +21,8 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xffffff);
 
 const camera = new THREE.PerspectiveCamera(45, newWidth / newHeight, 0.1, 1000);
-camera.position.set(2.5, 0.8, 3.5);  // Lowered camera height significantly
-camera.lookAt(new THREE.Vector3(0.8, 0.5, 0.8));  // Lowered lookAt point
+camera.position.set(2.5, 0.5, 3.5);  // Closer and slightly lower to the right
+camera.lookAt(new THREE.Vector3(0.8, 0.5, 0.8));  // Adjusted lookAt point
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping   = true;
@@ -65,8 +65,8 @@ let currentDirectionAngle = null;
 // Add these variables at the top with other globals
 let angleVisualizationOffset = {
     x: 0.2,
-    y: 1.75,    // was 0.0, moved up by 0.5
-    z: 2.3    // was 2.2, increased by 0.05
+    y: 0,    // was 0.0, moved up by 0.5
+    z: 1    // was 2.2, increased by 0.05
 };
 
 // ─────────────── LOAD 3D MODELS ───────────────
@@ -152,6 +152,7 @@ window.updateDirectionAngleVisualization = updateDirectionAngleVisualization;
 function createAttackAngle3D(attackAngleDegrees) {
     if (attackAngleGroup) { scene.remove(attackAngleGroup); }
     attackAngleGroup = new THREE.Group();
+    attackAngleGroup.position.set(0, 0.2, 0.1);  // Moved up from 0 to 0.5
     scene.add(attackAngleGroup);
   
     // Use bat's position as origin with offset
@@ -219,6 +220,7 @@ function createAttackAngle3D(attackAngleDegrees) {
 function createDirectionAngle3D(directionAngleDegrees) {
     if (directionAngleGroup) { scene.remove(directionAngleGroup); }
     directionAngleGroup = new THREE.Group();
+    directionAngleGroup.position.set(0, 0.2, 0.1);  // Moved up from 0 to 0.5
     scene.add(directionAngleGroup);
   
     // Use bat's position as origin with offset
@@ -474,3 +476,21 @@ function handleKeyPress(event) {
         createDirectionAngle3D(currentDirectionAngle);
     }
 }
+
+// Initialize the scene
+init();
+
+// Set default values for initial load
+const defaultValues = {
+    attack_angle: 10,  // Default attack angle
+    attack_direction: 5,  // Default direction angle
+    swing_path_tilt: 8  // Default swing path tilt
+};
+
+// Apply default values
+updateAttackAngleVisualization(defaultValues.attack_angle);
+updateDirectionAngleVisualization(defaultValues.attack_direction);
+updateSwingPathTilt(defaultValues.swing_path_tilt);
+
+// Start animation loop
+animate();

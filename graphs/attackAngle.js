@@ -77,19 +77,23 @@ export function drawAttackAngle(containerSel, data, config) {
 
 // Append the MLB Average utility function at the bottom:
 function appendMLBAverage(svg, cx, y, data, field, overrideFontSize) {
-    let mlbAvg = null;
-    if (window.__statcast_full_data__ && Array.isArray(window.__statcast_full_data__)) {
-        mlbAvg = d3.mean(window.__statcast_full_data__, d => +d[field]);
-    } else if (data && data.length > 0) {
-        mlbAvg = d3.mean(data, d => +d[field]);
-    }
-    const fontSize = overrideFontSize || "20px";
-    svg.append('text')
-       .attr('x', cx)
-       .attr('y', y)
-       .attr('text-anchor', 'middle')
-       .style('font-size', fontSize)
-       .style('fill', '#EB6E1F')
-       .text(mlbAvg !== null && !isNaN(mlbAvg) ?
-             `MLB Average: ${mlbAvg.toFixed(1)}${field==="attack_angle"?"°":""}` : '');
+    // Get the strike count from the data
+    const strikeCount = data[0]?.strikes || 0;
+    
+    // Load the appropriate stats file based on strike count
+    d3.json(`files/sandbox/${strikeCount === 0 ? 'zerostr' : 'twostr'}_stats.json`)
+        .then(stats => {
+            if (stats && stats[0]) {
+                const mlbAvg = stats[0][field];
+                const fontSize = overrideFontSize || "10px";
+                svg.append('text')
+                   .attr('x', cx)
+                   .attr('y', y)
+                   .attr('text-anchor', 'middle')
+                   .style('font-size', fontSize)
+                   .style('fill', '#EB6E1F')
+                   .text(`MLB Average: ${mlbAvg.toFixed(1)}${field==="attack_angle"?"°":""}`);
+            }
+        })
+        .catch(err => console.error('Error loading MLB stats:', err));
 }

@@ -12,6 +12,13 @@ h1, h2, h3, h4, h5, h6 {
   margin-block: 0;
 }
 
+body, p, span, li, td, th, label, input, select, textarea, button {
+  font-family: var(--base-font);
+  font-size: 14px;
+  font-weight: 400;
+  color: #000; /* optional: adjust for readability */
+}
+
 svg text {
   font-family: 'Montserrat', sans-serif !important;
   font-weight: 600; /* or 700/900 if bold needed */

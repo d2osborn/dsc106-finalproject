@@ -48,25 +48,61 @@ function drawOverallScatter() {
         d.cleanName = nameCounts[base] === 1 ? base : d.name_with_stand;
       });
 
+      const avg_wOBA = d3.mean(data, d => d.wOBA);
+      const avg_barrel = 0.105168
+
       const x = d3.scaleLinear()
         .domain(d3.extent(data, d => d.wOBA)).nice()
         .range([0, width]);
 
       const y = d3.scaleLinear()
-        .domain(d3.extent(data, d => d["barrel%"])).nice()
+        .domain([0, 0.30])  // 0.30 means 30.0% on the visual axis
         .range([height, 0]);
+
+      const xMin = 0.220;
+      const xMax = 0.480;
+      const step = 0.040;
+      const xTicks = d3.range(xMin, xMax + step, step); // add a tiny buffer for inclusion
 
       svg.append("g")
         .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x));
+        .call(d3.axisBottom(x)
+          .tickValues(xTicks)
+          .tickFormat(d => d.toFixed(3))
+        );
 
-      svg.append("g").call(d3.axisLeft(y));
+      const yTicks = d3.range(0, 0.31, 0.04);  // generates 0.00, 0.04, ..., 0.28, 0.30
+
+      svg.append("g")
+        .call(d3.axisLeft(y)
+          .tickValues(yTicks)
+          .tickFormat(d => (d * 100).toFixed(1))  // formats 0.04 as 4.0
+        );
 
       svg.append("g")
         .call(d3.axisLeft(y).tickSize(-width).tickFormat(""))
         .attr("opacity", 0.3)
         .selectAll("line")
         .attr("stroke-dasharray", "4");
+
+      svg.append("line")
+        .attr("x1", x(avg_wOBA))
+        .attr("x2", x(avg_wOBA))
+        .attr("y1", 0)
+        .attr("y2", height)
+        .attr("stroke", "#002D62")
+        .attr("stroke-dasharray", "4")
+        .attr("stroke-width", 1.5);
+
+      // Horizontal line for average barrel%
+      svg.append("line")
+        .attr("x1", 0)
+        .attr("x2", width)
+        .attr("y1", y(avg_barrel))
+        .attr("y2", y(avg_barrel))
+        .attr("stroke", "#002D62")
+        .attr("stroke-dasharray", "4")
+        .attr("stroke-width", 1.5);
 
       // Filter out Yordan before drawing default circles
       const filtered = data.filter(d => d.cleanName !== "Yordan Alvarez");

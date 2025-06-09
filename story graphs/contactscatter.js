@@ -48,24 +48,47 @@ function drawContactScatter() {
     const league_woba = d3.mean(data, d => d.wOBA);
     const league_contact = +league[0]["contact%"];
 
+    const xMin = 0.160;
+    const xMax = 0.380;
+    const xStep = 0.040;
+    const xTicks = d3.range(xMin, xMax + xStep, xStep);
+
     const x = d3.scaleLinear()
-      .domain(d3.extent(data, d => d.wOBA)).nice()
+      .domain([xMin, xMax])
       .range([0, width]);
 
+    const yTicks = [0.55, 0.65, 0.75, 0.85, 0.95];
+
     const y = d3.scaleLinear()
-      .domain(d3.extent(data, d => d["contact%"])).nice()
+      .domain([0.55, 1.0])
       .range([height, 0]);
 
-    // Axes
     svg.append("g")
-      .attr("transform", `translate(0,${height})`)
-      .call(d3.axisBottom(x));
-    svg.append("g").call(d3.axisLeft(y));
+      .call(d3.axisLeft(y)
+        .tickValues(yTicks)
+        .tickFormat(d => (d * 100).toFixed(1)) // formats e.g. 0.65 → 65.0
+      );
+
     svg.append("g")
       .call(d3.axisLeft(y).tickSize(-width).tickFormat(""))
       .attr("opacity", 0.3)
       .selectAll("line")
       .attr("stroke-dasharray", "4");
+
+    // Axes
+    svg.append("g")
+      .attr("transform", `translate(0,${height})`)
+      .call(d3.axisBottom(x)
+        .tickValues(xTicks)
+        .tickFormat(d => d.toFixed(3))
+      );
+
+    // svg.append("g").call(d3.axisLeft(y));
+    // svg.append("g")
+    //   .call(d3.axisLeft(y).tickSize(-width).tickFormat(""))
+    //   .attr("opacity", 0.3)
+    //   .selectAll("line")
+    //   .attr("stroke-dasharray", "4");
 
     // League average lines
     svg.append("line")

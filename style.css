@@ -988,6 +988,7 @@ section.graph-section {
     line-height: 1.55;
     padding: 0 20px;
     order: 1; /* Add order to control position */
+    margin-top: 2rem; /* Lowered the radar text a bit */
 }
 
 .radar-container {
@@ -1141,4 +1142,28 @@ section.graph-section {
     line-height: 1.6;
     text-align: justify;
     margin-bottom: 1.5em;
+}
+
+/* New styles for final section container */
+.final-section-container {
+    display: flex;
+    align-items: flex-start; /* align items at top */
+    justify-content: space-between;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 4rem auto;
+    padding: 0 20px;
+}
+.conclusion-container, .references-container {
+    flex: 1;
+    padding: 1rem;
+}
+@media (max-width: 800px) {
+    .final-section-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    .conclusion-container, .references-container {
+        width: 100%;
+    }
 }

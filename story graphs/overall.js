@@ -77,7 +77,7 @@ function drawOverallScatter() {
         .attr("cx", d => x(d.wOBA))
         .attr("cy", d => y(d["barrel%"]))
         .attr("r", 6)
-        .attr("fill", "steelblue")
+        .attr("fill", "#EB6E1F")
         .attr("opacity", 0.6)
         .on("mouseover", (event, d) => {
           tooltip.html(`
@@ -151,7 +151,7 @@ function drawOverallScatter() {
           })
           .on("mousemove", event => {
             tooltip
-              .style("left", (event.clientX -450) + "px")
+              .style("left", (event.clientX - 450) + "px")
               .style("top", (event.clientY - 120) + "px");
           })        
           .on("mouseout", () => tooltip.style("opacity", 0));
@@ -171,14 +171,14 @@ function drawOverallScatter() {
         .attr("y", -margin.left + 20)
         .attr("x", -height / 2)
         .attr("text-anchor", "middle")
-        .text("Barrel %");
+        .text("Barrel%");
 
       svg.append("text")
         .attr("x", width / 2)
         .attr("y", -margin.top / 2)
         .attr("text-anchor", "middle")
         .attr("font-size", "18px")
-        .text("Overall: Barrel % vs wOBA");
+        .text("Overall: Barrel% vs wOBA");
     })
     .catch(err => console.error("JSON load error:", err));
 }

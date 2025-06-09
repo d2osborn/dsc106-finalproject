@@ -1,13 +1,10 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 function drawContactScatter() {
-  // Clear any existing SVG to prevent multiple graphs on resize
+  // Clear existing SVG
   d3.select("#scatter-contact-woba").select("svg").remove();
 
-  // Get the container element
   const container = document.querySelector("#scatter-contact-woba");
-
-  // Use getBoundingClientRect for more accurate dimensions after layout
   const rect = container.getBoundingClientRect();
   const containerWidth = rect.width;
   const containerHeight = rect.height;
@@ -15,8 +12,6 @@ function drawContactScatter() {
   const margin = { top: 60, right: 30, bottom: 60, left: 80 };
   const width = containerWidth - margin.left - margin.right;
   const height = containerHeight - margin.top - margin.bottom;
-
-  // Only proceed if dimensions are valid
   if (width <= 0 || height <= 0) return;
 
   const svg = d3.select("#scatter-contact-woba")
@@ -28,91 +23,159 @@ function drawContactScatter() {
     .append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
-  d3.json("files/yordan/contact_vs_wOBA_2str.json")
-    .then(data => {
-      data.forEach(d => {
-        d.wOBA = +d.wOBA;
-        d["contact%"] = +d["contact%"];
-        d.cleanName = d.name_with_stand.replace(/[LR]$/, "");
-      });
+  // Tooltip
+  const tooltip = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("position", "absolute")
+    .style("background", "rgba(0,0,0,0.8)")
+    .style("color", "#fff")
+    .style("padding", "6px 8px")
+    .style("border-radius", "4px")
+    .style("font-size", "12px")
+    .style("pointer-events", "none")
+    .style("opacity", 0);
 
-      const x = d3.scaleLinear()
-        .domain(d3.extent(data, d => d.wOBA)).nice()
-        .range([0, width]);
-
-      const y = d3.scaleLinear()
-        .domain(d3.extent(data, d => d["contact%"])).nice()
-        .range([height, 0]);
-
-      svg.append("g")
-        .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x));
-
-      svg.append("g").call(d3.axisLeft(y));
-
-      svg.append("g")
-        .call(d3.axisLeft(y).tickSize(-width).tickFormat(""))
-        .attr("opacity", 0.3)
-        .selectAll("line")
-        .attr("stroke-dasharray", "4");
-
-      svg.selectAll("circle")
-        .data(data)
-        .enter()
-        .append("circle")
-        .attr("cx", d => x(d.wOBA))
-        .attr("cy", d => y(d["contact%"]))
-        .attr("r", 4)
-        .attr("fill", "orange")
-        .attr("opacity", 0.6);
-
-      const target = data.find(d => d.cleanName === "Yordan Alvarez");
-      if (target) {
-        const xVal = x(target.wOBA);
-        const yVal = y(target["contact%"]);
-
-        svg.append("circle")
-          .attr("cx", xVal)
-          .attr("cy", yVal)
-          .attr("r", 8)
-          .attr("stroke", "black")
-          .attr("fill", "none");
-
-        svg.append("text")
-          .attr("x", xVal + 6)
-          .attr("y", yVal - 10)
-          .text(target.cleanName)
-          .attr("font-weight", "bold")
-          .attr("font-size", "12px");
-      }
-
-      svg.append("text")
-        .attr("x", width / 2)
-        .attr("y", height + margin.bottom / 2)
-        .attr("text-anchor", "middle")
-        .text("wOBA");
-
-      svg.append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", -margin.left + 20)
-        .attr("x", -height / 2)
-        .attr("text-anchor", "middle")
-        .text("Contact %");
-
-      svg.append("text")
-        .attr("x", width / 2)
-        .attr("y", -margin.top / 2)
-        .attr("text-anchor", "middle")
-        .attr("font-size", 18)
-        .text("At Two Strikes: Contact % vs wOBA");
-    })
-    .catch(error => {
-      console.error("Failed to load JSON data:", error);
+  Promise.all([
+    d3.json("files/yordan/contact_vs_wOBA_2str.json"),
+    d3.json("files/sandbox/league_average_rates_2str.json")
+  ]).then(([data, league]) => {
+    data.forEach(d => {
+      d.wOBA = +d.wOBA;
+      d["contact%"] = +d["contact%"];
+      d.cleanName = d.name_with_stand.replace(/[LR]$/, "");
     });
+
+    const league_woba = d3.mean(data, d => d.wOBA);
+    const league_contact = +league[0]["contact%"];
+
+    const x = d3.scaleLinear()
+      .domain(d3.extent(data, d => d.wOBA)).nice()
+      .range([0, width]);
+
+    const y = d3.scaleLinear()
+      .domain(d3.extent(data, d => d["contact%"])).nice()
+      .range([height, 0]);
+
+    // Axes
+    svg.append("g")
+      .attr("transform", `translate(0,${height})`)
+      .call(d3.axisBottom(x));
+    svg.append("g").call(d3.axisLeft(y));
+    svg.append("g")
+      .call(d3.axisLeft(y).tickSize(-width).tickFormat(""))
+      .attr("opacity", 0.3)
+      .selectAll("line")
+      .attr("stroke-dasharray", "4");
+
+    // League average lines
+    svg.append("line")
+      .attr("x1", 0).attr("x2", width)
+      .attr("y1", y(league_contact)).attr("y2", y(league_contact))
+      .attr("stroke", "black").attr("stroke-dasharray", "4");
+    svg.append("line")
+      .attr("y1", 0).attr("y2", height)
+      .attr("x1", x(league_woba)).attr("x2", x(league_woba))
+      .attr("stroke", "black").attr("stroke-dasharray", "4");
+
+    // Player dots
+    svg.selectAll("circle.player-dot")
+      .data(data)
+      .enter()
+      .append("circle")
+      .attr("class", "player-dot")
+      .attr("cx", d => x(d.wOBA))
+      .attr("cy", d => y(d["contact%"]))
+      .attr("r", 5)
+      .attr("fill", "#EB6E1F")
+      .attr("opacity", 0.6)
+      .on("mouseover", (event, d) => {
+        tooltip.html(`
+          <strong>${d.cleanName}</strong><br/>
+          wOBA: ${d.wOBA.toFixed(3)}<br/>
+          Contact%: ${(d["contact%"] * 100).toFixed(1)}%
+        `).style("opacity", 1);
+      })
+      .on("mousemove", event => {
+        tooltip.style("left", (event.clientX + 15) + "px")
+               .style("top", (event.clientY - 30) + "px");
+      })
+      .on("mouseout", () => tooltip.style("opacity", 0));
+
+    // Highlight Yordan Alvarez with circular image
+    const t = data.find(d => d.cleanName === "Yordan Alvarez");
+    if (t) {
+      const xVal = x(t.wOBA);
+      const yVal = y(t["contact%"]);
+      const size = 28;
+
+      svg.append("defs")
+        .append("clipPath")
+        .attr("id", "yordanCircle")
+        .append("circle")
+        .attr("r", size / 2)
+        .attr("cx", 0)
+        .attr("cy", 0);
+
+      const yordanGroup = svg.append("g")
+        .attr("transform", `translate(${xVal},${yVal})`)
+        .style("cursor", "pointer");
+
+      yordanGroup.append("circle")
+        .attr("r", size / 2)
+        .attr("fill", "#fff")
+        .attr("stroke", "#000")
+        .attr("stroke-width", 1.5);
+
+      yordanGroup.append("image")
+        .attr("href", "files/yordan/yadro.png")
+        .attr("x", -size / 2)
+        .attr("y", -size / 2)
+        .attr("width", size)
+        .attr("height", size)
+        .attr("clip-path", "url(#yordanCircle)");
+
+      yordanGroup.append("circle")
+        .attr("r", size / 2)
+        .attr("fill", "transparent")
+        .on("mouseover", () => {
+          tooltip.html(`
+            <strong>${t.cleanName}</strong><br/>
+            wOBA: ${t.wOBA.toFixed(3)}<br/>
+            Contact%: ${(t["contact%"] * 100).toFixed(1)}%
+          `).style("opacity", 1);
+        })
+        .on("mousemove", event => {
+          tooltip.style("left", (event.clientX + 15) + "px")
+                 .style("top", (event.clientY - 30) + "px");
+        })
+        .on("mouseout", () => tooltip.style("opacity", 0));
+    }
+
+    // Labels
+    svg.append("text")
+      .attr("x", width / 2)
+      .attr("y", height + margin.bottom / 2)
+      .attr("text-anchor", "middle")
+      .text("wOBA");
+
+    svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", -margin.left + 20)
+      .attr("x", -height / 2)
+      .attr("text-anchor", "middle")
+      .text("Contact %");
+
+    svg.append("text")
+      .attr("x", width / 2)
+      .attr("y", -margin.top / 2)
+      .attr("text-anchor", "middle")
+      .attr("font-size", 18)
+      .text("At Two Strikes: Contact % vs wOBA");
+  }).catch(error => {
+    console.error("Error loading data:", error);
+  });
 }
 
-// Initial draw with a slight delay to ensure layout is complete
+// Initial draw after layout
 setTimeout(drawContactScatter, 100);
-
-// Redraw on window resize with a slight delay
-window.addEventListener('resize', () => setTimeout(drawContactScatter, 100));
+window.addEventListener("resize", () => setTimeout(drawContactScatter, 100));

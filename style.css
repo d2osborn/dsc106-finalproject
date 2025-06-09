@@ -1,3 +1,23 @@
+:root {
+  --base-font: 'Montserrat', sans-serif;
+  --header-weight: 700;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--base-font) !important;
+  font-weight: var(--header-weight) !important;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #002D62; /* optional: unify color */
+  margin-block: 0;
+}
+
+svg text {
+  font-family: 'Montserrat', sans-serif !important;
+  font-weight: 600; /* or 700/900 if bold needed */
+  fill: #000;       /* match your color scheme */
+}
+
 html, body {
     margin: 0;
     padding: 0;

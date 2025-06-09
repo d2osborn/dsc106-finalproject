@@ -13,7 +13,7 @@ const jMetrics = ['delta_attack_angle', 'delta_attack_direction', 'delta_swing_p
 // Color scheme
 const colors = {
   primary: '#002D62',
-  secondary: '#EB6E1F',
+  secondary: '#002D62',
   background: '#ffffff',
   text: '#002D62',
   grid: '#e0e0e0'
@@ -42,11 +42,17 @@ function pearsonCorr(x, y) {
 function formatMetricName(metric) {
   if (metric === 'wOBA') return 'wOBA';
   if (metric === 'gb%')  return 'GB%';
-  return metric
-    .split('_')
+
+  const parts = metric.split('_');
+
+  if (parts[0] === 'delta') {
+    const rest = parts.slice(1).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    return `Δ Var(${rest})`;
+  }
+
+  return parts
     .map((word, i) => {
       if (word.toLowerCase() === 'gb') return 'GB';
-      if (i === 0 && word === 'delta') return 'Δ';
       return word.charAt(0).toUpperCase() + word.slice(1);
     })
     .join('');
@@ -211,7 +217,7 @@ function drawScatterMatrix(data, selectedMetric) {
           .on("mousemove", event =>
             tooltip
               .style("top",  (event.pageY - 10) + "px")
-              .style("left", (event.pageX + 10) + "px")
+              .style("left", (event.pageX + 20) + "px")
           )
           .on("mouseout", () => tooltip.style("visibility", "hidden"));
     });

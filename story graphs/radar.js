@@ -44,7 +44,7 @@ function drawRadarChart() {
     g.append("circle")
       .attr("r", circleRadius)
       .attr("fill", "none")
-      .attr("stroke", "#EB6E1F")
+      .attr("stroke", "#002D62")
       .attr("stroke-dasharray", "2 2");
   }
 
@@ -57,7 +57,7 @@ function drawRadarChart() {
       .attr("dy", "-0.3em")
       .attr("text-anchor", "middle")
       .style("font-size", "12px") // Increased font size
-      .attr("fill", "#EB6E1F")
+      .attr("fill", "#002D62")
       .text(d => `${d * (100 / levels)}%`);
 
   // Draw axes and axis labels
@@ -69,7 +69,7 @@ function drawRadarChart() {
       .attr("x1", 0).attr("y1", 0)
       .attr("x2", Math.cos(angle) * radius)
       .attr("y2", Math.sin(angle) * radius)
-      .attr("stroke", "#EB6E1F")
+      .attr("stroke", "#002D62")
       .attr("stroke-width", 1);
 
     // Increased label distance from center
@@ -80,7 +80,7 @@ function drawRadarChart() {
       .attr("dy", "0.35em")
       .attr("text-anchor", "middle")
       .style("font-size", "14px") // Increased font size
-      .attr("fill", "#EB6E1F")
+      .attr("fill", "#002D62")
       .text(m === "wOBA" ? "wOBA" : m.replace("%", "") + "%");
   });
 
@@ -128,7 +128,7 @@ function drawRadarChart() {
       .attr("text-anchor", "middle")
       .style("font-size", "16px")
       .style("font-weight", "bold")
-      .attr("fill", "#EB6E1F")
+      .attr("fill", "#002D62")
       .text("Yordan Alvarez – 2-Strike Profile vs Peers (Percentiles)");
   }).catch(console.error);
 }

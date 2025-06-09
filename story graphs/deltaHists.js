@@ -162,7 +162,7 @@ d3.json("files/yordan/delta_angles.json")
       .style("color", "#333")
       .style("font-size", "0.9rem")
       .style("font-weight", "bold")
-      .text(d => `Δ ${d.replace("_", " ").replace(/\b\w/g, l => l.toUpperCase())}`);
+      .text(d => `Δ Var(${d.replace("_", " ").replace(/\b\w/g, l => l.toUpperCase())})`);
 
     // Add navigation arrows
     histContainer.append("div")

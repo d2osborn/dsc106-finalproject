@@ -40,7 +40,7 @@ d3.json("files/yordan/yordansummary.json").then(data => {
     {
       keyPct:     "barrel%_percentile",
       actualKey:  "barrel%",
-      label:      "Barrel %",
+      label:      "Barrel%",
       format:     d => (d.actual * 100).toFixed(1)
     },
     {

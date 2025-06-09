@@ -1118,16 +1118,27 @@ section.graph-section {
   clear: both;
 }
 
-/* Update histogram row styles to match heatmap */
-.histogram-row {
-    width: 600px;
-    height: 400px;
-    flex: 0 0 auto;
-    position: relative;
-    overflow: hidden;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin: 0;
-    padding: 1rem;
+/* Narrow text sections - reduced by additional 20% */
+.narrow-text {
+    width: 48%; /* Reduced from 60% to 48% (20% reduction) */
+    margin: 0 auto; /* Center the narrower text */
+    max-width: 576px; /* Reduced from 720px to 576px */
+}
+
+.swing-metrics-text {
+    padding: 2em 0;
+    text-align: center;
+}
+
+/* Add specific styling for plot-text-constrained */
+.plot-text-constrained {
+    width: 48%; /* Match the narrow-text width */
+    margin: 0 auto;
+    max-width: 576px;
+    font-size: 1vw;
+    font-weight: 400;
+    color: #111;
+    line-height: 1.6;
+    text-align: justify;
+    margin-bottom: 1.5em;
 }

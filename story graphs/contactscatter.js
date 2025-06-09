@@ -56,7 +56,7 @@ function drawContactScatter() {
     const xMin = 0.160;
     const xMax = 0.380;
     const xStep = 0.040;
-    const xTicks = d3.range(xMin, xMax + xStep, xStep);
+    const xTicks = [0.160, 0.200, 0.240, 0.280, 0.320, 0.360];
 
     const x = d3.scaleLinear()
       .domain([xMin, xMax])

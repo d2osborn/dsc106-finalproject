@@ -1,14 +1,14 @@
 export function drawDirectionAngle(containerSel, data, config) {
     const svg = containerSel.append('svg')
-        .attr('viewBox', '0 0 400 400')
+        .attr('viewBox', '0 0 300 300') // Reduced from 350x350 to zoom in more
         .attr('preserveAspectRatio', 'xMidYMid meet');
 
     svg.append('text')
-        .attr('x', 200)
-        .attr('y', 50)
+        .attr('x', 150) // Adjusted for new viewBox
+        .attr('y', 25) // Adjusted position
         .attr('text-anchor', 'middle')
         .attr('fill', '#002D62')
-        .style('font-size', '2vw')
+        .style('font-size', '24px') // Increased from 20px
         .text(config.title);
 
     const angleScale = d3.scaleLinear().domain([0, config.max]).range([0, Math.PI/3]);
@@ -18,7 +18,7 @@ export function drawDirectionAngle(containerSel, data, config) {
     const prevTheta = angleScale(prevAvg);
     const theta = angleScale(avg);
 
-    const r = 180, cx = 200, cy = 200;
+    const r = 120, cx = 150, cy = 150; // Adjusted for new viewBox
     const ballX = cx, ballY = cy + r * 0.85;
 
     svg.append('image')
@@ -75,14 +75,14 @@ export function drawDirectionAngle(containerSel, data, config) {
         });
 
     svg.append('text')
-        .attr('x', 210)
-        .attr('y', 190)
+        .attr('x', 165) // Adjusted for new layout
+        .attr('y', 145)
         .attr('text-anchor', 'start')
         .attr('fill', "#000")
-        .style('font-size', '22px')
+        .style('font-size', '24px') // Increased from 22px
         .text(avg.toFixed(1) + "°");
 
-    appendMLBAverage(svg, 200, 400, data, 'attack_direction', "36px");
+    appendMLBAverage(svg, 150, 285, data, 'attack_direction', "32px"); // Increased font size
 }
 
 function appendMLBAverage(svg, cx, y, data, field, overrideFontSize) {

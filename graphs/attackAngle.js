@@ -1,21 +1,21 @@
 export function drawAttackAngle(containerSel, data, config) {
     const svg = containerSel.append('svg')
-        .attr('viewBox', '0 0 400 400') // Matches container aspect ratio
+        .attr('viewBox', '0 0 300 300') // Reduced from 350x350 to zoom in more
         .attr('preserveAspectRatio', 'xMidYMid meet');
     // Title
     svg.append('text')
-        .attr('x', 200)
-        .attr('y', 50)
+        .attr('x', 150) // Adjusted for new viewBox
+        .attr('y', 25) // Adjusted position
         .attr('text-anchor', 'middle')
         .attr('fill', '#002D62')
-        .style('font-size', '2vw')
+        .style('font-size', '24px') // Increased from 20px
         .text(config.title);
     const angleScale = d3.scaleLinear().domain([0, config.max]).range([0, Math.PI/3]);
     const avg = d3.mean(data, d => +d.attack_angle) || 0;
     const prevAvg = window.previousAttackAngle !== undefined ? window.previousAttackAngle : 0;
     window.previousAttackAngle = avg;
     const theta = angleScale(avg);
-    const r = 180, cx = 200, cy = 200;
+    const r = 120, cx = 150, cy = 150; // Adjusted for new viewBox
     const ballX = cx + r * 0.85, ballY = cy;
     svg.append('image')
         .attr('href', 'images/ball.png')   // updated image path
@@ -64,15 +64,14 @@ export function drawAttackAngle(containerSel, data, config) {
              return t => ballY - lineLength * Math.sin(zeroAngle - interp(t));
         });
     svg.append('text')
-        .attr('x', 210)
-        .attr('y', 190)
+        .attr('x', 165) // Adjusted for new layout
+        .attr('y', 145)
         .attr('text-anchor', 'start')
         .attr('fill', "#000")
-        .style('font-size', '22px')
+        .style('font-size', '24px') // Increased from 22px
         .text(avg.toFixed(1) + "°");
     
-    // Enlarge MLB Average text: change override font size from "28px" to "32px"
-    appendMLBAverage(svg, 200, 380, data, 'attack_angle', "32px");
+    appendMLBAverage(svg, 150, 280, data, 'attack_angle', "32px"); // Increased font size
 }
 
 // Append the MLB Average utility function at the bottom:

@@ -1,16 +1,16 @@
 export function drawSwingPathTilt(containerSel, data, config) {
     // Create SVG container
     const svg = containerSel.append('svg')
-        .attr('viewBox', '0 0 400 400')
+        .attr('viewBox', '0 0 300 300') // Reduced from 350x350 to zoom in more
         .attr('preserveAspectRatio', 'xMidYMid meet');
     
     // Title
     svg.append('text')
-        .attr('x', 200)
-        .attr('y', 50)
+        .attr('x', 150) // Adjusted for new viewBox
+        .attr('y', 25) // Adjusted position
         .attr('text-anchor', 'middle')
         .attr('fill', '#002D62')
-        .style('font-size', '2vw')
+        .style('font-size', '24px') // Increased from 20px
         .text(config.title);
     
     // Always use right-handed logic for all players
@@ -21,11 +21,11 @@ export function drawSwingPathTilt(containerSel, data, config) {
     const prevTheta = Math.abs(prevAvg) * Math.PI / 180;
     const theta = Math.abs(avg) * Math.PI / 180;
     
-    const cx = 200, cy = 200;
-    const r = 180;
+    const cx = 150, cy = 150; // Adjusted center
+    const r = 120; // Adjusted radius
     const ballX = cx + r * 0.85;
     const ballY = cy;
-    const lineLength = 250;
+    const lineLength = 180; // Adjusted line length
     const zeroAngle = Math.PI;
     
     const blackX = ballX + lineLength * Math.cos(zeroAngle);
@@ -94,10 +94,10 @@ export function drawSwingPathTilt(containerSel, data, config) {
         .attr('y', centroidY)
         .attr('text-anchor', 'middle')
         .attr('fill', "#000")
-        .style('font-size', '22px')
+        .style('font-size', '24px') // Increased from 22px
         .text(avg.toFixed(1) + "°");
     
-    appendMLBAverage(svg, 200, 380, data, 'swing_path_tilt', "36px");
+    appendMLBAverage(svg, 150, 280, data, 'swing_path_tilt', "32px"); // Increased font size
 }
 
 function appendMLBAverage(svg, cx, y, data, field, overrideFontSize) {

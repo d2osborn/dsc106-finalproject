@@ -11,11 +11,11 @@ function drawRadarChart() {
     return;
   }
 
-  const containerWidth = container.clientWidth || 450;  // Reduced from 500
-  const containerHeight = container.clientHeight || 450; // Reduced from 500
+  const containerWidth = container.clientWidth || 450;
+  const containerHeight = container.clientHeight || 450;
   const width = Math.min(containerWidth, containerHeight);
   const height = width;
-  const margin = { top: 70, right: 70, bottom: 70, left: 70 }; // Reduced from 80
+  const margin = { top: 70, right: 70, bottom: 70, left: 70 };
   const innerW = width - margin.left - margin.right;
   const innerH = height - margin.top - margin.bottom;
   const radius = Math.min(innerW, innerH) / 2;
@@ -31,8 +31,7 @@ function drawRadarChart() {
       .attr("width", width)
       .attr("height", height)
       .attr("viewBox", `0 0 ${width} ${height}`)
-      .attr("preserveAspectRatio", "xMidYMid meet")
-      .style("background", "transparent");
+      .attr("preserveAspectRatio", "xMidYMid meet");
 
   const g = svg.append("g")
       .attr("transform", `translate(${margin.left + innerW/2}, ${margin.top + innerH/2})`);

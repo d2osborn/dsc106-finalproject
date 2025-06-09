@@ -51,7 +51,8 @@ function switchHistogram(direction) {
   containers.classed("active", false)
     .style("opacity", "0")
     .style("pointer-events", "none")
-    .style("transform", "translateY(20px)");
+    .style("transform", "translateY(20px)")
+    .style("z-index", "0");
   
   // Update current index
   currentIndex = (currentIndex + direction + total) % total;
@@ -59,6 +60,8 @@ function switchHistogram(direction) {
   // Add active class to new current
   containers.filter((d, i) => i === currentIndex)
     .classed("active", true)
+    .transition()
+    .duration(300)
     .style("opacity", "1")
     .style("pointer-events", "all")
     .style("transform", "translateY(0)")
@@ -165,39 +168,80 @@ d3.json("files/yordan/delta_angles.json")
       .text(d => `Δ Var(${d.replace("_", " ").replace(/\b\w/g, l => l.toUpperCase())})`);
 
     // Add navigation arrows
-    // Remove both of your existing histContainer.append("div").html(...) calls,
-    // and replace them with:
-
-    // Add a single navigation container
     const nav = histContainer.append("div")
       .attr("class", "hist-navigation")
       .style("position", "absolute")
-      .style("bottom", "-30px")
+      .style("bottom", "-40px")
       .style("left", "50%")
       .style("transform", "translateX(-50%)")
       .style("display", "flex")
-      .style("gap", "2rem")
-      .style("cursor", "pointer");
+      .style("align-items", "center")
+      .style("gap", "1rem")
+      .style("z-index", "10");
 
     // Left arrow: goes back one
     nav.append("div")
       .attr("class", "nav-arrow left")
-      .html("←")            // correct left arrow
-      .on("click", () => switchHistogram(-1));
+      .html("◀")
+      .style("font-size", "1.5rem")
+      .style("color", "#EB6E1F")
+      .style("cursor", "pointer")
+      .style("padding", "0.5rem")
+      .style("border-radius", "50%")
+      .style("background", "rgba(235, 110, 31, 0.1)")
+      .style("transition", "all 0.2s ease")
+      .style("user-select", "none")
+      .on("mouseover", function() {
+        d3.select(this)
+          .style("background", "rgba(235, 110, 31, 0.2)")
+          .style("transform", "scale(1.1)");
+      })
+      .on("mouseout", function() {
+        d3.select(this)
+          .style("background", "rgba(235, 110, 31, 0.1)")
+          .style("transform", "scale(1)");
+      })
+      .on("click", function(event) {
+        event.stopPropagation();
+        switchHistogram(-1);
+      });
+
+    // Counter display
+    nav.append("div")
+      .attr("class", "hist-counter")
+      .style("font-size", "0.9rem")
+      .style("color", "#333")
+      .style("font-weight", "bold")
+      .style("min-width", "3rem")
+      .style("text-align", "center")
+      .text(`1/${angles.length}`);
 
     // Right arrow: goes forward one
     nav.append("div")
       .attr("class", "nav-arrow right")
-      .html("→")            // actual right arrow
-      .on("click", () => switchHistogram(1));
-
-
-    // Add counter
-    container.append("div")
-      .attr("class", "hist-counter")
-      .style("text-align", "center")
-      .style("margin-top", "2rem")
-      .text(`1/${angles.length}`);
+      .html("▶")
+      .style("font-size", "1.5rem")
+      .style("color", "#EB6E1F")
+      .style("cursor", "pointer")
+      .style("padding", "0.5rem")
+      .style("border-radius", "50%")
+      .style("background", "rgba(235, 110, 31, 0.1)")
+      .style("transition", "all 0.2s ease")
+      .style("user-select", "none")
+      .on("mouseover", function() {
+        d3.select(this)
+          .style("background", "rgba(235, 110, 31, 0.2)")
+          .style("transform", "scale(1.1)");
+      })
+      .on("mouseout", function() {
+        d3.select(this)
+          .style("background", "rgba(235, 110, 31, 0.1)")
+          .style("transform", "scale(1)");
+      })
+      .on("click", function(event) {
+        event.stopPropagation();
+        switchHistogram(1);
+      });
 
     // Create SVGs in each container
     containers.each(function(angle) {

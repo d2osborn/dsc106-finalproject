@@ -6,13 +6,18 @@ function drawContactScatter() {
 
   const container = document.querySelector("#scatter-contact-woba");
   const rect = container.getBoundingClientRect();
-  const containerWidth = rect.width;
-  const containerHeight = rect.height;
+  const containerWidth = Math.max(400, rect.width); // Minimum width
+  const containerHeight = Math.max(300, rect.height); // Minimum height
 
-  const margin = { top: 60, right: 30, bottom: 60, left: 80 };
+  const margin = { top: 80, right: 40, bottom: 80, left: 90 }; // Increased margins
   const width = containerWidth - margin.left - margin.right;
   const height = containerHeight - margin.top - margin.bottom;
-  if (width <= 0 || height <= 0) return;
+  
+  if (width <= 0 || height <= 0) {
+    // Retry after a short delay if container isn't ready
+    setTimeout(drawContactScatter, 100);
+    return;
+  }
 
   const svg = d3.select("#scatter-contact-woba")
     .append("svg")
@@ -82,13 +87,6 @@ function drawContactScatter() {
         .tickValues(xTicks)
         .tickFormat(d => d.toFixed(3))
       );
-
-    // svg.append("g").call(d3.axisLeft(y));
-    // svg.append("g")
-    //   .call(d3.axisLeft(y).tickSize(-width).tickFormat(""))
-    //   .attr("opacity", 0.3)
-    //   .selectAll("line")
-    //   .attr("stroke-dasharray", "4");
 
     // League average lines
     svg.append("line")
@@ -174,31 +172,60 @@ function drawContactScatter() {
         .on("mouseout", () => tooltip.style("opacity", 0));
     }
 
-    // Labels
+    // Labels with adjusted positioning
     svg.append("text")
       .attr("x", width / 2)
-      .attr("y", height + margin.bottom / 2)
+      .attr("y", height + margin.bottom - 15) // Moved up slightly
       .attr("text-anchor", "middle")
+      .style("font-size", "14px")
       .text("wOBA");
 
     svg.append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", -margin.left + 20)
+      .attr("y", -margin.left + 25) // Adjusted position
       .attr("x", -height / 2)
       .attr("text-anchor", "middle")
+      .style("font-size", "14px")
       .text("Contact %");
 
     svg.append("text")
       .attr("x", width / 2)
-      .attr("y", -margin.top / 2)
+      .attr("y", -20) // Adjusted title position
       .attr("text-anchor", "middle")
-      .attr("font-size", 18)
+      .style("font-size", "18px")
+      .style("font-weight", "bold")
       .text("At Two Strikes: Contact % vs wOBA");
   }).catch(error => {
     console.error("Error loading data:", error);
   });
 }
 
-// Initial draw after layout
-setTimeout(drawContactScatter, 100);
-window.addEventListener("resize", () => setTimeout(drawContactScatter, 100));
+// Debounced resize function
+let resizeTimeout;
+function handleResize() {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(drawContactScatter, 150);
+}
+
+// Initial draw and resize handling
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => setTimeout(drawContactScatter, 200));
+} else {
+  setTimeout(drawContactScatter, 200);
+}
+
+window.addEventListener("resize", handleResize);
+
+// Also redraw when the container becomes visible (for lazy loading)
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      setTimeout(drawContactScatter, 100);
+    }
+  });
+});
+
+const container = document.querySelector("#scatter-contact-woba");
+if (container) {
+  observer.observe(container);
+}

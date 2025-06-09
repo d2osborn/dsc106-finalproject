@@ -165,7 +165,11 @@ d3.json("files/yordan/delta_angles.json")
       .text(d => `Δ Var(${d.replace("_", " ").replace(/\b\w/g, l => l.toUpperCase())})`);
 
     // Add navigation arrows
-    histContainer.append("div")
+    // Remove both of your existing histContainer.append("div").html(...) calls,
+    // and replace them with:
+
+    // Add a single navigation container
+    const nav = histContainer.append("div")
       .attr("class", "hist-navigation")
       .style("position", "absolute")
       .style("bottom", "-30px")
@@ -173,10 +177,20 @@ d3.json("files/yordan/delta_angles.json")
       .style("transform", "translateX(-50%)")
       .style("display", "flex")
       .style("gap", "2rem")
-      .html(`
-        <div class="nav-arrow left">←</div>
-        <div class="nav-arrow right">→</div>
-      `);
+      .style("cursor", "pointer");
+
+    // Left arrow: goes back one
+    nav.append("div")
+      .attr("class", "nav-arrow left")
+      .html("←")            // correct left arrow
+      .on("click", () => switchHistogram(-1));
+
+    // Right arrow: goes forward one
+    nav.append("div")
+      .attr("class", "nav-arrow right")
+      .html("→")            // actual right arrow
+      .on("click", () => switchHistogram(1));
+
 
     // Add counter
     container.append("div")

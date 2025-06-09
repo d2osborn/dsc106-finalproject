@@ -489,14 +489,40 @@ label {
     padding: 0;
 }
 
-/* —— flex row that holds plots + text —— */
+#scatter-contact-woba {
+  flex: 1;
+  max-width: 60%;
+}
+
 .heatmap-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 3.5rem;
-    margin: 4rem auto;
-    max-width: 1200px;
-    padding: 0 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 3rem;
+  max-width: 1200px;
+  margin: 4rem auto;
+  padding: 0 2rem;
+}
+
+.heatmap-row > * {
+  flex: 1;
+  min-width: 0;
+}
+
+.plot-text {
+  flex: 1;
+  max-width: 35%;
+}
+
+.chart {
+  flex: 1;
+  min-width: 0;              /* ✅ Allows shrinking to fit */
+  height: 400px;
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 /* —— pair of plots —— */
@@ -679,16 +705,6 @@ section, .graph-section {
     width: 100%;
     height: 100%;
     display: block;
-}
-
-/* Heatmap Row */
-.heatmap-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 3.5rem;
-    margin: 4rem auto;
-    max-width: 1200px;
-    padding: 0 20px;
 }
 
 .plot-pair {
@@ -941,7 +957,7 @@ section.graph-section {
 }
 
 /* Ensure proper stacking context */
-.graph-section, .heatmap-row, .sandbox-layout {
+.graph-section, .sandbox-layout {
     position: relative;
     z-index: 0;
 }

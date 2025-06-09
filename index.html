@@ -212,119 +212,127 @@
         <div class="scroll-arrows" onclick="scrollPastVideo()">&#x276F;&#x276F;&#x276F;</div>
     </div>
     <!-- COMBINED STATS/INTRO/CHART CONTAINER -->
-    <div id="chart-stats-container">
-        <!-- 30%: your stats card -->
-        <div id="stats"></div>
-    
-        <!-- 70%: stacked intro + scatter -->
-        <div id="right-panel">
-        <div id="intro-panel">
-            <p class="intro">
-            Yordan Álvarez, the Cuban-born designated hitter/left fielder…finished ninth in AL MVP voting.
+    <section class="section-container">
+        <div class="intro">
+            <p>
+                Yordan Alvarez is an outfielder/designated hitter for the Houston Astros.<br>
+                In 2024, he was voted an All-Star starter at the DH spot and an All-Star<br>
+                for his third consecutive year and finished top 10 in AL MVP voting.<br><br>
+                Yordan's 2024 overall statistics speak for themselves:<br>
+                His weighted on-base average (wOBA) was 96th percentile among MLB hitters.<br>
+                Yordan Alvarez stands out in particularly tough situations with two strikes.<br>
+                Let's investigate what made him a consistent top performer in different counts.
             </p>
         </div>
-        <div id="chart-panel">
-            <div id="tooltip"></div>
-            <p style="text-align: center; margin-bottom: 20px; font-size: 1.1em;">
-                Yordan Alvarez is an outfielder/designated hitter for the Houston Astros.<br>
-                In 2024, he was voted an All-Star starter at the DH spot and an All-Star <br>
-                for his third consecutive year and finished top 10 in AL MVP voting.<br> <br>
-                Yordan's 2024 overall statistics speaks for itself: <br>
-                his weighted on base average (wOBA) was 96th percentile amongst MLB hitters.<br>
-                Yordan Alvarez stands out in particularly tough situations two strikes <br>
-                Let's investigate what made him a consistent top performer in different counts.<br>
-              
-           </p>
+    </section>
 
-            <div id="overall-graph" class="chart"></div>
-        </div>
-        </div>
+    <!-- CHART CONTAINER ONLY: side-by-side layout -->
+    <div id="chart-stats-container">
+    <div id="stats"></div>
+    <div id="overall-graph" class="chart"></div>
     </div>
     
-      
-    
     <section class="section-container">
-        <p class="intro">
-            At 2 strikes, it's common knowledge that hitters are taught to use a "B swing". <br>
-           Batters tend to focus more on making contact to survive or to get on the base instead of trying to slug the ball. <br>
-           However, that leads to them losing quality of hits; Making two-strike contact rate and wOBA a contradicting pair.  <br>
-           Yordan Alverz's statistics prove that he did not sacrifice hie quality of swings for contact. <br>
-           What is he doing differently?
-       </p>
+        <div class="graph-section">
+            <div class="heatmap-row">
+                <div class="plot-text">
+                    <h3 style="color: #EB6E1F;">2 Strike Contact% vs wOBA</h3>
+                    <p>
+                    At 2 strikes, it's common knowledge that hitters are taught to use a "B swing". <br>
+                    Batters tend to focus more on making contact to survive or to get on the base instead of trying to slug the ball. <br>
+                    However, that leads to them losing quality of hits; Making two-strike contact rate and wOBA a contradicting pair.  <br>
+                    Yordan Alverz's statistics prove that he did not sacrifice hie quality of swings for contact. <br>
+                    What is he doing differently?
+                    </p>
+                </div>
+                <div id="scatter-contact-woba" class="chart"></div>
+            </div>
+        </div>
+        <!-- Radar Chart Section -->
+        <div class="graph-section">
+            <div class="heatmap-row">
+                <div id="radarChart"></div>
+                <div class="plot-text">
+                    <h3 style="color: #EB6E1F;">Yordan's 2-Strike Profile</h3>
+                    <p>
+                    Yordan Alvarez, compared to other MLB hitters, has noticeable top-notch attributes.
+                    A couple of things to focus on in this radar graph are the chase and oppo rates.
+                    The oppo rate represents his ability to hit to the opposite field, while the chase rate shows how often he expands his zone to make contact.
+                    This analysis can be highlighted more in the density graph.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="radar-section">
+            <div class="radar-text">
+                <h3 style="color: #EB6E1F;">Yordan's 2-Strike Profile</h3>
+                <p>
+                    Yordan Alvarez, compared to other MLB hitters, has noticeable top-notch attributes.
+                    A couple of things to focus on in this radar graph are the chase and oppo rates.
+                    The oppo rate represents his ability to hit to the opposite field, while the chase rate shows how often he expands his zone to make contact.
+                    This analysis can be highlighted more in the density graph.
+                </p>
+            </div>
+            <div class="radar-container">
+                <div id="radarChart"></div>
+            </div>
+        </div> -->
+
+        <!-- Attack Angle Section -->
+
+
+        <!-- Contact Zone Section -->
+        <div class="graph-section">
+            <div class="heatmap-row">
+                <div class="plot-text">
+                    <h3 style="color: #EB6E1F;">Contact% Between Counts</h3>
+                    <p>
+                        As we can see from the side-by-side strike zone heatmaps, Yordan's contact% changes drastically from 0-strike counts to 2-strike counts. 
+                        We can see how in 0-strike counts, he prefers to make contact more inside and along the middle of the zone, but in 2-strike counts, he expands his zone and even tends to make contact away.
+                        This not only tells us that Yordan is willing to adjust his approach, but also that he can maintain quality contact even when expanding his zone.
+                    </p>
+                </div>
+                <div class="plot-pair">
+                    <div id="heatmap0" class="heatmap" style="margin-top: 5rem;"></div>
+                    <div id="heatmap2" class="heatmap" style="margin-top: 5rem;"></div>
+                </div>
+            </div>
+        </div>
+        <h3 style="color: #EB6E1F;">Changes in Swing Metrics</h3>
+        <p>
+        For further analysis, we can encorporate Baseball Savant recently released new swing metrics: attack angle (º), attack direction (º), and swing path (tilt) (º)<br>
+        These new metrics allow the public to take a deeper dive into swing geometry and better understand how hitters approach each at-bat. 
+        Their swing geometry can dramatically affect batted-ball outcomes like wOBA, contact%, and groundball%.
         </p>
-          <div id="scatter-contact-woba" class="chart"></div>
+        <!-- Delta Histograms Section -->
+        <div class="graph-section">
+            <div class="heatmap-row">
+                <div class="plot-text">
+                    <p>
+                    The histograms show how much MLB hitters swing metrics change in variance between 0-strike and 2-strike counts.
+                    The distribution of attack angle changes between 0-strike and 2-strike counts reveals how hitters adjust their swing plane.
+                    Yordan Alvarez shows a significant shift in variance of his attack angle, acheiving 96th percentile among MLB hitters.
+                    This adjustment helps him maintain contact while sacrificing some power potential.
+                    Each graph represents a different aspect of his swing: attack angle, attack direction, and swing path tilt.
+                    The red line indicates Yordan's position relative to other MLB hitters, showing how his adjustments compare to the league average.
+                    Click through the graphs to explore each metric in detail.
 
-          <!-- Radar Chart Section -->
-          <div class="radar-section">
-              <div class="radar-text">
-                  <h3 style="color: #EB6E1F;">Yordan's 2-Strike Profile</h3>
-                  <p>
-                      Yordan Alvarez, compared to other MLB hitters, has noticeable top-notch attributes.
-                      A couple of things to focus on in this radar graph are the chase and oppo rates.
-                      The oppo rate represents his ability to hit to the opposite field, while the chase rate shows how often he expands his zone to make contact.
-                      This analysis can be highlighted more in the density graph.
-                  </p>
-              </div>
-              <div class="radar-container">
-                  <div id="radarChart"></div>
-              </div>
-          </div>
-
-          <!-- Attack Angle Section -->
-
-
-          <!-- Contact Zone Section -->
-          <div class="graph-section">
-              <div class="heatmap-row">
-                  <div class="plot-pair">
-                      <div id="heatmap0" class="heatmap" style="margin-top: 5rem;"></div>
-                      <div id="heatmap2" class="heatmap" style="margin-top: 5rem;"></div>
-                  </div>
-                  <div class="plot-text">
-                      <h3 style="color: #EB6E1F;">Contact% Between Counts</h3>
-                      <p>
-                          As we can see from the side-by-side strike zone heatmaps, Yordan's contact% changes drastically from 0-strike counts to 2-strike counts. 
-                          We can see how in 0-strike counts, he prefers to make contact more inside and along the middle of the zone, but in 2-strike counts, he expands his zone and even tends to make contact away.
-                          This not only tells us that Yordan is willing to adjust his approach, but also that he can maintain quality contact even when expanding his zone.
-                      </p>
-                  </div>
-              </div>
-          </div>
-          <h3 style="color: #EB6E1F;">Changes in Swing Metrics</h3>
-            <p>
-            For further analysis, we can encorporate Baseball Savant recently released new swing metrics: attack angle (º), attack direction (º), and swing path (tilt) (º)<br>
-            These new metrics allow the public to take a deeper dive into swing geometry and better understand how hitters approach each at-bat. 
-            Their swing geometry can dramatically affect batted-ball outcomes like wOBA, contact%, and groundball%.
-            </p>
-          <!-- Delta Histograms Section -->
-          <div class="graph-section">
-              <div class="heatmap-row">
-                  <div class="plot-text">
-                      <p>
-                        The histograms show how much MLB hitters swing metrics change in variance between 0-strike and 2-strike counts.
-                        The distribution of attack angle changes between 0-strike and 2-strike counts reveals how hitters adjust their swing plane.
-                        Yordan Alvarez shows a significant shift in variance of his attack angle, acheiving 96th percentile among MLB hitters.
-                        This adjustment helps him maintain contact while sacrificing some power potential.
-                        Each graph represents a different aspect of his swing: attack angle, attack direction, and swing path tilt.
-                        The red line indicates Yordan's position relative to other MLB hitters, showing how his adjustments compare to the league average.
-                        Click through the graphs to explore each metric in detail.
-
-                      </p>
-                  </div>
-                  <div class="plot-pair" style="margin-left: auto; margin-right: 0;">
-                      <div id="delta-hists" style="margin-left: auto;"></div>
-                  </div>
-              </div>
-          </div>
+                    </p>
+                </div>
+                <div class="plot-pair" style="margin-left: auto; margin-right: 0;">
+                    <div id="delta-hists" style="margin-left: auto;"></div>
+                </div>
+            </div>
+        </div>
 
 
-          <p class = "But">
-            This result could mean that although he is changing his tilt of his upper body but the angle that his arms and his body makes remain consistent.
-            Do the data reveal major leaguers follow Yordan's approach?<br><br>
-            Here's change in variance scatter plot for the each metrics against important outcome rates.
-            Explore league-wide trend and see how Yordan Alverez's appraoch can be justified.
-            You can also dive deeper into player specific data down in the sandbox.
-          </p>
+        <p class = "But">
+        This result could mean that although he is changing his tilt of his upper body but the angle that his arms and his body makes remain consistent.
+        Do the data reveal major leaguers follow Yordan's approach?<br><br>
+        Here's change in variance scatter plot for the each metrics against important outcome rates.
+        Explore league-wide trend and see how Yordan Alverez's appraoch can be justified.
+        You can also dive deeper into player specific data down in the sandbox.
+        </p>
 
       </section>
 

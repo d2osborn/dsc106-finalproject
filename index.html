@@ -117,6 +117,7 @@
                 // Initial
                 populateList();
                 update();
+
             }).catch(err => console.error('Error loading JSON:', err));
         });
     </script>
@@ -216,7 +217,11 @@
     <section class="section-container">
         <div class="intro">
             <p>
-                In 2024, Yordan Alvarez, outfielder/designated hitter for the Houston Astros, was voted an All-Star starter as a DH and All-Star for his third consecutive year and finished top 10 in AL MVP voting. His stats on the year speak for themselves: his 0.397 wOBA fell in the 96th percentile, his 16.7 barrel% fell in the 91st percentile, his 35 HRs fell in the 94th percentile, and his 107 mph EV90 fell in the 94th percentile, across all qualifying MLB hitters. This project will investigate how he had such a successful season by looking at the quality of his contact, how he approached two-strike counts, and more.
+                In 2024, Yordan Alvarez, outfielder/designated hitter for the Houston Astros, 
+                was voted an All-Star starter as a DH and All-Star for his third consecutive year and finished top 10 in AL MVP voting. 
+                His stats on the year speak for themselves: his 0.397 wOBA was in the 96th percentile, his 16.7 barrel% was in the 91st percentile, 
+                his 35 HRs was in the 94th percentile, and his 107 mph EV90 was in the 94th percentile, across all qualifying MLB hitters. 
+                This project will investigate how he had such a successful season by looking at the quality of his contact, how he approached two-strike counts, and more.
             </p>
         </div>
     </section>
@@ -234,7 +239,11 @@
                 <div class="plot-text">
                     <h3 style="color: #EB6E1F;">2 Strike Contact% vs wOBA</h3>
                     <p>
-                    In two strikes, hitters are taught to protect the zone by shortening up and flattening their swing to prevent a strikeout and stay alive, referred to as a “B swing.” As a result, while hitters may improve their ability to make contact, the effectiveness of that contact often declines, meaning metrics like contact% may rise, but wOBA tends to fall. Yordan’s numbers in two-strike counts tell a different story: he didn’t sacrifice the quality of his swings and still ranks among the league’s top hitters, as seen in this scatter plot. So what is he doing differently?
+                    In two strikes, hitters are taught a "B swing" to essentially protect the zone by shortening up/flattening their swing to prevent a strikeout and stay alive.
+                    As a result, while hitters are improving their ability to make contact, the effectiveness of that contact often declines, 
+                    meaning contact% may rise, but wOBA tends to fall. Yordan’s numbers in two-strike counts tell a different story: 
+                    he's making just as much contact than in zero strikes, and still ranking as one of the league’s top hitters, as seen in this scatter plot to the right. 
+                    So what is he doing different than the norm?
                     </p>
                 </div>
                 <div id="scatter-contact-woba" class="chart"></div>
@@ -247,7 +256,11 @@
                 <div class="plot-text">
                     <h3 style="color: #EB6E1F;">Yordan's 2-Strike Profile</h3>
                     <p>
-                    Well Yordan’s numbers, in comparison to the rest of the league, offer insight into how he’s able to survive and be successful in two-strike counts. Looking at the radar plot, we can see his high chase% and oppo% immediately stand out. While swinging out of the zone is typically seen as a negative, Yordan is able to balance this out by hitting the ball the other way. He’s able to hit the ball against the right-side infield shift, which is a valuable trait to have in two strikes.
+                    Well Yordan’s numbers, in comparison to the rest of the league, offer insight into how he’s able to survive and be successful in two-strike counts. 
+                    Looking at the radar plot, we can see his high chase% and oppo% immediately stand out. While swinging out of the zone is typically seen as a negative, 
+                    Yordan is able to balance this out by hitting the ball the other way. He’s able to hit the ball 
+                    against the right-side infield shift, which is a valuable trait to have in two strikes albeit at the cost of some power, 
+                    but we can see that he is still barreling the ball at a well above average rate in two strikes.
                     </p>
                 </div>
             </div>
@@ -276,7 +289,10 @@
                 <div class="plot-text">
                     <h3 style="color: #EB6E1F;">Contact% Between Counts</h3>
                     <p>
-                        The side-by-side strike zone heatmaps reveal a significant difference in Yordan’s contact profile from zero strikes to two strikes. With no strikes, he focuses on making contact on pitches inside and over the heart of the plate, which aligns with his natural swing path. However, with two strikes, he expands the zone and makes contact mostly away from him. This not only shows his ability to adjust his approach down in the count but also that he is able to maintain strong contact quality.
+                        The side-by-side strike zone heatmaps reveal a significant difference in Yordan’s contact profile from zero strikes to two strikes. 
+                        With no strikes, he focuses on making contact pretty much only on pitches inside and over the heart of the plate, aligning with his natural swing path. 
+                        However, with two strikes, he expands the zone and makes contact mostly away from him. This not only shows his ability to adjust his 
+                        approach down in the count but also that he is able to maintain consistent contact quality while going out of his "comfort zone" to make contact.
                     </p>
                 </div>
                 <div class="plot-pair">
@@ -290,13 +306,21 @@
         <div class="graph-section">
             <h3 style="color: #EB6E1F;">Changes in Swing Metrics</h3>
             <p>
-            <br></br>
-            Recently, Baseball Savant released new metrics to help characterize the geometry of a hitter’s swing: attack angle (º), attack direction (º), and swing path (tilt) (º). <a href="https://www.mlb.com/news/new-statcast-swing-metrics-2025" target="_blank" rel="noopener noreferrer"> More can be found here</a>. This allows us to perform further analysis and explore potential relationships between these swing characteristics and batted-ball outcomes like wOBA, contact%, groundball%, and more.
+            Recently, Baseball Savant released new metrics to help characterize the geometry of a hitter’s swing: attack angle (º), attack direction (º), 
+            and swing path (tilt) (º). <a href="https://www.mlb.com/news/new-statcast-swing-metrics-2025" target="_blank" rel="noopener noreferrer"> More can be found here</a>. 
+            This allows us to perform further analysis and explore potential relationships between these swing characteristics and batted-ball outcomes like 
+            wOBA, contact%, groundball%, and more.
             </p>
             <div class="heatmap-row">
                 <div class="plot-text">
                     <p>
-                    These histograms display how the variance of each swing angle changes across all hitters from zero-strike to two-strike counts. Each distribution captures the degree of adjustment in the swing plane between counts, where a higher change in variance indicates more significant changes in that specific angle with two strikes. Notably, Yordan shows a significant change in the variance of his attack angle between counts, ranking in the 96th percentile among all hitters. This adjustment reflects his ability to make consistent contact, even if it means sacrificing some power, as lower attack angles mean hitting the ball more to the ground. The red line on the histograms highlights his percentile rank, showing just how much more he’s altering his swing in that angle metric compared to the rest of the league. Click on the arrows to look through the graphs and explore each angle more in detail.
+                    These histograms show how the variance in each swing angle changes across all hitters between zero-strike and two-strike counts.
+                    A higher variance indicates a greater degree of adjustment in that specific angle, and Yordan ranks in the 96th percentile for attack angle variance.
+                    This suggests that he's making significant swing adjustments in response to pitches mostly on the outer-half of the zone.
+                    Although his contact% is basically identical between zero and two strikes, he's showing that he has a more dynamic swing approach
+                    that allows him to adjust to pitch location and still drive the ball when pitchers make a mistake.
+                    The red line on the histograms highlights his percentile rank, showing just how much more he’s changing his swing in that angle compared to the rest of the league. 
+                    Click on the arrows to look through the graphs and explore the distribution of each angle more in detail.
                     </p>
                 </div>
                 <div class="plot-pair" style="margin-left: auto; margin-right: 0;">
@@ -308,7 +332,9 @@
         <h3 style="color: #EB6E1F;">But how does the rest of the league differ?</h3>
         <p class = "But">
         <br></br>
-        Below are scatter plots showing how changes in swing angle variance relate to key outcome metrics, along with an interactive sandbox dashboard. Use these tools to explore league-wide trends, evaluate how Yordan’s two-strike approach is justified, and compare how your favorite player adjusts and how much better/worse their outcomes are between zero-strike and two-strike counts.
+        Below are scatter plots showing how changes in the variance of these swing angles relate to key outcome metrics, along with an interactive sandbox dashboard. 
+        Use these tools to explore league-wide trends, evaluate how Yordan’s two-strike approach is justified, 
+        and compare how your favorite player adjusts and how much better/worse their outcomes are between zero-strike and two-strike counts.
         </p>
 
       </section>
@@ -360,7 +386,14 @@
         <div class="plot-text">
         <h3>Conclusion</h3>
         <p>
-            While the scatter plots suggest some correlation between changes in swing mechanics and outcome metrics, the newly introduced swing angles offer a clearer picture: there isn’t a one-size-fits-all solution for two-strike approaches. Instead, different combinations of mechanical adjustments, such as changes in these angles individually, can benefit players in different ways. Hitters who understand the geometry of their own swing can tailor their adjustments to maintain performance in tough situations. Managers and coaches can also use these metrics to gain some analytical insights into a player’s tendencies and even optimize lineup decisions as a result. It’s important to recognize that these metrics exist within a broader context, as factors such as height, weight, pitch recognition, mental approach, and situational pressure all play critical roles in a hitter’s success in two strikes. Therefore, while these swing angles provide valuable insight into a hitter’s swing, they should be used alongside other data and qualitative evaluation to form a more complete understanding of two-strike hitting.
+            While the scatter plots suggest there lies some correlation between changing up your swing mechanics and outcomes, 
+            these newly introduced swing angles offer a clearer picture instead: there isn't a one-size-fits-all solution for two-strike approaches.
+            Different combinations of mechanical adjustments can benefit players in different ways instead.
+            Hitters who understand the geometry of their own swing could potentially tailor the changes of their swings to maintain performance in two strikes.
+            Managers and coaches could also use these angles to gain some analytical insights into a player's tendencies, and even optimize lineup decisions as a result.
+            It's important to recognize that these angles exist within a broader context, as there are lots of confounding factors that all play a critical role in a hitter's
+            success and approach in two strikes. Therefore, while these new swing angles can provide valuable insight into a hitter's swing, they should be used alongside other data/metrics
+            to form a more complete understanding of two-strike hitting.
         </p>
         </div>
 
